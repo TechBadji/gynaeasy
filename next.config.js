@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-// Force rebuild: 2026-03-09T17:15:00Z
 const withPWA = require('next-pwa')({
     dest: 'public',
     disable: process.env.NODE_ENV === 'development',
@@ -10,9 +9,19 @@ const withPWA = require('next-pwa')({
 
 const nextConfig = {
     reactStrictMode: true,
+
     experimental: {
-        serverActions: true,
+        serverActions: {
+            // Accepte localhost en dev ET le domaine Vercel en production
+            allowedOrigins: [
+                'localhost:3000',
+                process.env.NEXT_PUBLIC_APP_URL?.replace(/^https?:\/\//, '') || '',
+            ].filter(Boolean),
+        },
     },
+
+    // Silence l'erreur webpack vs Turbopack liée à next-pwa
+    turbopack: {},
 }
 
 module.exports = withPWA(nextConfig)

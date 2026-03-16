@@ -1,10 +1,23 @@
 {
-  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/auth/login/page": "app/auth/login/page.js",
   "/(protected)/agenda/page": "app/(protected)/agenda/page.js",
-  "/(protected)/facturation/page": "app/(protected)/facturation/page.js",
   "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
-  "/admin/page": "app/admin/page.js",
+  "/(protected)/facturation/page": "app/(protected)/facturation/page.js",
+  "/(protected)/imagerie/page": "app/(protected)/imagerie/page.js",
   "/(protected)/inventaire/page": "app/(protected)/inventaire/page.js",
-  "/(protected)/statistiques/page": "app/(protected)/statistiques/page.js"
+  "/(protected)/parametres/page": "app/(protected)/parametres/page.js",
+  "/(protected)/patients/[id]/page": "app/(protected)/patients/[id]/page.js",
+  "/(protected)/patients/page": "app/(protected)/patients/page.js",
+  "/(protected)/statistiques/page": "app/(protected)/statistiques/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
+  "/api/documents/ordonnance/route": "app/api/documents/ordonnance/route.js",
+  "/api/reminders/sms/route": "app/api/reminders/sms/route.js",
+  "/auth/login/page": "app/auth/login/page.js",
+  "/booking/page": "app/booking/page.js",
+  "/onboarding/page": "app/onboarding/page.js",
+  "/onboarding/verify/page": "app/onboarding/verify/page.js",
+  "/p/[code]/page": "app/p/[code]/page.js",
+  "/page": "app/page.js"
 }

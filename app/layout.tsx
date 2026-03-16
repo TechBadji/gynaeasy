@@ -7,6 +7,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
     title: 'Gynaeasy - Logiciel Gynécologie HDS',
     description: 'SaaS Gynécologique HDS - Suivis, CCAM, Ordonnances',
+    manifest: '/manifest.json',
 }
 
 import { Providers } from '@/components/providers'

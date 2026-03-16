@@ -1,412 +1,670 @@
 {
   "node": {
-    "0971f86d77fc57f9cfaec9b0bf8e22edf6b584b3": {
+    "40816899b6cab7075d5e1b8729d0b8b547aea2df1a": {
       "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser"
-      }
-    },
-    "136f255b3361815926f04ca0a02ccd707438febf": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser"
-      }
-    },
-    "1980f7ec4df49f1713aec32f82ea8d9542750d8f": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser"
-      }
-    },
-    "02b476ae8966b6d87f8ec1001d3918c80dae0300": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "0e2a9a8505c28f4895ec04814d4660bec4a3433a": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "11a1da4b2838e34d682791c6cc9224b64a05668b": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "1acf0c711f4058af229d4e5da2693836e60ba649": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "1fda2ef9902425525dfde0811a46f107cef9497c": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "20081c313d5f827058cab9f7de3ec738f7eb628f": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "28d4e6b1126a3b11e174fff6653b5edec3a193a9": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "2e35765495f5aec3b54b658b577b460baa100c93": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "a26dc19873b2c9be82168bf572120163184165c4": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "b4806c46ec774541b507f9c69237bb3969723a5a": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "bb5ad2915e935792c5c5c99cc5b195a8dad679a4": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "ce3e9a15ace25d789524d5f8385714d4d4d273de": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "d249ac66a07bed0110d033169d08a0411a6786a7": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "daac67b2292f5173e8d16040c2f4575a5b6b9b75": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "e13237a4ca51267e080ff9c4eb7a1d47ea0d474e": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "e7810e97984ff8488bb36637c3b903e0b1c051d4": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "e8f02a7cf1e71733b8e0e084db68c018659afbca": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "e9ad4f2e351840316b93c218c927859c09c87662": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "f9045fcdacc313e6d21688bd82110313f020db39": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "f982f2789add9cb6477f72d6b1cab0e945fd050b": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "ff2cae228e3afcd8887cf7396c2da7da5a8777eb": {
-      "workers": {
-        "app/booking/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbooking.ts%22%2C%5B%22validatePatientCode%22%2C%22createOnlineAppointment%22%2C%22getDoctorAppointments%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=true!",
-        "app/admin/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fsuperadmin.ts%22%2C%5B%22updateUserRoleAdmin%22%2C%22createPromotion%22%2C%22getSuperAdminStats%22%2C%22updatePlanConfig%22%2C%22createAbonnement%22%2C%22updateAbonnement%22%2C%22getAppSettings%22%2C%22updatePromotion%22%2C%22getAuditLogs%22%2C%22deleteUser%22%2C%22getAllUsers%22%2C%22createUserAdmin%22%2C%22updateAppSettings%22%2C%22getPromotions%22%2C%22getAllActesCCAM%22%2C%22getAllAbonnements%22%2C%22getActiveDoctors%22%2C%22deletePromotion%22%2C%22toggleUserModule%22%2C%22updateActeCCAMAdmin%22%2C%22getPlanConfigs%22%5D%5D%5D&__client_imported__=!"
-      },
-      "layer": {
-        "app/booking/page": "action-browser",
-        "app/admin/page": "rsc"
-      }
-    },
-    "2c870e51698584676e16f4888cf4ac0e409060b0": {
-      "workers": {
-        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/dashboard/page": "action-browser",
-        "app/(protected)/patients/page": "action-browser",
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "47daa94cfb2cdf059f709aefb4955dcf21f82da6": {
-      "workers": {
-        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/dashboard/page": "action-browser",
-        "app/(protected)/patients/page": "action-browser",
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "6742ee79438eb222f989e2b7b2f2f239994024aa": {
-      "workers": {
-        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/dashboard/page": "action-browser",
-        "app/(protected)/patients/page": "action-browser",
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "d8c19f06e9c926e3953fc3ceb2da1e3b36b56b9b": {
-      "workers": {
-        "app/(protected)/dashboard/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/dashboard/page": "action-browser",
-        "app/(protected)/patients/page": "action-browser",
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "5a4acbe7a6cb0bdc400f138b9970f6b225201e68": {
-      "workers": {
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "795e1446a33e54609739b1a6249215e5d56ed891": {
-      "workers": {
-        "app/(protected)/patients/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fpatient.ts%22%2C%5B%22requestAccess%22%2C%22handleAccessRequest%22%2C%22createPatient%22%2C%22declareGrossesse%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fconsultation.ts%22%2C%5B%22createEmptyConsultation%22%2C%22updateConsultationMedicalData%22%5D%5D%5D&__client_imported__=true!"
-      },
-      "layer": {
-        "app/(protected)/patients/[id]/page": "action-browser"
-      }
-    },
-    "5ba247fa9f871d6ebfe89d0fab9f24aaba0c77a0": {
-      "workers": {
-        "app/(protected)/agenda/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Frdv.ts%22%2C%5B%22createRdv%22%2C%22getPatients%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/agenda/page": {
+          "moduleId": 176143,
+          "async": false,
+          "exportedName": "createRdv",
+          "filename": "app/actions/rdv.ts"
+        }
       },
       "layer": {
         "app/(protected)/agenda/page": "action-browser"
-      }
+      },
+      "filename": "app/actions/rdv.ts",
+      "exportedName": "createRdv"
     },
-    "c0a4967785c8a845116c6c3faac936df6d05f540": {
+    "6051da566a5e4f43ff0ff2332fed38b00ecc5d2694": {
       "workers": {
-        "app/(protected)/agenda/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Frdv.ts%22%2C%5B%22createRdv%22%2C%22getPatients%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/dashboard/page": {
+          "moduleId": 121553,
+          "async": false,
+          "exportedName": "handleAccessRequest",
+          "filename": "app/actions/patient.ts"
+        }
       },
       "layer": {
-        "app/(protected)/agenda/page": "action-browser"
-      }
+        "app/(protected)/dashboard/page": "action-browser"
+      },
+      "filename": "app/actions/patient.ts",
+      "exportedName": "handleAccessRequest"
     },
-    "69ce7a95024d4c148301485543247e25bd47cf3f": {
+    "404e879daad318e36f0f44200ea534c8edcdb5092e": {
       "workers": {
-        "app/(protected)/imagerie/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fclinic.ts%22%2C%5B%22updateClinicSettings%22%2C%22getClinicSettings%22%5D%5D%5D&__client_imported__=!",
-        "app/(protected)/facturation/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fclinic.ts%22%2C%5B%22updateClinicSettings%22%2C%22getClinicSettings%22%5D%5D%5D&__client_imported__=!"
+        "app/(protected)/facturation/page": {
+          "moduleId": 124760,
+          "async": false,
+          "exportedName": "createReglement",
+          "filename": "app/actions/billing.ts"
+        }
       },
       "layer": {
+        "app/(protected)/facturation/page": "action-browser"
+      },
+      "filename": "app/actions/billing.ts",
+      "exportedName": "createReglement"
+    },
+    "002d402b88654d5bb1581350a030087b1bb8cae0f1": {
+      "workers": {
+        "app/(protected)/facturation/page": {
+          "moduleId": 124760,
+          "async": false,
+          "exportedName": "getClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        },
+        "app/(protected)/imagerie/page": {
+          "moduleId": 510153,
+          "async": false,
+          "exportedName": "getClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        },
+        "app/(protected)/parametres/page": {
+          "moduleId": 729460,
+          "async": false,
+          "exportedName": "getClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/facturation/page": "rsc",
         "app/(protected)/imagerie/page": "rsc",
-        "app/(protected)/facturation/page": "rsc"
-      }
+        "app/(protected)/parametres/page": "rsc"
+      },
+      "filename": "app/actions/clinic.ts",
+      "exportedName": "getClinicSettings"
     },
-    "865989f76e216459a1976ce6770b6f8b2a3dcf06": {
+    "40179a2160723cf1bd1c7344bc012cb88ccdc76647": {
       "workers": {
-        "app/(protected)/imagerie/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fclinic.ts%22%2C%5B%22updateClinicSettings%22%2C%22getClinicSettings%22%5D%5D%5D&__client_imported__=!",
-        "app/(protected)/facturation/page": "(rsc)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fclinic.ts%22%2C%5B%22updateClinicSettings%22%2C%22getClinicSettings%22%5D%5D%5D&__client_imported__=!"
+        "app/(protected)/facturation/page": {
+          "moduleId": 124760,
+          "async": false,
+          "exportedName": "updateClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        },
+        "app/(protected)/imagerie/page": {
+          "moduleId": 510153,
+          "async": false,
+          "exportedName": "updateClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        },
+        "app/(protected)/parametres/page": {
+          "moduleId": 729460,
+          "async": false,
+          "exportedName": "updateClinicSettings",
+          "filename": "app/actions/clinic.ts"
+        }
       },
       "layer": {
+        "app/(protected)/facturation/page": "rsc",
         "app/(protected)/imagerie/page": "rsc",
-        "app/(protected)/facturation/page": "rsc"
-      }
+        "app/(protected)/parametres/page": "action-browser"
+      },
+      "filename": "app/actions/clinic.ts",
+      "exportedName": "updateClinicSettings"
     },
-    "439c0d7ae42f95a91e40d504158735d19aedf0a2": {
+    "7086b314137d0926488a8e65405a53a320c6ffdd7b": {
       "workers": {
-        "app/(protected)/imagerie/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fimaging.ts%22%2C%5B%22saveImagingReport%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/imagerie/page": {
+          "moduleId": 510153,
+          "async": false,
+          "exportedName": "saveImagingReport",
+          "filename": "app/actions/imaging.ts"
+        }
       },
       "layer": {
         "app/(protected)/imagerie/page": "action-browser"
-      }
+      },
+      "filename": "app/actions/imaging.ts",
+      "exportedName": "saveImagingReport"
     },
-    "798821fc58399cb228d78838910f8f49390feb03": {
+    "60eb7b032a6ca7bbc6e290cc28a56f0606120dc580": {
       "workers": {
-        "app/(protected)/imagerie/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fimaging.ts%22%2C%5B%22saveImagingReport%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/inventaire/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/imagerie/page": {
+          "moduleId": 510153,
+          "async": false,
+          "exportedName": "consumeStockItem",
+          "filename": "app/actions/stock.ts"
+        }
       },
       "layer": {
-        "app/(protected)/imagerie/page": "action-browser",
+        "app/(protected)/imagerie/page": "action-browser"
+      },
+      "filename": "app/actions/stock.ts",
+      "exportedName": "consumeStockItem"
+    },
+    "60c4801cad552e73adc30f2fa7391c8cf0c761eb0b": {
+      "workers": {
+        "app/(protected)/inventaire/page": {
+          "moduleId": 722849,
+          "async": false,
+          "exportedName": "updateStockItem",
+          "filename": "app/actions/stock.ts"
+        }
+      },
+      "layer": {
         "app/(protected)/inventaire/page": "action-browser"
-      }
+      },
+      "filename": "app/actions/stock.ts",
+      "exportedName": "updateStockItem"
     },
-    "c8359e61e6923e8b92e9c00f278e7b95458e9da1": {
+    "407da1a02bae9df1196c12f8eef0135c06e3a5eefc": {
       "workers": {
-        "app/(protected)/imagerie/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fimaging.ts%22%2C%5B%22saveImagingReport%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/inventaire/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/inventaire/page": {
+          "moduleId": 722849,
+          "async": false,
+          "exportedName": "deleteStockItem",
+          "filename": "app/actions/stock.ts"
+        }
       },
       "layer": {
-        "app/(protected)/imagerie/page": "action-browser",
         "app/(protected)/inventaire/page": "action-browser"
-      }
+      },
+      "filename": "app/actions/stock.ts",
+      "exportedName": "deleteStockItem"
     },
-    "ce0b9c9fe0ea1de265eb101de716ec4f6a70c59c": {
+    "4016b6d3da919f13ad8c6634ef2e4965b89c164bc0": {
       "workers": {
-        "app/(protected)/imagerie/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fimaging.ts%22%2C%5B%22saveImagingReport%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/inventaire/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/patients/page": {
+          "moduleId": 655694,
+          "async": false,
+          "exportedName": "createPatient",
+          "filename": "app/actions/patient.ts"
+        }
       },
       "layer": {
-        "app/(protected)/imagerie/page": "action-browser",
-        "app/(protected)/inventaire/page": "action-browser"
-      }
+        "app/(protected)/patients/page": "action-browser"
+      },
+      "filename": "app/actions/patient.ts",
+      "exportedName": "createPatient"
     },
-    "e0b305fddc9b19a6eb1c4c0264cf160d0ab7aa14": {
+    "605d4054fb706a390308610691d708c3c8de946869": {
       "workers": {
-        "app/(protected)/imagerie/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fimaging.ts%22%2C%5B%22saveImagingReport%22%5D%5D%2C%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!",
-        "app/(protected)/inventaire/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fstock.ts%22%2C%5B%22consumeStockItem%22%2C%22deleteStockItem%22%2C%22updateStockItem%22%2C%22getStockItems%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/patients/[id]/page": {
+          "moduleId": 925420,
+          "async": false,
+          "exportedName": "declareGrossesse",
+          "filename": "app/actions/patient.ts"
+        }
       },
       "layer": {
-        "app/(protected)/imagerie/page": "action-browser",
-        "app/(protected)/inventaire/page": "action-browser"
-      }
+        "app/(protected)/patients/[id]/page": "action-browser"
+      },
+      "filename": "app/actions/patient.ts",
+      "exportedName": "declareGrossesse"
     },
-    "259fbaee5342ce1bba4f23b56166105409137103": {
+    "60b3f13d2345b395b6f580c4384af77bdff7eae037": {
       "workers": {
-        "app/(protected)/facturation/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbilling.ts%22%2C%5B%22getActiveCCAMCodes%22%2C%22createReglement%22%2C%22getRecentInvoices%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/patients/[id]/page": {
+          "moduleId": 925420,
+          "async": false,
+          "exportedName": "updateConsultationMedicalData",
+          "filename": "app/actions/consultation.ts"
+        }
       },
       "layer": {
-        "app/(protected)/facturation/page": "action-browser"
-      }
+        "app/(protected)/patients/[id]/page": "action-browser"
+      },
+      "filename": "app/actions/consultation.ts",
+      "exportedName": "updateConsultationMedicalData"
     },
-    "41532048e9d88c2675b23bc3f86678b8c560fd55": {
+    "402b86ccddd52ce701205a1e3a9cff03e1fd294b21": {
       "workers": {
-        "app/(protected)/facturation/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbilling.ts%22%2C%5B%22getActiveCCAMCodes%22%2C%22createReglement%22%2C%22getRecentInvoices%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/patients/[id]/page": {
+          "moduleId": 925420,
+          "async": false,
+          "exportedName": "createEmptyConsultation",
+          "filename": "app/actions/consultation.ts"
+        }
       },
       "layer": {
-        "app/(protected)/facturation/page": "action-browser"
-      }
+        "app/(protected)/patients/[id]/page": "action-browser"
+      },
+      "filename": "app/actions/consultation.ts",
+      "exportedName": "createEmptyConsultation"
     },
-    "d9eeda2946fdcae06f23a02c7f6098f4fb3d1fd5": {
+    "40b5de53dba0c86d00860b958bc27c2b7cddd5a00c": {
       "workers": {
-        "app/(protected)/facturation/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22%2FUsers%2Fm12020%2FDocuments%2Fdev%2FAntigravity%2Fgynaeasy%2Fapp%2Factions%2Fbilling.ts%22%2C%5B%22getActiveCCAMCodes%22%2C%22createReglement%22%2C%22getRecentInvoices%22%5D%5D%5D&__client_imported__=true!"
+        "app/(protected)/patients/[id]/page": {
+          "moduleId": 925420,
+          "async": false,
+          "exportedName": "requestAccess",
+          "filename": "app/actions/patient.ts"
+        }
       },
       "layer": {
-        "app/(protected)/facturation/page": "action-browser"
-      }
+        "app/(protected)/patients/[id]/page": "action-browser"
+      },
+      "filename": "app/actions/patient.ts",
+      "exportedName": "requestAccess"
+    },
+    "001d457236218e74c885c78958d10490842b8bc6d4": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getPlanConfigs",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getPlanConfigs"
+    },
+    "002bef64c314ff6c30fd2015e98fdcdf08e5d81c71": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getActiveDoctors",
+          "filename": "app/actions/superadmin.ts"
+        },
+        "app/booking/page": {
+          "moduleId": 574862,
+          "async": false,
+          "exportedName": "getActiveDoctors",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc",
+        "app/booking/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getActiveDoctors"
+    },
+    "002d178925b59a475971b79b17830893f59611f688": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getAllAbonnements",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAllAbonnements"
+    },
+    "002e56de673574e299ce67b0788a6cfb0751d54374": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getPromotions",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getPromotions"
+    },
+    "005fc7a04e516d5e38997acd1acb711d1f2551a146": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getAllUsers",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAllUsers"
+    },
+    "007ea371e3f2aa32b1efda4e47c7925a9b5f7941d0": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getAppSettings",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAppSettings"
+    },
+    "00c318e49ce3033ff160bffaeaabf23a4c11588b92": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getAllActesCCAM",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAllActesCCAM"
+    },
+    "00c9b8d7ffadb4cde5a226384619c4cd6b1d5d0733": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getSuperAdminStats",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getSuperAdminStats"
+    },
+    "4008cf4aad4e82a632bc5450bf5beb7bff47afbd5a": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getAuditLogs",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAuditLogs"
+    },
+    "40150f5ada5bc478e5a548d3f5d3ad216186f73528": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "createAbonnement",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "createAbonnement"
+    },
+    "4075bab8c3ba0e689754017b83dbb65734e3555d4c": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "createPromotion",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "createPromotion"
+    },
+    "408bf72025497684d07d3153cd80617dcddd74e90e": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updateAppSettings",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updateAppSettings"
+    },
+    "40b27065992a2691ddac0b44d146f6af7d13f8b3c4": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "createUserAdmin",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "createUserAdmin"
+    },
+    "40cc61ceba3e8e3ded16a4f44bc1fa0a528a47d7c0": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "deletePromotion",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "deletePromotion"
+    },
+    "40df23c1b8c719a78b4505da8244f497e8edf4816f": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "deleteUser",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "deleteUser"
+    },
+    "604153d895f4cf15472df91d7bf2622a072f534cbc": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "toggleUserModule",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "toggleUserModule"
+    },
+    "6050b453ca0c671cc3b2fce9f4e4a2322faf78be67": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updatePromotion",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updatePromotion"
+    },
+    "6074e24cda55579c3200594c4a645192c1ed76d1d9": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updateAbonnement",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updateAbonnement"
+    },
+    "6079728569511daaa8959653fdf5581d447317de4d": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updateUserRoleAdmin",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updateUserRoleAdmin"
+    },
+    "60937d6ee25c7f1cde061b389e7b4a4a0b99f77650": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updateActeCCAMAdmin",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updateActeCCAMAdmin"
+    },
+    "609b9cc5a05a6bd3e35b77962be414dc9e8ce5ac44": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "updatePlanConfig",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updatePlanConfig"
+    },
+    "00d75fb3d80209fbd48f9fd7d38c4746fdf6fc6e19": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "getPendingRegistrations",
+          "filename": "app/actions/onboarding.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/onboarding.ts",
+      "exportedName": "getPendingRegistrations"
+    },
+    "402d1d47d5129f20331922b7a802f0a020edaa737d": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "registerDoctor",
+          "filename": "app/actions/onboarding.ts"
+        },
+        "app/onboarding/page": {
+          "moduleId": 453978,
+          "async": false,
+          "exportedName": "registerDoctor",
+          "filename": "app/actions/onboarding.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc",
+        "app/onboarding/page": "action-browser"
+      },
+      "filename": "app/actions/onboarding.ts",
+      "exportedName": "registerDoctor"
+    },
+    "408089ec83c03b3a4f4638822f777d66f47f4152a5": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "approveRegistration",
+          "filename": "app/actions/onboarding.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/onboarding.ts",
+      "exportedName": "approveRegistration"
+    },
+    "40d07e1ad780cbeb0e53078ea862750dd24501acb3": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 422767,
+          "async": false,
+          "exportedName": "verifyDoctorEmail",
+          "filename": "app/actions/onboarding.ts"
+        },
+        "app/onboarding/verify/page": {
+          "moduleId": 509609,
+          "async": false,
+          "exportedName": "verifyDoctorEmail",
+          "filename": "app/actions/onboarding.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc",
+        "app/onboarding/verify/page": "action-browser"
+      },
+      "filename": "app/actions/onboarding.ts",
+      "exportedName": "verifyDoctorEmail"
+    },
+    "40ccd0464b369d53f1544e5f0294ab63af8af45a87": {
+      "workers": {
+        "app/booking/page": {
+          "moduleId": 574862,
+          "async": false,
+          "exportedName": "validatePatientCode",
+          "filename": "app/actions/booking.ts"
+        }
+      },
+      "layer": {
+        "app/booking/page": "action-browser"
+      },
+      "filename": "app/actions/booking.ts",
+      "exportedName": "validatePatientCode"
+    },
+    "783462a21dcdd9ae981a48fc91e8e781faa69166e9": {
+      "workers": {
+        "app/booking/page": {
+          "moduleId": 574862,
+          "async": false,
+          "exportedName": "createOnlineAppointment",
+          "filename": "app/actions/booking.ts"
+        }
+      },
+      "layer": {
+        "app/booking/page": "action-browser"
+      },
+      "filename": "app/actions/booking.ts",
+      "exportedName": "createOnlineAppointment"
     }
   },
   "edge": {},
-  "encryptionKey": "ykyrGNYnJRmG5SgBYFyKXxE1fBCOF+eCI0KTRV82lgg="
+  "encryptionKey": "U1waH4C8qd9lrk5Slvt5tH86aWcBww4SrHWU+r1IJTI="
 }

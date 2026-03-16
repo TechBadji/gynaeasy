@@ -1,3 +1,5 @@
+"use server"
+
 import { prisma } from "@/lib/prisma";
 import { AccountStatus, Role } from "@prisma/client";
 import { sendVerificationEmail, sendCredentialsEmail } from "@/lib/mail";
