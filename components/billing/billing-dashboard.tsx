@@ -122,11 +122,21 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
         const toastId = toast.loading("Génération du PDF...");
 
         try {
+            console.log("Invoice data for PDF:", invoice);
             const { consultation } = invoice;
+            if (!consultation) throw new Error("Données de consultation manquantes");
+            
             const { patient, user: doctor } = consultation;
+            if (!patient) throw new Error("Données patient manquantes");
+            if (!doctor) throw new Error("Données médecin manquantes");
 
             const pdf = new jsPDF("p", "mm", "a4");
             const pageWidth = pdf.internal.pageSize.getWidth();
+            
+            // Dates sécurisées
+            const dateSoin = consultation.dateHeure ? new Date(consultation.dateHeure) : new Date();
+            const datePaiement = invoice.dateReglement ? new Date(invoice.dateReglement) : new Date();
+
 
             // Configuration des polices et couleurs
             pdf.setTextColor(30, 41, 59); // slate-800
@@ -175,7 +185,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             pdf.setFontSize(11);
             pdf.setTextColor(30, 41, 59);
             pdf.text(`${patient.nom.toUpperCase()} ${patient.prenom}`, 20, 87);
-            pdf.text(format(new Date(consultation.dateHeure), "dd MMMM yyyy", { locale: fr }), pageWidth - 20, 87, { align: "right" });
+            pdf.text(format(dateSoin, "dd MMMM yyyy", { locale: fr }), pageWidth - 20, 87, { align: "right" });
 
             pdf.setFontSize(8);
             pdf.setTextColor(100, 116, 139);
@@ -223,7 +233,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             pdf.setTextColor(30, 41, 59);
             pdf.text(invoice.mode, 30, 174);
             pdf.setTextColor(16, 185, 129); // emerald-500
-            pdf.text(`AQUITTÉE LE ${format(new Date(invoice.dateReglement), "dd/MM/yyyy")}`, pageWidth - 30, 174, { align: "right" });
+            pdf.text(`AQUITTÉE LE ${format(datePaiement, "dd/MM/yyyy")}`, pageWidth - 30, 174, { align: "right" });
 
             // Footer
             pdf.setFontSize(7);

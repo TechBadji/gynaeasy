@@ -14,7 +14,13 @@ export default function FeuilleSoinPrint({ invoice, clinicInfo }: FeuilleSoinPro
     if (!invoice) return null;
 
     const { consultation } = invoice;
+    if (!consultation) return null;
+    
     const { patient, user: doctor } = consultation;
+    if (!patient || !doctor) return null;
+
+    const dateSoin = consultation.dateHeure ? new Date(consultation.dateHeure) : new Date();
+    const datePaiement = invoice.dateReglement ? new Date(invoice.dateReglement) : new Date();
 
     return (
         <div id="feuille-soin-print" className="bg-white p-16 text-slate-900 font-serif hidden print:block min-h-screen">
@@ -49,7 +55,7 @@ export default function FeuilleSoinPrint({ invoice, clinicInfo }: FeuilleSoinPro
                 </div>
                 <div className="space-y-4 text-right">
                     <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 border-b pb-1">Date de l'acte</h3>
-                    <p className="text-lg font-bold">{format(new Date(consultation.dateHeure), "PPP", { locale: fr })}</p>
+                    <p className="text-lg font-bold">{format(dateSoin, "PPP", { locale: fr })}</p>
                 </div>
             </div>
 
@@ -88,7 +94,7 @@ export default function FeuilleSoinPrint({ invoice, clinicInfo }: FeuilleSoinPro
                     </div>
                     <div className="text-right text-emerald-600 font-bold flex items-center gap-2">
                         <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                        AQUITTÉE LE {format(new Date(invoice.dateReglement), "dd/MM/yyyy")}
+                        AQUITTÉE LE {format(datePaiement, "dd/MM/yyyy")}
                     </div>
                 </div>
             </div>

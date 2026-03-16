@@ -36,6 +36,18 @@ export async function createReglement(data: {
             reference: data.reference,
             statut: StatutPaiement.PAYE,
             dateReglement: new Date(),
+        },
+        include: {
+            consultation: {
+                include: {
+                    patient: {
+                        select: { nom: true, prenom: true, codePatient: true }
+                    },
+                    user: {
+                        select: { name: true }
+                    }
+                }
+            }
         }
     });
 
