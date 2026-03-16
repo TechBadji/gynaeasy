@@ -6,6 +6,7 @@ import { fr } from "date-fns/locale";
 import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Plus, X, Loader2, CalendarPlus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { createRdv, type RdvFormState } from "@/app/actions/rdv";
 
 const locales = { fr };
@@ -64,6 +65,7 @@ const DUREES = [
 const initialState: RdvFormState = { success: false, message: "" };
 
 export default function AgendaClient({ initialEvents, patients }: Props) {
+    const router = useRouter();
     const [view, setView] = useState(Views.WEEK);
     const [date, setDate] = useState(new Date());
     // Convert ISO strings from the server back to real Date objects
@@ -130,10 +132,14 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
             // Re-fetch by simply reloading after the server rebuilds the page
             setTimeout(() => {
                 setIsOpen(false);
+                setIsNewPatient(false);
+                setNewPatientInfo({ nom: "", prenom: "" });
                 setState(initialState);
                 setSelectedPatient(null);
                 setSearch("");
-                window.location.reload();
+                // Nettoyer l'URL pour éviter que le modal ne se réouvre au reload
+                router.push("/agenda");
+                router.refresh();
             }, 1200);
         }
     };
