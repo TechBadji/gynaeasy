@@ -7,9 +7,10 @@ import { Lock } from "lucide-react";
 import Link from "next/link";
 import AccessRequestButton from "@/components/patients/access-request-button";
 
-export default async function PatientPage({ params }: { params: { id: string } }) {
+export default async function PatientPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const patient = await prisma.patient.findUnique({
-        where: { id: params.id },
+        where: { id: id },
         include: {
             grossesses: {
                 orderBy: { createdAt: 'desc' }
@@ -38,7 +39,7 @@ export default async function PatientPage({ params }: { params: { id: string } }
     // Vérifier s'il y a une demande d'accès acceptée (pour les médecins tiers)
     const hasGrantedAccess = await prisma.accessRequest.findFirst({
         where: {
-            patientId: params.id,
+            patientId: id,
             doctorId: userId,
             status: "GRANTED",
             OR: [
@@ -64,7 +65,7 @@ export default async function PatientPage({ params }: { params: { id: string } }
                     <Link href="/patients" className="px-6 py-2 bg-slate-100 text-slate-700 rounded-xl font-medium">
                         Retour
                     </Link>
-                    <AccessRequestButton patientId={params.id} />
+                    <AccessRequestButton patientId={id} />
                 </div>
             </div>
         );
@@ -89,6 +90,15 @@ export default async function PatientPage({ params }: { params: { id: string } }
             dateHeure: c.dateHeure.toISOString(),
             createdAt: c.createdAt.toISOString(),
             updatedAt: c.updatedAt.toISOString(),
+            actes: c.actes.map(a => ({
+                ...a,
+                createdAt: a.createdAt.toISOString(),
+                acte: {
+                    ...a.acte,
+                    createdAt: a.acte.createdAt.toISOString(),
+                    updatedAt: a.acte.updatedAt.toISOString(),
+                }
+            })),
             reglement: c.reglement ? {
                 ...c.reglement,
                 dateReglement: c.reglement.dateReglement?.toISOString() || null,
