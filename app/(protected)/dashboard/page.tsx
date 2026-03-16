@@ -60,8 +60,8 @@ export default async function DashboardPage() {
                         <h2 className="text-xl font-bold text-slate-900">Bienvenue au Secrétariat</h2>
                         <p className="text-slate-500">Gérez les rendez-vous et la facturation du cabinet.</p>
                     </div>
-                    <Link href="/facturation" className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
-                        Ouvrir le centre de facturation
+                    <Link href="/agenda" className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                        Nouveau rendez vous
                     </Link>
                 </div>
             )}
