@@ -215,7 +215,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             pdf.setDrawColor(226, 232, 240);
             pdf.line(20, 135, pageWidth - 20, 135);
             pdf.setFontSize(12);
-            pdf.text("TOTAL À RÉGLER", 130, 145);
+            pdf.text("TOTAL À RÉGLER", 110, 145);
             pdf.setFontSize(14);
             pdf.setTextColor(79, 70, 229);
             pdf.text(formatCurrency(invoice.montant), pageWidth - 25, 145, { align: "right" });
