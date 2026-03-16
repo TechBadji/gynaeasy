@@ -209,7 +209,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             pdf.text("JQMD001", 25, 125);
             pdf.text(`${consultation.type} - Acte principal`, 55, 125);
             pdf.setFont("helvetica", "bold");
-            pdf.text(formatCurrency(invoice.montant), pageWidth - 25, 125, { align: "right" });
+            pdf.text(invoice.montant.toString(), pageWidth - 25, 125, { align: "right" });
 
             // Total
             pdf.setDrawColor(226, 232, 240);
@@ -218,7 +218,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             pdf.text("TOTAL À RÉGLER", 110, 145);
             pdf.setFontSize(14);
             pdf.setTextColor(79, 70, 229);
-            pdf.text(formatCurrency(invoice.montant), pageWidth - 25, 145, { align: "right" });
+            pdf.text(invoice.montant.toString(), pageWidth - 25, 145, { align: "right" });
 
             // Mode de paiement
             pdf.setFillColor(248, 250, 252);
