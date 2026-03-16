@@ -30,13 +30,15 @@ function LoginForm() {
             });
 
             if (result?.error) {
-                setError("Email ou mot de passe incorrect");
+                console.error("Erreur de connexion:", result.error);
+                setError(`Échec de la connexion : ${result.error === "CredentialsSignin" ? "Identifiants incorrects" : result.error}`);
             } else {
                 router.push(callbackUrl);
                 router.refresh(); // Force refresh to update session state in layout
             }
-        } catch (err) {
-            setError("Une erreur est survenue lors de la connexion.");
+        } catch (err: any) {
+            console.error("Exception lors de la connexion:", err);
+            setError(`Une erreur est survenue : ${err.message || "Erreur inconnue"}`);
         } finally {
             setIsLoading(false);
         }
