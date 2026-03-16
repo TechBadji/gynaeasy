@@ -82,6 +82,28 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
     const [showDropdown, setShowDropdown] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
+    // Auto-open modal if ?new=true is present in URL
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get("new") === "true") {
+            setIsOpen(true);
+            
+            const pId = params.get("patientId");
+            const pName = params.get("patientName");
+            if (pId && pName) {
+                // On cherche le patient complet dans la liste pour avoir toutes les infos si besoin
+                const found = patients.find(p => p.id === pId);
+                if (found) {
+                    setSelectedPatient(found);
+                    setSearch(`${found.civilite} ${found.nom.toUpperCase()} ${found.prenom}`);
+                } else {
+                    // Fallback si pas encore dans la liste (peu probable)
+                    setSearch(decodeURIComponent(pName));
+                }
+            }
+        }
+    }, [patients]);
+
     // Pre-fill date with today
     const todayStr = new Date().toISOString().split("T")[0];
 

@@ -208,3 +208,28 @@ export async function handleAccessRequest(requestId: string, approve: boolean) {
         return { success: false, message: e.message };
     }
 }
+
+export async function searchPatients(query: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
+
+    if (!query || query.length < 2) return [];
+
+    return await prisma.patient.findMany({
+        where: {
+            OR: [
+                { nom: { contains: query, mode: "insensitive" } },
+                { prenom: { contains: query, mode: "insensitive" } },
+                { codePatient: { contains: query } },
+            ],
+        },
+        select: {
+            id: true,
+            nom: true,
+            prenom: true,
+            codePatient: true,
+            civilite: true,
+        },
+        take: 5,
+    });
+}

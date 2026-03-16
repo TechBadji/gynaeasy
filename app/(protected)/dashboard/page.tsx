@@ -8,6 +8,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AccessRequestsList from "@/components/dashboard/access-requests-list";
 import Link from "next/link";
+import QuickRdvSearch from "@/components/dashboard/quick-rdv-search";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -55,14 +56,12 @@ export default async function DashboardPage() {
             </div>
 
             {role === "SECRETAIRE" && (
-                <div className="bg-white border-2 border-indigo-100 rounded-2xl p-6 shadow-sm flex items-center justify-between">
-                    <div>
+                <div className="bg-white border-2 border-indigo-100 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1">
                         <h2 className="text-xl font-bold text-slate-900">Bienvenue au Secrétariat</h2>
                         <p className="text-slate-500">Gérez les rendez-vous et la facturation du cabinet.</p>
                     </div>
-                    <Link href="/agenda" className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
-                        Nouveau rendez vous
-                    </Link>
+                    <QuickRdvSearch />
                 </div>
             )}
 
