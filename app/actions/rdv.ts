@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 const RdvSchema = z.object({
-    patientId: z.string().min(1, "Veuillez sélectionner un patient"),
+    patientId: z.string().optional(),
     date: z.string().min(1, "Date requise"),
     heureDebut: z.string().min(1, "Heure de début requise"),
     duree: z.string().min(1, "Durée requise"),
@@ -51,16 +51,47 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
 
     const data = parsed.data;
 
-    // Build DateTime from date + time
-    const [year, month, day] = data.date.split("-").map(Number);
-    const [hour, minute] = data.heureDebut.split(":").map(Number);
-    const dateHeure = new Date(year, month - 1, day, hour, minute);
-    const dureeMin = parseInt(data.duree);
-
     try {
+        let finalPatientId = data.patientId;
+
+        // Si c'est un nouveau patient, on le crée d'abord
+        if (formData.get("isNewPatient") === "true") {
+            const civilite = formData.get("new_civilite") as string;
+            const nom = formData.get("new_nom") as string;
+            const prenom = formData.get("new_prenom") as string;
+            const telephone = formData.get("new_telephone") as string;
+
+            // Générer un code patient unique (logique simplifiée ici, on réutilise celle de patient.ts si possible)
+            const codePatient = Math.floor(10000 + Math.random() * 90000).toString();
+
+            const newPatient = await prisma.patient.create({
+                data: {
+                    civilite: civilite as any,
+                    nom,
+                    prenom,
+                    telephone,
+                    codePatient,
+                    treatingDoctorId: userId,
+                    dateNaissance: new Date(1990, 0, 1), // Date par défaut, à compléter plus tard
+                    userId,
+                }
+            });
+            finalPatientId = newPatient.id;
+        }
+
+        if (!finalPatientId) {
+            return { success: false, message: "Veuillez sélectionner ou créer un patient" };
+        }
+
+        // Build DateTime from date + time
+        const [year, month, day] = data.date.split("-").map(Number);
+        const [hour, minute] = data.heureDebut.split(":").map(Number);
+        const dateHeure = new Date(year, month - 1, day, hour, minute);
+        const dureeMin = parseInt(data.duree);
+
         await prisma.consultation.create({
             data: {
-                patientId: data.patientId,
+                patientId: finalPatientId,
                 userId,
                 dateHeure,
                 duree: dureeMin,

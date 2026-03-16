@@ -80,6 +80,8 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
     const [search, setSearch] = useState("");
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [isNewPatient, setIsNewPatient] = useState(false);
+    const [newPatientInfo, setNewPatientInfo] = useState({ nom: "", prenom: "" });
     const formRef = useRef<HTMLFormElement>(null);
 
     // Auto-open modal if ?new=true is present in URL
@@ -249,45 +251,111 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
 
                                 {/* Patient search */}
                                 <div className="mb-4 relative">
-                                    <label className={labelClass}>Patient *</label>
-                                    <input
-                                        type="text"
-                                        placeholder="Rechercher un patient..."
-                                        value={search}
-                                        onChange={(e) => {
-                                            setSearch(e.target.value);
-                                            setShowDropdown(true);
-                                            if (!e.target.value) setSelectedPatient(null);
-                                        }}
-                                        onFocus={() => setShowDropdown(true)}
-                                        className={inputClass}
-                                        autoComplete="off"
-                                    />
-                                    {/* Hidden input for form submission */}
-                                    <input type="hidden" name="patientId" value={selectedPatient?.id || ""} />
-                                    {showDropdown && search && !selectedPatient && (
-                                        <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                                            {filteredPatients.length === 0 ? (
-                                                <div className="px-4 py-3 text-sm text-slate-500">Aucun patient trouvé</div>
-                                            ) : (
-                                                filteredPatients.map((p) => (
-                                                    <button
-                                                        key={p.id}
-                                                        type="button"
-                                                        onClick={() => {
-                                                            setSelectedPatient(p);
-                                                            setSearch(`${p.civilite} ${p.nom.toUpperCase()} ${p.prenom}`);
-                                                            setShowDropdown(false);
-                                                        }}
-                                                        className="w-full text-left px-4 py-2 text-sm hover:bg-pink-50 hover:text-pink-700"
-                                                    >
-                                                        {p.civilite} {p.nom.toUpperCase()} {p.prenom}
-                                                    </button>
-                                                ))
+                                    <div className="flex justify-between items-center mb-1">
+                                        <label className={labelClass}>Patient *</label>
+                                        <button 
+                                            type="button" 
+                                            onClick={() => {
+                                                const newMode = !isNewPatient;
+                                                setIsNewPatient(newMode);
+                                                setSelectedPatient(null);
+                                                setSearch("");
+                                            }}
+                                            className="text-xs font-bold text-pink-600 hover:text-pink-700"
+                                        >
+                                            {isNewPatient ? "← Client existant" : "+ Nouveau Patient"}
+                                        </button>
+                                    </div>
+                                    
+                                    {!isNewPatient ? (
+                                        <>
+                                            <input
+                                                type="text"
+                                                placeholder="Rechercher un patient..."
+                                                value={search}
+                                                onChange={(e) => {
+                                                    setSearch(e.target.value);
+                                                    setShowDropdown(true);
+                                                    if (!e.target.value) setSelectedPatient(null);
+                                                }}
+                                                onFocus={() => setShowDropdown(true)}
+                                                className={inputClass}
+                                                autoComplete="off"
+                                            />
+                                            {/* Hidden input for form submission */}
+                                            <input type="hidden" name="patientId" value={selectedPatient?.id || ""} />
+                                            {showDropdown && search && !selectedPatient && (
+                                                <div className="absolute z-10 mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                                    {filteredPatients.length === 0 ? (
+                                                        <div className="px-4 py-3 text-sm text-slate-500 flex flex-col items-center">
+                                                            <p>Aucun patient trouvé</p>
+                                                            <button 
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setIsNewPatient(true);
+                                                                    const parts = search.split(" ");
+                                                                    setNewPatientInfo({
+                                                                        ...newPatientInfo,
+                                                                        nom: parts[0] || "",
+                                                                        prenom: parts.slice(1).join(" ") || ""
+                                                                    });
+                                                                }}
+                                                                className="mt-2 text-xs text-pink-600 font-bold hover:underline"
+                                                            >
+                                                                Créer une nouvelle fiche ?
+                                                            </button>
+                                                        </div>
+                                                    ) : (
+                                                        filteredPatients.map((p) => (
+                                                            <button
+                                                                key={p.id}
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    setSelectedPatient(p);
+                                                                    setSearch(`${p.civilite} ${p.nom.toUpperCase()} ${p.prenom}`);
+                                                                    setShowDropdown(false);
+                                                                }}
+                                                                className="w-full text-left px-4 py-2 text-sm hover:bg-pink-50 hover:text-pink-700"
+                                                            >
+                                                                {p.civilite} {p.nom.toUpperCase()} {p.prenom}
+                                                            </button>
+                                                        ))
+                                                    )}
+                                                </div>
                                             )}
+                                            {state.errors?.patientId && <p className={errorClass}>{state.errors.patientId[0]}</p>}
+                                        </>
+                                    ) : (
+                                        <div className="space-y-3 bg-slate-50 p-4 rounded-lg border border-slate-200 animate-in fade-in duration-300">
+                                            <input type="hidden" name="isNewPatient" value="true" />
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <select name="new_civilite" className={inputClass}>
+                                                    <option value="MME">Mme</option>
+                                                    <option value="MLLE">Mlle</option>
+                                                    <option value="M">M.</option>
+                                                </select>
+                                                <input 
+                                                    name="new_nom" 
+                                                    placeholder="Nom *" 
+                                                    required 
+                                                    className={`${inputClass} col-span-2`} 
+                                                    defaultValue={newPatientInfo.nom}
+                                                />
+                                            </div>
+                                            <input 
+                                                name="new_prenom" 
+                                                placeholder="Prénom *" 
+                                                required 
+                                                className={inputClass} 
+                                                defaultValue={newPatientInfo.prenom}
+                                            />
+                                            <input 
+                                                name="new_telephone" 
+                                                placeholder="Téléphone" 
+                                                className={inputClass} 
+                                            />
                                         </div>
                                     )}
-                                    {state.errors?.patientId && <p className={errorClass}>{state.errors.patientId[0]}</p>}
                                 </div>
 
                                 {/* Type */}
