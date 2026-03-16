@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { PatientClient } from "@/components/patients/patient-client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -30,13 +30,15 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
     if (!patient) return notFound();
 
     const session = await getServerSession(authOptions);
-    const userId = (session?.user as any).id;
+    if (!session?.user) redirect("/auth/login");
+
+    const userId = (session.user as any).id;
 
     // Vérification de l'accès
     const isTreatingDoctor = patient.treatingDoctorId === userId;
     const isPublic = patient.isPublic;
 
-    // Vérifier s'il y a une demande d'accès acceptée (pour les médecins tiers)
+    // Vérifier s'il y a une demande d'accès acceptée
     const hasGrantedAccess = await prisma.accessRequest.findFirst({
         where: {
             patientId: id,
@@ -50,7 +52,6 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
     });
 
     if (!isTreatingDoctor && !isPublic && !hasGrantedAccess) {
-        // Rediriger vers une page de demande d'accès ou afficher un message restreint
         return (
             <div className="min-h-[60vh] flex flex-col items-center justify-center p-8 text-center space-y-4">
                 <div className="h-20 w-20 bg-amber-100 rounded-3xl flex items-center justify-center text-amber-600">
@@ -71,42 +72,8 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
         );
     }
 
-    // Serialize dates for client component
-    const serializedPatient = {
-        ...patient,
-        dateNaissance: patient.dateNaissance.toISOString(),
-        consentementDate: patient.consentementDate?.toISOString() || null,
-        createdAt: patient.createdAt.toISOString(),
-        updatedAt: patient.updatedAt.toISOString(),
-        grossesses: patient.grossesses.map(g => ({
-            ...g,
-            ddr: g.ddr?.toISOString() || null,
-            dpa: g.dpa?.toISOString() || null,
-            createdAt: g.createdAt.toISOString(),
-            updatedAt: g.updatedAt.toISOString(),
-        })),
-        consultations: patient.consultations.map(c => ({
-            ...c,
-            dateHeure: c.dateHeure.toISOString(),
-            createdAt: c.createdAt.toISOString(),
-            updatedAt: c.updatedAt.toISOString(),
-            actes: c.actes.map(a => ({
-                ...a,
-                createdAt: a.createdAt.toISOString(),
-                acte: {
-                    ...a.acte,
-                    createdAt: a.acte.createdAt.toISOString(),
-                    updatedAt: a.acte.updatedAt.toISOString(),
-                }
-            })),
-            reglement: c.reglement ? {
-                ...c.reglement,
-                dateReglement: c.reglement.dateReglement?.toISOString() || null,
-                createdAt: c.reglement.createdAt.toISOString(),
-                updatedAt: c.reglement.updatedAt.toISOString(),
-            } : null
-        }))
-    };
+    // Sérialisation "Deep" pour éviter tout crash de Date sur Vercel
+    const serializedPatient = JSON.parse(JSON.stringify(patient));
 
-    return <PatientClient patient={serializedPatient as any} />;
+    return <PatientClient patient={serializedPatient} />;
 }
