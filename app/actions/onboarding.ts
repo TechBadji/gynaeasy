@@ -74,8 +74,8 @@ export async function verifyDoctorEmail(token: string) {
 
 export async function approveRegistration(userId: string) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
-
-    if (!user || user.status !== AccountStatus.PENDING_APPROVAL) {
+ 
+    if (!user || (user.status !== AccountStatus.PENDING_APPROVAL && user.status !== AccountStatus.PENDING_VERIFICATION)) {
         throw new Error("Utilisateur non trouvé ou déjà validé.");
     }
 
@@ -117,7 +117,11 @@ export async function approveRegistration(userId: string) {
 
 export async function getPendingRegistrations() {
     return await prisma.user.findMany({
-        where: { status: AccountStatus.PENDING_APPROVAL },
+        where: { 
+            status: {
+                in: [AccountStatus.PENDING_APPROVAL, AccountStatus.PENDING_VERIFICATION]
+            }
+        },
         orderBy: { createdAt: "desc" }
     });
 }

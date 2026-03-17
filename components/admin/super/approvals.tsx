@@ -10,7 +10,8 @@ import {
     Building2,
     Stethoscope,
     Calendar,
-    Loader2
+    Loader2,
+    AlertCircle
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -92,10 +93,17 @@ export default function SuperAdminApprovals({ pendingUsers: initialUsers }: Supe
                                     <Stethoscope className="h-4 w-4" />
                                     <span className="truncate">{user.specialite}</span>
                                 </div>
-                                <div className="flex items-center gap-2.5 text-slate-400 text-sm text-emerald-400 font-bold">
-                                    <CheckCircle2 className="h-4 w-4" />
-                                    Email Vérifié
-                                </div>
+                                {user.status === "PENDING_VERIFICATION" ? (
+                                    <div className="flex items-center gap-2.5 text-amber-400 font-bold">
+                                        <AlertCircle className="h-4 w-4" />
+                                        Email Non Vérifié
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2.5 text-emerald-400 font-bold">
+                                        <CheckCircle2 className="h-4 w-4" />
+                                        Email Vérifié
+                                    </div>
+                                )}
                             </div>
                         </div>
 
