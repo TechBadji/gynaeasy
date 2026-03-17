@@ -9,6 +9,7 @@ import { authOptions } from "@/lib/auth";
 import AccessRequestsList from "@/components/dashboard/access-requests-list";
 import Link from "next/link";
 import QuickRdvSearch from "@/components/dashboard/quick-rdv-search";
+import SmsRemindersCard from "@/components/dashboard/sms-reminders-card";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
@@ -56,12 +57,15 @@ export default async function DashboardPage() {
             </div>
 
             {role === "SECRETAIRE" && (
-                <div className="bg-white border-2 border-indigo-100 rounded-2xl p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex-1">
-                        <h2 className="text-xl font-bold text-slate-900">Bienvenue au Secrétariat</h2>
-                        <p className="text-slate-500">Gérez les rendez-vous et la facturation du cabinet.</p>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 bg-white border-2 border-indigo-100 rounded-2xl p-6 shadow-sm flex flex-col items-start justify-between gap-6">
+                        <div className="flex-1">
+                            <h2 className="text-xl font-bold text-slate-900">Bienvenue au Secrétariat</h2>
+                            <p className="text-slate-500">Gérez les rendez-vous et la facturation du cabinet.</p>
+                        </div>
+                        <QuickRdvSearch />
                     </div>
-                    <QuickRdvSearch />
+                    <SmsRemindersCard />
                 </div>
             )}
 

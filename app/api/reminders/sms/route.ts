@@ -1,13 +1,7 @@
 import { NextResponse } from 'next/server';
-import twilio from 'twilio';
-
-// Initialize the Twilio client using environment variables
-// Ensure TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, and TWILIO_PHONE_NUMBER are set
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const fromPhone = process.env.TWILIO_PHONE_NUMBER;
-
-const client = accountSid && authToken ? twilio(accountSid, authToken) : null;
+import { sendSMS } from '@/lib/sms';
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export async function POST(req: Request) {
     try {
@@ -17,29 +11,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
-        if (!client) {
-            console.warn("[SMS] Twilio not configured. Simulating SMS to", to);
-            return NextResponse.json({ success: true, simulated: true });
+        const formattedDate = format(new Date(dateHeure), "eeee d MMMM yyyy à HH:mm", { locale: fr });
+        const message = `Bonjour Mme ${patientNom}, le cabinet Gynaeasy vous rappelle votre RDV le ${formattedDate}. Merci d'annuler 24h à l'avance en cas d'empêchement.`;
+
+        const res = await sendSMS(to, message);
+
+        if (res.success) {
+            return NextResponse.json({ success: true, messageId: res.messageId, simulated: res.simulated });
+        } else {
+            return NextResponse.json({ error: res.error }, { status: 500 });
         }
-
-        const formattedDate = new Date(dateHeure).toLocaleString('fr-FR', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        const message = `Bonjour Mme ${patientNom}, le Dr LEYDIER vous rappelle votre RDV le ${formattedDate}. En cas d'empêchement, merci d'annuler 48h à l'avance.`;
-
-        const sms = await client.messages.create({
-            body: message,
-            from: fromPhone,
-            to: to, // Must be in E.164 format e.g. +33612345678
-        });
-
-        return NextResponse.json({ success: true, messageId: sms.sid });
     } catch (error) {
         console.error("SMS Error:", error);
         return NextResponse.json({ error: "Failed to send SMS" }, { status: 500 });

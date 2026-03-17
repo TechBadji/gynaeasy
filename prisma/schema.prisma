@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,9 +7,250 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ==========================================
-// UTILISATEURS & AUTHENTIFICATION
-// ==========================================
+model User {
+  id                String          @id @default(cuid())
+  name              String?
+  email             String?         @unique
+  emailVerified     DateTime?
+  image             String?
+  password          String?
+  role              Role            @default(MEDECIN)
+  twoFactorEnabled  Boolean         @default(false)
+  twoFactorSecret   String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  specialite        String?
+  enabledModules    String[]        @default(["AGENDA", "PATIENTS"])
+  clinicName        String?
+  status            AccountStatus   @default(ACTIVE)
+  verificationToken String?         @unique
+  abonnements       Abonnement[]
+  accessRequests    AccessRequest[]
+  consultations     Consultation[]
+  asTreating        Patient[]       @relation("TreatingDoctor")
+  patients          Patient[]
+}
+
+model Patient {
+  id                  String          @id @default(cuid())
+  codePatient         String          @unique
+  civilite            Civilite
+  nom                 String
+  prenom              String
+  dateNaissance       DateTime
+  telephone           String?
+  email               String?
+  adresse             String?
+  groupeSanguin       String?
+  rhesus              String?
+  antecedentsMedicaux Json?
+  traitementsEnCours  String?
+  isPublic            Boolean         @default(false)
+  treatingDoctorId    String
+  consentementRGPD    Boolean         @default(false)
+  consentementDate    DateTime?
+  userId              String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  accessRequests      AccessRequest[]
+  consultations       Consultation[]
+  documents           Document[]
+  grossesses          Grossesse[]
+  treatingDoctor      User            @relation("TreatingDoctor", fields: [treatingDoctorId], references: [id])
+  user                User?           @relation(fields: [userId], references: [id])
+}
+
+model AccessRequest {
+  id        String       @id @default(cuid())
+  patientId String
+  doctorId  String
+  status    AccessStatus @default(PENDING)
+  expiresAt DateTime?
+  createdAt DateTime     @default(now())
+  doctor    User         @relation(fields: [doctorId], references: [id])
+  patient   Patient      @relation(fields: [patientId], references: [id])
+}
+
+model Grossesse {
+  id        String          @id @default(cuid())
+  patientId String
+  ddr       DateTime?
+  dpa       DateTime?
+  statut    StatutGrossesse @default(EN_COURS)
+  notes     String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  patient   Patient         @relation(fields: [patientId], references: [id])
+
+  @@index([patientId])
+}
+
+model ActeCCAM {
+  id            String             @id @default(cuid())
+  code          String             @unique
+  libelle       String
+  description   String?
+  tarif         Float
+  coeff         Float?
+  chapitre      String?
+  active        Boolean            @default(true)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  consultations ConsultationActe[]
+}
+
+model Consultation {
+  id               String             @id @default(cuid())
+  patientId        String
+  userId           String
+  dateHeure        DateTime
+  duree            Int                @default(30)
+  type             TypeRDV
+  motif            String?
+  diagnostique     String?
+  notes            String?
+  donneesMedicales Json?
+  honoraire        Float?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  source           RDVSource          @default(PHONE)
+  smsReminded      Boolean            @default(false)
+  patient          Patient            @relation(fields: [patientId], references: [id])
+  user             User               @relation(fields: [userId], references: [id])
+  actes            ConsultationActe[]
+  reglement        Reglement?
+
+  @@index([patientId])
+  @@index([userId])
+  @@index([dateHeure])
+}
+
+model ConsultationActe {
+  id             String       @id @default(cuid())
+  consultationId String
+  acteId         String
+  quantite       Int          @default(1)
+  tarifApplique  Float
+  coefficient    Float?
+  remboursement  Float?
+  createdAt      DateTime     @default(now())
+  acte           ActeCCAM     @relation(fields: [acteId], references: [id])
+  consultation   Consultation @relation(fields: [consultationId], references: [id])
+
+  @@unique([consultationId, acteId])
+}
+
+model Reglement {
+  id              String         @id @default(cuid())
+  consultationId  String         @unique
+  montant         Float
+  mode            ModePaiement
+  statut          StatutPaiement @default(EN_ATTENTE)
+  dateReglement   DateTime?
+  reference       String?
+  feuilleSoinsUrl String?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  consultation    Consultation   @relation(fields: [consultationId], references: [id])
+}
+
+model Document {
+  id          String       @id @default(cuid())
+  patientId   String
+  nom         String
+  type        TypeDocument
+  url         String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  description String?
+  metadata    Json?
+  patient     Patient      @relation(fields: [patientId], references: [id])
+
+  @@index([patientId])
+}
+
+model ModeleDocument {
+  id        String       @id @default(cuid())
+  nom       String
+  type      TypeDocument
+  contenu   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  patientId String?
+  details   String?
+  ipAddress String?
+  timestamp DateTime @default(now())
+
+  @@index([userId])
+  @@index([patientId])
+  @@index([timestamp])
+}
+
+model Abonnement {
+  id              String           @id @default(cuid())
+  userId          String
+  stripeId        String?          @unique
+  plan            PlanAbonnement
+  statut          StatutAbonnement @default(ACTIF)
+  dateDebut       DateTime         @default(now())
+  dateFin         DateTime?
+  reductionType   ReductionType?
+  reductionValeur Float?
+  notesPromo      String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  user            User             @relation(fields: [userId], references: [id])
+}
+
+model PlanConfig {
+  id            String         @id @default(cuid())
+  plan          PlanAbonnement @unique
+  prixMensuel   Float
+  description   String?
+  features      Json?
+  isPromotional Boolean        @default(false)
+  updatedAt     DateTime       @updatedAt
+}
+
+model Promotion {
+  id          String        @id @default(cuid())
+  code        String        @unique
+  description String?
+  type        ReductionType
+  valeur      Float
+  validUntil  DateTime?
+  usageLimit  Int?
+  usageCount  Int           @default(0)
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+}
+
+model StockItem {
+  id            String   @id @default(cuid())
+  nom           String
+  categorie     String?
+  quantite      Int      @default(0)
+  unite         String   @default("UNITE")
+  seuilAlerte   Int      @default(5)
+  derniereModif DateTime @updatedAt
+  createdAt     DateTime @default(now())
+}
+
+model ClinicSettings {
+  id        String   @id @default("singleton")
+  nom       String   @default("Gynaeasy Clinic")
+  adresse   String?
+  telephone String?
+  email     String?
+  slogan    String?
+  updatedAt DateTime @updatedAt
+}
 
 enum Role {
   MEDECIN
@@ -27,85 +265,10 @@ enum AccountStatus {
   BLOCKED
 }
 
-model User {
-  id               String       @id @default(cuid())
-  name             String?
-  email            String?      @unique
-  emailVerified    DateTime?
-  image            String?
-  password         String?
-  role             Role         @default(MEDECIN)
-  status           AccountStatus @default(ACTIVE) // Default active for seeded users
-  clinicName       String?      // Name of the clinic/cabinet
-  specialite       String?      // Spécialité médicale (ex: Gynécologue, Échographiste)
-  enabledModules   String[]     @default(["AGENDA", "PATIENTS"]) // Modules activés par le SuperAdmin
-  verificationToken String?      @unique
-  twoFactorEnabled Boolean      @default(false)
-  twoFactorSecret  String?
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-
-  patients         Patient[]
-  asTreating       Patient[]    @relation("TreatingDoctor")
-  consultations    Consultation[]
-  abonnements      Abonnement[]
-  accessRequests   AccessRequest[]
-}
-
-// ==========================================
-// PATIENTS & DOSSIER MEDICAL
-// ==========================================
-
 enum Civilite {
   MME
   MLLE
   M
-}
-
-model Patient {
-  id                    String         @id @default(cuid())
-  codePatient           String         @unique // Code à 5 chiffres unique
-  civilite              Civilite
-  nom                   String
-  prenom                String
-  dateNaissance         DateTime
-  telephone             String?
-  email                 String?
-  adresse               String?
-  groupeSanguin         String?        // A, B, AB, O
-  rhesus                String?        // +, -
-  antecedentsMedicaux   Json?          // stocké en JSON pour flexibilité (médicaux, chirurgicaux, familiaux)
-  traitementsEnCours    String?
-  
-  // Confidentialité & Accès
-  isPublic              Boolean        @default(false)
-  treatingDoctorId      String         // Médecin traitant d'origine
-  treatingDoctor        User           @relation("TreatingDoctor", fields: [treatingDoctorId], references: [id])
-  
-  consentementRGPD      Boolean        @default(false)
-  consentementDate      DateTime?
-  
-  userId                String?        // Créateur (peut être différent du médecin traitant)
-  user                  User?          @relation(fields: [userId], references: [id])
-  
-  consultations         Consultation[]
-  grossesses            Grossesse[]
-  documents             Document[]
-  accessRequests        AccessRequest[]
-  
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
-}
-
-model AccessRequest {
-  id              String         @id @default(cuid())
-  patientId       String
-  patient         Patient        @relation(fields: [patientId], references: [id])
-  doctorId        String         // Le médecin qui demande l'accès
-  doctor          User           @relation(fields: [doctorId], references: [id])
-  status          AccessStatus   @default(PENDING)
-  expiresAt       DateTime?
-  createdAt       DateTime       @default(now())
 }
 
 enum AccessStatus {
@@ -114,33 +277,11 @@ enum AccessStatus {
   DENIED
 }
 
-// ==========================================
-// SUIVI DE GROSSESSE
-// ==========================================
-
-model Grossesse {
-  id              String          @id @default(cuid())
-  patientId       String
-  patient         Patient         @relation(fields: [patientId], references: [id])
-  ddr             DateTime?       // Date des Dernières Règles
-  dpa             DateTime?       // Date Prévue d'Accouchement (basée sur DDR + calcul classique)
-  statut          StatutGrossesse @default(EN_COURS)
-  notes           String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-
-  @@index([patientId])
-}
-
 enum StatutGrossesse {
   EN_COURS
   TERMINEE
   ARRETEE
 }
-
-// ==========================================
-// CONSULTATIONS & ACTES CCAM
-// ==========================================
 
 enum TypeRDV {
   CONSULTATION
@@ -150,85 +291,9 @@ enum TypeRDV {
   TELECONSULTATION
 }
 
-// Actes CCAM (importés depuis la base officielle)
-model ActeCCAM {
-  id          String   @id @default(cuid())
-  code        String   @unique // ex: "JQMD001"
-  libelle     String   // ex: "Échographie de dépistage du 1er trimestre de grossesse"
-  description String?
-  tarif       Float    // tarif de base en FCFA
-  coeff       Float?   // coefficient éventuel
-  chapitre    String?  // ex: "Obstétrique"
-  active      Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  consultations ConsultationActe[] // Relation modifiée pour pointer vers la table jointe
-}
-
-// Consultation enrichie
-model Consultation {
-  id              String             @id @default(cuid())
-  patientId       String
-  patient         Patient            @relation(fields: [patientId], references: [id])
-  userId          String
-  user            User               @relation(fields: [userId], references: [id])
-  dateHeure       DateTime
-  duree           Int                @default(30)
-  type            TypeRDV
-  motif           String?            // motif de la consultation
-  diagnostique    String?            // code CIM-10 ou texte libre
-  notes           String?
-  donneesMedicales Json?             // Données structurées (constantes, examen, écho, prescription)
-  actes           ConsultationActe[] // actes CCAM réalisés
-  honoraire       Float?             // montant total facturé calculé via CCAM
-  reglement       Reglement?
-  createdAt       DateTime           @default(now())
-  updatedAt       DateTime           @updatedAt
-  source          RDVSource          @default(PHONE)
-
-  @@index([patientId])
-  @@index([userId])
-  @@index([dateHeure])
-}
-
 enum RDVSource {
   ONLINE
   PHONE
-}
-
-// Actes réalisés pendant une consultation
-model ConsultationActe {
-  id              String        @id @default(cuid())
-  consultationId  String
-  consultation    Consultation  @relation(fields: [consultationId], references: [id])
-  acteId          String
-  acte            ActeCCAM      @relation(fields: [acteId], references: [id])
-  quantite        Int           @default(1)
-  tarifApplique   Float         // tarif au moment de l'acte
-  coefficient     Float?        // coefficient appliqué
-  remboursement   Float?        // part remboursée
-  createdAt       DateTime      @default(now())
-
-  @@unique([consultationId, acteId])
-}
-
-// ==========================================
-// FACTURATION & RÈGLEMENTS
-// ==========================================
-
-model Reglement {
-  id              String         @id @default(cuid())
-  consultationId  String         @unique
-  consultation    Consultation   @relation(fields: [consultationId], references: [id])
-  montant         Float
-  mode            ModePaiement
-  statut          StatutPaiement @default(EN_ATTENTE)
-  dateReglement   DateTime?
-  reference       String?        // numéro de transaction ou de chèque
-  feuilleSoinsUrl String?        // PDF généré de la feuille de soins
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
 }
 
 enum ModePaiement {
@@ -236,9 +301,9 @@ enum ModePaiement {
   CHEQUE
   CB
   VIREMENT
-  SANTE          // Tiers-payant, Mutuelle
-  WAVE           // Mobile Money
-  ORANGE_MONEY   // Mobile Money
+  SANTE
+  WAVE
+  ORANGE_MONEY
 }
 
 enum StatutPaiement {
@@ -246,25 +311,6 @@ enum StatutPaiement {
   PAYE
   ANNULE
   REMBOURSE
-}
-
-// ==========================================
-// DOCUMENTS & MODÈLES
-// ==========================================
-
-model Document {
-  id              String        @id @default(cuid())
-  patientId       String
-  patient         Patient       @relation(fields: [patientId], references: [id])
-  nom             String
-  type            TypeDocument
-  url             String        // URL sur Uploadthing ou autre CDN
-  description     String?       // Conclusion ou notes brèves
-  metadata        Json?         // Données structurées du compte-rendu
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-
-  @@index([patientId])
 }
 
 enum TypeDocument {
@@ -277,84 +323,9 @@ enum TypeDocument {
   AUTRE
 }
 
-model ModeleDocument {
-  id          String        @id @default(cuid())
-  nom         String
-  type        TypeDocument
-  contenu     String        // Contenu avec variables (ex: {{patient_nom}}, {{date_jour}})
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-}
-
-// ==========================================
-// SÉCURITÉ & AUDIT LOG (HDS READY)
-// ==========================================
-
-model AuditLog {
-  id        String   @id @default(cuid())
-  userId    String
-  action    String   // ex: "CONSULTATION_DOSSIER", "MODIFICATION_ORDONNANCE", "FACTURATION", "CONNEXION_ECHOUEE"
-  patientId String?
-  details   String?  // JSON avec les détails (ex: IP, actes modifiés)
-  ipAddress String?  // pour traçabilité (IP du navigateur)
-  timestamp DateTime @default(now())
-
-  @@index([userId])
-  @@index([patientId])
-  @@index([timestamp])
-}
-
-// ==========================================
-// GESTION SAAS (STRIPE / ABONNEMENTS)
-// ==========================================
-
-model Abonnement {
-  id              String           @id @default(cuid())
-  userId          String
-  user            User             @relation(fields: [userId], references: [id])
-  stripeId        String?          @unique  // ID de l'abonnement Stripe
-  plan            PlanAbonnement
-  statut          StatutAbonnement @default(ACTIF)
-  dateDebut       DateTime         @default(now())
-  dateFin         DateTime?        // null si abonnement à vie / sans fin prevue
-  
-  // Gestion des réductions
-  reductionType   ReductionType?   // POURCENTAGE ou MONTANT_FIXE
-  reductionValeur Float?           // ex: 20 pour 20% ou 5000 pour 5000 FCFA
-  notesPromo      String?          // Justification de la promo
-  
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-}
-
 enum ReductionType {
   POURCENTAGE
   MONTANT_FIXE
-}
-
-// Configuration des plans par le Super Admin
-model PlanConfig {
-  id              String           @id @default(cuid())
-  plan            PlanAbonnement   @unique
-  prixMensuel     Float            // Prix standard
-  description     String?
-  features        Json?            // ["AGENDA", "FACTURATION", "CONSULTATION_ENRICHIE", etc.]
-  isPromotional   Boolean          @default(false)
-  updatedAt       DateTime         @updatedAt
-}
-
-// Bibliothèque de codes promotionnels
-model Promotion {
-  id              String           @id @default(cuid())
-  code            String           @unique
-  description     String?
-  type            ReductionType
-  valeur          Float
-  validUntil      DateTime?
-  usageLimit      Int?             // Facultatif
-  usageCount      Int              @default(0)
-  active          Boolean          @default(true)
-  createdAt       DateTime         @default(now())
 }
 
 enum PlanAbonnement {
@@ -367,33 +338,4 @@ enum StatutAbonnement {
   ACTIF
   ANNULE
   EXPIRE
-}
-
-// ==========================================
-// STOCKS & INVENTAIRE
-// ==========================================
-
-model StockItem {
-  id            String   @id @default(cuid())
-  nom           String   // ex: "Gel échographie", "Papier thermique"
-  categorie     String?  // Sanitaire, Imagerie, Bureau
-  quantite      Int      @default(0)
-  unite         String   @default("UNITE") // FLACON, ROULEAU, BOITE
-  seuilAlerte   Int      @default(5)
-  derniereModif DateTime @updatedAt
-  createdAt     DateTime @default(now())
-}
-
-// ==========================================
-// CONFIGURATION DU CABINET
-// ==========================================
-
-model ClinicSettings {
-  id          String   @id @default("singleton")
-  nom         String   @default("Gynaeasy Clinic")
-  adresse     String?
-  telephone   String?
-  email       String?
-  slogan      String?
-  updatedAt   DateTime @updatedAt
 }

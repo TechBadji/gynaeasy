@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { Activity, ShieldCheck, Lock, Calendar } from "lucide-react";
 import Link from "next/link";
 
-export default async function PublicProfilePage({ params }: { params: { code: string } }) {
+export default async function PublicProfilePage({ params }: { params: Promise<{ code: string }> }) {
+    const { code } = await params;
     const patient = await prisma.patient.findUnique({
-        where: { codePatient: params.code },
+        where: { codePatient: code },
         select: {
             id: true,
             nom: true,
