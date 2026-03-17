@@ -178,14 +178,14 @@ export async function createUserAdmin(data: {
     });
 
     revalidatePath("/admin/super");
-    return user;
+    return JSON.parse(JSON.stringify(user));
 }
 
 export async function updateUserRoleAdmin(userId: string, role: "MEDECIN" | "SECRETAIRE" | "ADMIN") {
     await checkSuperAdmin();
     const user = await prisma.user.update({ where: { id: userId }, data: { role } });
     revalidatePath("/admin/super");
-    return user;
+    return JSON.parse(JSON.stringify(user));
 }
 
 export async function toggleUserModule(userId: string, moduleName: string) {
@@ -209,7 +209,7 @@ export async function toggleUserModule(userId: string, moduleName: string) {
 
     revalidatePath("/admin/super");
     revalidatePath("/dashboard");
-    return updated;
+    return JSON.parse(JSON.stringify(updated));
 }
 
 export async function deleteUser(userId: string) {
@@ -251,7 +251,7 @@ export async function updateAbonnement(
     await checkSuperAdmin();
     const ab = await prisma.abonnement.update({ where: { id }, data });
     revalidatePath("/admin");
-    return ab;
+    return JSON.parse(JSON.stringify(ab));
 }
 
 export async function createAbonnement(data: {
@@ -265,7 +265,7 @@ export async function createAbonnement(data: {
     await checkSuperAdmin();
     const ab = await prisma.abonnement.create({ data });
     revalidatePath("/admin");
-    return ab;
+    return JSON.parse(JSON.stringify(ab));
 }
 
 // ============================================
@@ -273,7 +273,8 @@ export async function createAbonnement(data: {
 // ============================================
 export async function getPlanConfigs() {
     await checkSuperAdmin();
-    return await prisma.planConfig.findMany();
+    const configs = await prisma.planConfig.findMany();
+    return JSON.parse(JSON.stringify(configs));
 }
 
 export async function updatePlanConfig(plan: "BASIQUE" | "PRO" | "PREMIUM", data: {
@@ -289,7 +290,7 @@ export async function updatePlanConfig(plan: "BASIQUE" | "PRO" | "PREMIUM", data
         create: { plan, ...data }
     });
     revalidatePath("/admin");
-    return config;
+    return JSON.parse(JSON.stringify(config));
 }
 
 // ============================================
@@ -297,9 +298,10 @@ export async function updatePlanConfig(plan: "BASIQUE" | "PRO" | "PREMIUM", data
 // ============================================
 export async function getPromotions() {
     await checkSuperAdmin();
-    return await prisma.promotion.findMany({
+    const promotions = await prisma.promotion.findMany({
         orderBy: { createdAt: "desc" }
     });
+    return JSON.parse(JSON.stringify(promotions));
 }
 
 export async function createPromotion(data: {
@@ -313,7 +315,7 @@ export async function createPromotion(data: {
     await checkSuperAdmin();
     const promo = await prisma.promotion.create({ data });
     revalidatePath("/admin");
-    return promo;
+    return JSON.parse(JSON.stringify(promo));
 }
 
 export async function updatePromotion(id: string, active: boolean) {
@@ -323,7 +325,7 @@ export async function updatePromotion(id: string, active: boolean) {
         data: { active }
     });
     revalidatePath("/admin");
-    return promo;
+    return JSON.parse(JSON.stringify(promo));
 }
 
 export async function deletePromotion(id: string) {
@@ -338,14 +340,15 @@ export async function deletePromotion(id: string) {
 // ============================================
 export async function getAllActesCCAM() {
     await checkSuperAdmin();
-    return await prisma.acteCCAM.findMany({ orderBy: { code: "asc" } });
+    const actes = await prisma.acteCCAM.findMany({ orderBy: { code: "asc" } });
+    return JSON.parse(JSON.stringify(actes));
 }
 
 export async function updateActeCCAMAdmin(id: string, data: { active?: boolean; tarif?: number; libelle?: string }) {
     await checkSuperAdmin();
     const acte = await prisma.acteCCAM.update({ where: { id }, data });
     revalidatePath("/admin/super");
-    return acte;
+    return JSON.parse(JSON.stringify(acte));
 }
 
 // ============================================
@@ -357,7 +360,7 @@ export async function getAppSettings() {
     if (!settings) {
         settings = await prisma.clinicSettings.create({ data: { id: "singleton" } });
     }
-    return settings;
+    return JSON.parse(JSON.stringify(settings));
 }
 
 export async function updateAppSettings(data: {
@@ -391,10 +394,11 @@ export async function updateAppSettings(data: {
 // ============================================
 export async function getAuditLogs(limit = 50) {
     await checkSuperAdmin();
-    return await prisma.auditLog.findMany({
+    const logs = await prisma.auditLog.findMany({
         take: limit,
         orderBy: { timestamp: "desc" },
     });
+    return JSON.parse(JSON.stringify(logs));
 }
 // ============================================
 // FONCTIONS PUBLIQUES (POUR LE PORTAIL PATIENT)
