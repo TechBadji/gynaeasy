@@ -11,7 +11,11 @@ export async function sendSMS(to: string, message: string) {
     if (!clientId || !clientSecret || !senderNumber) {
         console.log(`[SIMULATION SMS ORANGE] Vers: ${to} | Message: ${message}`);
         await new Promise(resolve => setTimeout(resolve, 800));
-        return { success: true, simulated: true };
+        return { 
+            success: true, 
+            messageId: `sim_${Math.random().toString(36).substring(2, 9)}`, 
+            simulated: true 
+        };
     }
 
     try {
@@ -34,7 +38,6 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Envoyer le SMS
-        // Format du numéro de téléphone Orange: tel:+221XXXXXXXXX
         const formattedTo = to.startsWith('+') ? `tel:${to}` : `tel:+221${to}`;
         const formattedFrom = `tel:${senderNumber}`;
 
@@ -60,9 +63,17 @@ export async function sendSMS(to: string, message: string) {
             throw new Error(errorData.requestError?.serviceException?.variables?.[0] || "Erreur lors de l'envoi du SMS Orange");
         }
 
-        return { success: true };
+        const smsData = await smsResponse.json();
+        const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
+        const messageId = resourceUrl.split('/').pop() || "sent";
+
+        return { 
+            success: true, 
+            messageId, 
+            simulated: false 
+        };
     } catch (error: any) {
         console.error("Orange SMS Error:", error);
-        return { success: false, error: error.message };
+        return { success: false, error: error.message, messageId: null, simulated: false };
     }
 }

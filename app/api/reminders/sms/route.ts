@@ -17,9 +17,15 @@ export async function POST(req: Request) {
         const res = await sendSMS(to, message);
 
         if (res.success) {
-            return NextResponse.json({ success: true, messageId: res.messageId, simulated: res.simulated });
+            return NextResponse.json({ 
+                success: true, 
+                messageId: (res as any).messageId, 
+                simulated: (res as any).simulated 
+            });
         } else {
-            return NextResponse.json({ error: res.error }, { status: 500 });
+            return NextResponse.json({ 
+                error: (res as any).error || "Failed to send SMS" 
+            }, { status: 500 });
         }
     } catch (error) {
         console.error("SMS Error:", error);
