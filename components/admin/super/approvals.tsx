@@ -28,11 +28,15 @@ export default function SuperAdminApprovals({ pendingUsers: initialUsers }: Supe
         setProcessingId(userId);
         startTransition(async () => {
             try {
-                await approveRegistration(userId);
-                setUsers(users.filter(u => u.id !== userId));
-                toast.success("Médecin approuvé et identifiants envoyés !");
+                const res = await approveRegistration(userId);
+                if (res.success) {
+                    setUsers(users.filter(u => u.id !== userId));
+                    toast.success("Médecin approuvé et identifiants envoyés !");
+                } else {
+                    toast.error(res.error || "L'approbation a échoué.");
+                }
             } catch (err: any) {
-                toast.error(err.message || "L'approbation a échoué.");
+                toast.error("Échec de la connexion au serveur.");
             } finally {
                 setProcessingId(null);
             }

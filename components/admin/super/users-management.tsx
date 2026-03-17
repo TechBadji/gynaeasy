@@ -39,12 +39,16 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
     const handleRoleChange = (userId: string, role: "MEDECIN" | "SECRETAIRE" | "ADMIN") => {
         startTransition(async () => {
             try {
-                await updateUserRoleAdmin(userId, role);
-                setLocalUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role } : u));
-                toast.success("Rôle mis à jour");
-                setEditingId(null);
+                const res = await updateUserRoleAdmin(userId, role);
+                if (res.success) {
+                    setLocalUsers((prev) => prev.map((u) => u.id === userId ? { ...u, role } : u));
+                    toast.success("Rôle mis à jour");
+                    setEditingId(null);
+                } else {
+                    toast.error(res.error || "Erreur lors de la mise à jour");
+                }
             } catch {
-                toast.error("Erreur lors de la mise à jour");
+                toast.error("Erreur de connexion");
             }
         });
     };
@@ -54,12 +58,16 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
         startTransition(async () => {
             try {
                 const res = await createUserAdmin(newUser);
-                setLocalUsers([res, ...localUsers]);
-                toast.success("Compte créé avec succès");
-                setIsCreateModalOpen(false);
-                setNewUser({ name: "", email: "", password: "", role: "MEDECIN" });
+                if (res.success) {
+                    setLocalUsers([res.data, ...localUsers]);
+                    toast.success("Compte créé avec succès");
+                    setIsCreateModalOpen(false);
+                    setNewUser({ name: "", email: "", password: "", role: "MEDECIN" });
+                } else {
+                    toast.error(res.error || "Erreur lors de la création");
+                }
             } catch (err: any) {
-                toast.error(err.message || "Erreur lors de la création");
+                toast.error("Échec de la communication avec le serveur");
             }
         });
     };
@@ -70,11 +78,15 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
         
         startTransition(async () => {
             try {
-                await setUserStatusAdmin(userId, newStatus as any);
-                setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
-                toast.success(`Utilisateur ${label} avec succès`);
+                const res = await setUserStatusAdmin(userId, newStatus as any);
+                if (res.success) {
+                    setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+                    toast.success(`Utilisateur ${label} avec succès`);
+                } else {
+                    toast.error(res.error || "Erreur de statut");
+                }
             } catch (err: any) {
-                toast.error(err.message || "Erreur lors du changement de statut");
+                toast.error("Erreur serveur");
             }
         });
     };
@@ -84,11 +96,15 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
 
         startTransition(async () => {
             try {
-                await deleteUserAdmin(userId);
-                setLocalUsers(prev => prev.filter(u => u.id !== userId));
-                toast.success("Compte supprimé définitivement");
+                const res = await deleteUserAdmin(userId);
+                if (res.success) {
+                    setLocalUsers(prev => prev.filter(u => u.id !== userId));
+                    toast.success("Compte supprimé définitivement");
+                } else {
+                    toast.error(res.error || "Suppression impossible");
+                }
             } catch (err: any) {
-                toast.error(err.message || "Erreur lors de la suppression");
+                toast.error("Erreur lors de la suppression");
             }
         });
     };
@@ -174,12 +190,13 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                                             onClick={() => {
                                                                 startTransition(async () => {
                                                                     try {
-                                                                        await toggleUserModule(user.id, mod);
-                                                                        setLocalUsers(prev => prev.map(u => u.id === user.id ? {
-                                                                            ...u,
-                                                                            enabledModules: isEnabled ? u.enabledModules.filter((m: string) => m !== mod) : [...(u.enabledModules || []), mod]
-                                                                        } : u));
-                                                                        toast.success(`${mod} ${isEnabled ? 'désactivé' : 'activé'}`);
+                                                                        const res = await toggleUserModule(user.id, mod);
+                                                                        if (res.success) {
+                                                                            setLocalUsers(prev => prev.map(u => u.id === user.id ? res.data : u));
+                                                                            toast.success(`${mod} ${isEnabled ? 'désactivé' : 'activé'}`);
+                                                                        } else {
+                                                                            toast.error(res.error || "Erreur module");
+                                                                        }
                                                                     } catch {
                                                                         toast.error("Erreur action module");
                                                                     }

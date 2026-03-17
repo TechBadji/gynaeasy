@@ -148,102 +148,122 @@ export async function createUserAdmin(data: {
     role: "MEDECIN" | "SECRETAIRE" | "ADMIN";
     password?: string;
 }) {
-    await checkSuperAdmin();
+    try {
+        await checkSuperAdmin();
 
-    const hashedPassword = await bcrypt.hash(data.password || "Gynaeasy2026!", 10);
+        const hashedPassword = await bcrypt.hash(data.password || "Gynaeasy2026!", 10);
 
-    // Modules par défaut selon le rôle
-    const defaultModules = data.role === "SECRETAIRE"
-        ? ["AGENDA", "PATIENTS", "FACTURATION"]
-        : ["AGENDA", "PATIENTS", "FACTURATION", "CONSULTATION", "IMAGERIE"];
+        // Modules par défaut selon le rôle
+        const defaultModules = data.role === "SECRETAIRE"
+            ? ["AGENDA", "PATIENTS", "FACTURATION"]
+            : ["AGENDA", "PATIENTS", "FACTURATION", "CONSULTATION", "IMAGERIE"];
 
-    const user = await prisma.user.create({
-        data: {
-            name: data.name,
-            email: data.email,
-            password: hashedPassword,
-            role: data.role,
-            enabledModules: defaultModules,
-        }
-    });
+        const user = await prisma.user.create({
+            data: {
+                name: data.name,
+                email: data.email,
+                password: hashedPassword,
+                role: data.role,
+                enabledModules: defaultModules,
+            }
+        });
 
-    // Créer un abonnement par défaut pour que l'utilisateur puisse se connecter
-    await prisma.abonnement.create({
-        data: {
-            userId: user.id,
-            plan: data.role === "SECRETAIRE" ? "PRO" : "PREMIUM",
-            statut: "ACTIF",
-            dateDebut: new Date(),
-        }
-    });
+        // Créer un abonnement par défaut pour que l'utilisateur puisse se connecter
+        await prisma.abonnement.create({
+            data: {
+                userId: user.id,
+                plan: data.role === "SECRETAIRE" ? "PRO" : "PREMIUM",
+                statut: "ACTIF",
+                dateDebut: new Date(),
+            }
+        });
 
-    revalidatePath("/admin/super");
-    return JSON.parse(JSON.stringify(user));
+        revalidatePath("/admin/super");
+        return { success: true, data: JSON.parse(JSON.stringify(user)) };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
 }
 
 export async function updateUserRoleAdmin(userId: string, role: "MEDECIN" | "SECRETAIRE" | "ADMIN") {
-    await checkSuperAdmin();
-    const user = await prisma.user.update({ where: { id: userId }, data: { role } });
-    revalidatePath("/admin/super");
-    return JSON.parse(JSON.stringify(user));
+    try {
+        await checkSuperAdmin();
+        const user = await prisma.user.update({ where: { id: userId }, data: { role } });
+        revalidatePath("/admin/super");
+        return { success: true, data: JSON.parse(JSON.stringify(user)) };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
 }
 
 export async function setUserStatusAdmin(userId: string, status: "ACTIVE" | "BLOCKED" | "PENDING_APPROVAL") {
-    await checkSuperAdmin();
-    const user = await prisma.user.update({ 
-        where: { id: userId }, 
-        data: { status: status as any } 
-    });
-    revalidatePath("/admin/super");
-    return JSON.parse(JSON.stringify(user));
+    try {
+        await checkSuperAdmin();
+        const user = await prisma.user.update({ 
+            where: { id: userId }, 
+            data: { status: status as any } 
+        });
+        revalidatePath("/admin/super");
+        return { success: true, data: JSON.parse(JSON.stringify(user)) };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
 }
 
 export async function toggleUserModule(userId: string, moduleName: string) {
-    await checkSuperAdmin();
-    const user = await prisma.user.findUnique({ where: { id: userId }, select: { enabledModules: true } });
-    if (!user) throw new Error("Utilisateur non trouvé");
+    try {
+        await checkSuperAdmin();
+        const user = await prisma.user.findUnique({ where: { id: userId }, select: { enabledModules: true } });
+        if (!user) throw new Error("Utilisateur non trouvé");
 
-    const modules = [...user.enabledModules];
-    const index = modules.indexOf(moduleName);
+        const modules = [...user.enabledModules];
+        const index = modules.indexOf(moduleName);
 
-    if (index > -1) {
-        modules.splice(index, 1);
-    } else {
-        modules.push(moduleName);
+        if (index > -1) {
+            modules.splice(index, 1);
+        } else {
+            modules.push(moduleName);
+        }
+
+        const updated = await prisma.user.update({
+            where: { id: userId },
+            data: { enabledModules: modules }
+        });
+
+        revalidatePath("/admin/super");
+        revalidatePath("/dashboard");
+        return { success: true, data: JSON.parse(JSON.stringify(updated)) };
+    } catch (error: any) {
+        return { success: false, error: error.message };
     }
-
-    const updated = await prisma.user.update({
-        where: { id: userId },
-        data: { enabledModules: modules }
-    });
-
-    revalidatePath("/admin/super");
-    revalidatePath("/dashboard");
-    return JSON.parse(JSON.stringify(updated));
 }
 
 export async function deleteUserAdmin(userId: string) {
-    await checkSuperAdmin();
-    
-    // On vérifie si l'utilisateur a des données médicales avant suppression
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        include: {
-            _count: {
-                select: { patients: true, consultations: true }
+    try {
+        await checkSuperAdmin();
+        
+        // On vérifie si l'utilisateur a des données médicales avant suppression
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                _count: {
+                    select: { patients: true, consultations: true }
+                }
             }
+        });
+
+        if (!user) return { success: false, error: "Utilisateur non trouvé" };
+
+        if (user._count.patients > 0 || user._count.consultations > 0) {
+            return { success: false, error: "Impossible de supprimer définitivement : ce compte contient des données médicales. Utilisez le blocage à la place." };
         }
-    });
 
-    if (!user) throw new Error("Utilisateur non trouvé");
-
-    if (user._count.patients > 0 || user._count.consultations > 0) {
-        throw new Error("Impossible de supprimer définitivement : ce compte contient des données médicales. Utilisez le blocage à la place.");
+        await prisma.user.delete({ where: { id: userId } });
+        revalidatePath("/admin/super");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message || "Erreur lors de la suppression" };
     }
-
-    await prisma.user.delete({ where: { id: userId } });
-    revalidatePath("/admin/super");
-    return { success: true };
 }
 
 // ============================================
