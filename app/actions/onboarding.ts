@@ -116,7 +116,7 @@ export async function approveRegistration(userId: string) {
 }
 
 export async function getPendingRegistrations() {
-    return await prisma.user.findMany({
+    const users = await prisma.user.findMany({
         where: { 
             status: {
                 in: [AccountStatus.PENDING_APPROVAL, AccountStatus.PENDING_VERIFICATION]
@@ -124,4 +124,5 @@ export async function getPendingRegistrations() {
         },
         orderBy: { createdAt: "desc" }
     });
+    return JSON.parse(JSON.stringify(users));
 }

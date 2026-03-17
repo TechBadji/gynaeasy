@@ -26,7 +26,7 @@ export default async function SuperAdminPage() {
         redirect("/dashboard");
     }
 
-    const [stats, users, abonnements, actes, settings, auditLogs, planConfigs, promotions, pendingUsers] = await Promise.all([
+    const data = await Promise.all([
         getSuperAdminStats(),
         getAllUsers(),
         getAllAbonnements(),
@@ -37,6 +37,9 @@ export default async function SuperAdminPage() {
         getPromotions(),
         getPendingRegistrations(),
     ]);
+
+    // Sérialisation forcée pour éviter les erreurs RSC en production
+    const [stats, users, abonnements, actes, settings, auditLogs, planConfigs, promotions, pendingUsers] = JSON.parse(JSON.stringify(data));
 
     return (
         <SuperAdminClient

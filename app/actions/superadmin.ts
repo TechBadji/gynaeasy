@@ -80,7 +80,7 @@ export async function getSuperAdminStats() {
         where: { statut: "ACTIF" },
     });
 
-    return {
+    return JSON.parse(JSON.stringify({
         kpis: {
             totalUsers,
             totalPatients,
@@ -95,7 +95,7 @@ export async function getSuperAdminStats() {
         consultationsByMonth,
         usersByRole,
         abonnementsByPlan,
-    };
+    }));
 }
 
 async function getConsultationsByMonth() {
@@ -120,7 +120,7 @@ async function getConsultationsByMonth() {
 // ============================================
 export async function getAllUsers() {
     await checkSuperAdmin();
-    return await prisma.user.findMany({
+    const users = await prisma.user.findMany({
         select: {
             id: true,
             name: true,
@@ -139,6 +139,7 @@ export async function getAllUsers() {
         },
         orderBy: { createdAt: "desc" },
     });
+    return JSON.parse(JSON.stringify(users));
 }
 
 export async function createUserAdmin(data: {
