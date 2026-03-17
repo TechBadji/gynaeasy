@@ -247,14 +247,14 @@ export async function deleteUserAdmin(userId: string) {
             where: { id: userId },
             include: {
                 _count: {
-                    select: { patients: true, consultations: true }
+                    select: { asTreating: true, consultations: true }
                 }
             }
         });
 
         if (!user) return { success: false, error: "Utilisateur non trouvé" };
 
-        if (user._count.patients > 0 || user._count.consultations > 0) {
+        if (user._count.asTreating > 0 || user._count.consultations > 0) {
             return { success: false, error: "Impossible de supprimer définitivement : ce compte contient des données médicales. Utilisez le blocage à la place." };
         }
 

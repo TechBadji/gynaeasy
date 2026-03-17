@@ -27,6 +27,7 @@ model User {
   abonnements       Abonnement[]
   accessRequests    AccessRequest[]
   consultations     Consultation[]
+  auditLogs         AuditLog[]
   asTreating        Patient[]       @relation("TreatingDoctor")
   patients          Patient[]
 }
@@ -67,7 +68,7 @@ model AccessRequest {
   status    AccessStatus @default(PENDING)
   expiresAt DateTime?
   createdAt DateTime     @default(now())
-  doctor    User         @relation(fields: [doctorId], references: [id])
+  doctor    User         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   patient   Patient      @relation(fields: [patientId], references: [id])
 }
 
@@ -181,6 +182,7 @@ model ModeleDocument {
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   action    String
   patientId String?
   details   String?
@@ -205,7 +207,7 @@ model Abonnement {
   notesPromo      String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  user            User             @relation(fields: [userId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PlanConfig {
