@@ -30,11 +30,15 @@ export default function OnboardingPage() {
         e.preventDefault();
         startTransition(async () => {
             try {
-                await registerDoctor(formData);
-                setIsSubmitted(true);
-                toast.success("Demande envoyée !");
+                const res = await registerDoctor(formData);
+                if (res.success) {
+                    setIsSubmitted(true);
+                    toast.success("Demande envoyée !");
+                } else {
+                    toast.error(res.error || "Une erreur est survenue.");
+                }
             } catch (err: any) {
-                toast.error(err.message || "Une erreur est survenue.");
+                toast.error("Échec de la connexion au serveur.");
             }
         });
     };
