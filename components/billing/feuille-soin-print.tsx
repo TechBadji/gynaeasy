@@ -73,13 +73,13 @@ export default function FeuilleSoinPrint({ invoice, clinicInfo }: FeuilleSoinPro
                         <tr className="border-b border-slate-100">
                             <td className="py-4 font-mono text-sm">JQMD001</td>
                             <td className="py-4 text-sm font-medium">{consultation.type} - Acte principal</td>
-                            <td className="py-4 text-right font-bold">{invoice.montant.toString()}</td>
+                            <td className="py-4 text-right font-bold">{formatCurrency(invoice.montant)}</td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colSpan={2} className="py-6 text-right font-bold text-slate-500">Total à régler</td>
-                            <td className="py-6 text-right text-xl font-black">{invoice.montant.toString()}</td>
+                            <td className="py-6 text-right text-xl font-black">{formatCurrency(invoice.montant)}</td>
                         </tr>
                     </tfoot>
                 </table>

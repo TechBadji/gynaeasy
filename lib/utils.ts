@@ -11,9 +11,5 @@ export function cn(...inputs: ClassValue[]) {
  * @returns Chaîne formatée (ex: "50 000 FCFA")
  */
 export function formatCurrency(amount: number): string {
-    return new Intl.NumberFormat("fr-FR", {
-        style: "decimal",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-    }).format(amount) + " FCFA";
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " FCFA";
 }
