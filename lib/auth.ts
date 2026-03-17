@@ -39,6 +39,10 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Identifiants incorrects");
                 }
 
+                if (user.status === "BLOCKED") {
+                    throw new Error("Votre compte a été suspendu par l'administration.");
+                }
+
                 const isPasswordValid = await bcrypt.compare(
                     credentials.password,
                     user.password

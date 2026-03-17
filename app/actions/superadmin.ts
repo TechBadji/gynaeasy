@@ -188,6 +188,16 @@ export async function updateUserRoleAdmin(userId: string, role: "MEDECIN" | "SEC
     return JSON.parse(JSON.stringify(user));
 }
 
+export async function setUserStatusAdmin(userId: string, status: "ACTIVE" | "BLOCKED" | "PENDING_APPROVAL") {
+    await checkSuperAdmin();
+    const user = await prisma.user.update({ 
+        where: { id: userId }, 
+        data: { status: status as any } 
+    });
+    revalidatePath("/admin/super");
+    return JSON.parse(JSON.stringify(user));
+}
+
 export async function toggleUserModule(userId: string, moduleName: string) {
     await checkSuperAdmin();
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { enabledModules: true } });
@@ -212,14 +222,26 @@ export async function toggleUserModule(userId: string, moduleName: string) {
     return JSON.parse(JSON.stringify(updated));
 }
 
-export async function deleteUser(userId: string) {
+export async function deleteUserAdmin(userId: string) {
     await checkSuperAdmin();
-    // Soft delete: just block access by changing role — never delete medical data
-    // For hard delete in a real SAAS you'd anonymize data
-    await prisma.user.update({
+    
+    // On vérifie si l'utilisateur a des données médicales avant suppression
+    const user = await prisma.user.findUnique({
         where: { id: userId },
-        data: { role: "SECRETAIRE" }, // Downgrade
+        include: {
+            _count: {
+                select: { patients: true, consultations: true }
+            }
+        }
     });
+
+    if (!user) throw new Error("Utilisateur non trouvé");
+
+    if (user._count.patients > 0 || user._count.consultations > 0) {
+        throw new Error("Impossible de supprimer définitivement : ce compte contient des données médicales. Utilisez le blocage à la place.");
+    }
+
+    await prisma.user.delete({ where: { id: userId } });
     revalidatePath("/admin/super");
     return { success: true };
 }

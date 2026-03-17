@@ -30,11 +30,16 @@ function VerifyContent() {
 
         const verify = async () => {
             try {
-                await verifyDoctorEmail(token);
-                setStatus("success");
+                const res = await verifyDoctorEmail(token);
+                if (res.success) {
+                    setStatus("success");
+                } else {
+                    setStatus("error");
+                    setMessage(res.error || "La vérification a échoué.");
+                }
             } catch (err: any) {
                 setStatus("error");
-                setMessage(err.message || "La vérification a échoué.");
+                setMessage("Impossible de contacter le serveur.");
             }
         };
 

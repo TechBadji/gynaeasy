@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateUserRoleAdmin, toggleUserModule, createUserAdmin } from "@/app/actions/superadmin";
-import { Users, Search, ChevronDown, CheckCircle2, AlertCircle, Shield, Zap, Plus, X, Lock, Mail, UserPlus } from "lucide-react";
+import { updateUserRoleAdmin, toggleUserModule, createUserAdmin, setUserStatusAdmin, deleteUserAdmin } from "@/app/actions/superadmin";
+import { Users, Search, ChevronDown, CheckCircle2, AlertCircle, Shield, Zap, Plus, X, Lock, Mail, UserPlus, Ban, UserCheck, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const ROLE_COLORS: Record<string, string> = {
@@ -60,6 +60,35 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                 setNewUser({ name: "", email: "", password: "", role: "MEDECIN" });
             } catch (err: any) {
                 toast.error(err.message || "Erreur lors de la création");
+            }
+        });
+    };
+
+    const handleBlockToggle = (userId: string, currentStatus: string) => {
+        const newStatus = currentStatus === "BLOCKED" ? "ACTIVE" : "BLOCKED";
+        const label = newStatus === "BLOCKED" ? "bloqué" : "activé";
+        
+        startTransition(async () => {
+            try {
+                await setUserStatusAdmin(userId, newStatus as any);
+                setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, status: newStatus } : u));
+                toast.success(`Utilisateur ${label} avec succès`);
+            } catch (err: any) {
+                toast.error(err.message || "Erreur lors du changement de statut");
+            }
+        });
+    };
+
+    const handleDelete = (userId: string, userName: string) => {
+        if (!confirm(`Êtes-vous sûr de vouloir supprimer définitivement le compte de ${userName} ? Cette action est irréversible.`)) return;
+
+        startTransition(async () => {
+            try {
+                await deleteUserAdmin(userId);
+                setLocalUsers(prev => prev.filter(u => u.id !== userId));
+                toast.success("Compte supprimé définitivement");
+            } catch (err: any) {
+                toast.error(err.message || "Erreur lors de la suppression");
             }
         });
     };
@@ -168,27 +197,45 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                             {new Date(user.createdAt).toLocaleDateString("fr-FR")}
                                         </td>
                                         <td className="px-4 py-3">
-                                            <div className="relative">
+                                            <div className="flex items-center gap-2">
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={() => setEditingId(editingId === user.id ? null : user.id)}
+                                                        className="flex items-center gap-1 text-[10px] font-bold text-slate-400 hover:text-white border border-white/10 rounded-lg px-2 py-1.5 hover:border-white/30 transition-all uppercase tracking-tighter"
+                                                    >
+                                                        Rôle <ChevronDown className="h-3 w-3" />
+                                                    </button>
+                                                    {editingId === user.id && (
+                                                        <div className="absolute right-0 top-10 rotate-in-fwd z-50 bg-[#151c2e] border border-white/10 rounded-xl shadow-2xl overflow-hidden w-40 backdrop-blur-xl">
+                                                            {(["MEDECIN", "SECRETAIRE", "ADMIN"] as const).map((role) => (
+                                                                <button
+                                                                    key={role}
+                                                                    onClick={() => handleRoleChange(user.id, role)}
+                                                                    disabled={isPending || user.role === role}
+                                                                    className={`w-full text-left px-4 py-3 text-[10px] font-bold transition-colors border-b border-white/5 last:border-0 ${user.role === role ? "text-violet-400 bg-violet-400/5 shadow-inner" : "text-slate-300 hover:bg-white/5"}`}
+                                                                >
+                                                                    {role}
+                                                                </button>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+
                                                 <button
-                                                    onClick={() => setEditingId(editingId === user.id ? null : user.id)}
-                                                    className="flex items-center gap-1 text-xs text-slate-400 hover:text-white border border-white/10 rounded-md px-2 py-1 hover:border-white/30 transition-all"
+                                                    onClick={() => handleBlockToggle(user.id, user.status)}
+                                                    title={user.status === "BLOCKED" ? "Débloquer" : "Bloquer"}
+                                                    className={`p-2 rounded-lg border transition-all ${user.status === "BLOCKED" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500 hover:bg-emerald-500/20" : "bg-amber-500/10 border-amber-500/20 text-amber-500 hover:bg-amber-500/20"}`}
                                                 >
-                                                    Rôle <ChevronDown className="h-3 w-3" />
+                                                    {user.status === "BLOCKED" ? <UserCheck className="h-3.5 w-3.5" /> : <Ban className="h-3.5 w-3.5" />}
                                                 </button>
-                                                {editingId === user.id && (
-                                                    <div className="absolute right-0 top-8 z-50 bg-[#1a2340] border border-white/20 rounded-lg shadow-2xl overflow-hidden w-40">
-                                                        {["MEDECIN", "SECRETAIRE", "ADMIN"].map((role) => (
-                                                            <button
-                                                                key={role}
-                                                                onClick={() => handleRoleChange(user.id, role as any)}
-                                                                disabled={isPending || user.role === role}
-                                                                className={`w-full text-left px-4 py-2.5 text-xs hover:bg-white/10 transition-colors ${user.role === role ? "text-violet-400 font-semibold" : "text-slate-300"}`}
-                                                            >
-                                                                {role}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                )}
+
+                                                <button
+                                                    onClick={() => handleDelete(user.id, user.name || user.email)}
+                                                    title="Supprimer définitivement"
+                                                    className="p-2 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/20 transition-all"
+                                                >
+                                                    <Trash2 className="h-3.5 w-3.5" />
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
