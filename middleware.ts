@@ -29,6 +29,6 @@ export default withAuth(
 );
 
 export const config = {
-    // Protéger toutes les routes sauf l'authentification (login, register), les API NextAuth et les assets statiques
-    matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|auth).*)"],
+    // Protéger toutes les routes sauf l'authentification, l'onboarding, le booking public et les assets
+    matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|manifest.json|robots.txt|auth|onboarding|booking|p|$).*)"],
 };
