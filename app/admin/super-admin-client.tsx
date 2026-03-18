@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import {
     LayoutDashboard, Users, CreditCard, ClipboardList,
     Settings, Shield, Activity, LogOut, ChevronRight,
-    Bell, Search
+    Search
 } from "lucide-react";
 import SuperAdminOverview from "@/components/admin/super/overview";
 import SuperAdminUsers from "@/components/admin/super/users-management";
@@ -16,6 +16,7 @@ import SuperAdminAudit from "@/components/admin/super/audit-logs";
 import SuperAdminPricing from "@/components/admin/super/pricing-management";
 import SuperAdminPromotions from "@/components/admin/super/promotions-management";
 import SuperAdminApprovals from "@/components/admin/super/approvals";
+import NotificationBell from "@/components/notifications/notification-bell";
 
 const NAV_ITEMS = [
     { id: "overview", label: "Vue d'ensemble", icon: LayoutDashboard },
@@ -26,7 +27,6 @@ const NAV_ITEMS = [
     { id: "promotions", label: "Promotions", icon: Shield },
     { id: "ccam", label: "Catalogue CCAM", icon: ClipboardList },
     { id: "settings", label: "Paramètres App", icon: Settings },
-    { id: "sms", label: "SMS & Rappels", icon: Bell },
     { id: "audit", label: "Audit Log", icon: Shield },
 ];
 
@@ -150,10 +150,7 @@ export default function SuperAdminClient({
                                 className="bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-violet-500/50 w-64 transition-all"
                             />
                         </div>
-                        <button className="relative p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
-                            <Bell className="h-4 w-4" />
-                            <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-pink-500"></span>
-                        </button>
+                        <NotificationBell />
                     </div>
                 </header>
 
@@ -167,7 +164,6 @@ export default function SuperAdminClient({
                     {activeTab === "promotions" && <SuperAdminPromotions promotions={promotions} />}
                     {activeTab === "ccam" && <SuperAdminCCAM actes={actes} searchQuery={searchQuery} />}
                     {activeTab === "settings" && <SuperAdminSettings settings={settings} />}
-                    {activeTab === "sms" && <SuperAdminSettings settings={settings} onlySMS={true} />}
                     {activeTab === "audit" && <SuperAdminAudit logs={auditLogs} />}
                 </main>
             </div>
