@@ -44,12 +44,16 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Envoyer le SMS
-        // Orange support: "avec votre code pays mais sans préfixe + ou 00" pour le SENDER
-        const cleanTo = to.startsWith('+') ? to : `+221${to.replace(/^0+/, '')}`;
+        // Orange support: "avec votre code pays mais sans préfixe + ou 00"
+        const cleanTo = to.replace(/^\+|^00/, ''); // Supprime le + ou 00
         const cleanFrom = senderNumber.replace(/^\+|^00/, ''); // Supprime le + ou 00
         
-        const formattedTo = `tel:${cleanTo}`;
-        const formattedFrom = `tel:${cleanFrom}`;
+        // S'assurer qu'on a le 221
+        const finalTo = cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`;
+        const finalFrom = cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`;
+
+        const formattedTo = `tel:${finalTo}`;
+        const formattedFrom = `tel:${finalFrom}`;
 
         const smsResponse = await fetch(`https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`, {
             method: "POST",
