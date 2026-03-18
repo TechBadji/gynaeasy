@@ -21,7 +21,7 @@ export async function sendSMS(to: string, message: string) {
     try {
         // 1. Obtenir le token d'accès
         const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-        const tokenResponse = await fetch("https://api.orange.com/oauth/v2/token", {
+        const tokenResponse = await fetch("https://api.orange.com/oauth/v3/token", {
             method: "POST",
             headers: {
                 "Authorization": `Basic ${authHeader}`,
