@@ -44,8 +44,11 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Envoyer le SMS
-        const formattedTo = to.startsWith('+') ? `tel:${to}` : `tel:+221${to}`;
-        const formattedFrom = `tel:${senderNumber}`;
+        const cleanTo = to.startsWith('+') ? to : `+221${to.replace(/^0+/, '')}`;
+        const cleanFrom = senderNumber.startsWith('+') ? senderNumber : `+${senderNumber.replace(/^0+/, '')}`;
+        
+        const formattedTo = `tel:${cleanTo}`;
+        const formattedFrom = `tel:${cleanFrom}`;
 
         const smsResponse = await fetch(`https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`, {
             method: "POST",
