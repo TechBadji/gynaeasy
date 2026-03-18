@@ -22,9 +22,9 @@ export default function SuperAdminPricing({ planConfigs }: { planConfigs: any[] 
     };
 
     const PLAN_DETAILS = {
-        BASIQUE: { icon: "🌱", color: "text-slate-400" },
+        SOLO: { icon: "🌱", color: "text-slate-400" },
         PRO: { icon: "🚀", color: "text-violet-400" },
-        PREMIUM: { icon: "👑", color: "text-amber-400" },
+        CLINIQUE: { icon: "👑", color: "text-amber-400" },
     };
 
     return (
@@ -35,10 +35,10 @@ export default function SuperAdminPricing({ planConfigs }: { planConfigs: any[] 
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {["BASIQUE", "PRO", "PREMIUM"].map((planName) => {
+                {["SOLO", "PRO", "CLINIQUE"].map((planName) => {
                     const config = configs.find(c => c.plan === planName) || {
                         plan: planName,
-                        prixMensuel: planName === "BASIQUE" ? 15000 : planName === "PRO" ? 35000 : 75000,
+                        prixMensuel: planName === "SOLO" ? 25000 : planName === "PRO" ? 50000 : 95000,
                         description: "",
                         features: []
                     };

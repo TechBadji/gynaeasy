@@ -4,9 +4,9 @@ import { Users, Activity, CreditCard, TrendingUp, Stethoscope, UserCheck, ArrowU
 import { formatCurrency } from "@/lib/utils";
 
 const PLAN_COLORS: Record<string, string> = {
-    BASIQUE: "bg-slate-500",
+    SOLO: "bg-slate-500",
     PRO: "bg-violet-500",
-    PREMIUM: "bg-amber-500",
+    CLINIQUE: "bg-amber-500",
 };
 
 export default function SuperAdminOverview({ stats }: { stats: any }) {

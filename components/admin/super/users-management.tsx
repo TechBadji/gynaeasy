@@ -12,9 +12,9 @@ const ROLE_COLORS: Record<string, string> = {
 };
 
 const PLAN_COLORS: Record<string, string> = {
-    PREMIUM: "text-amber-400",
+    CLINIQUE: "text-amber-400",
     PRO: "text-violet-400",
-    BASIQUE: "text-slate-400",
+    SOLO: "text-slate-400",
 };
 
 export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; searchQuery: string }) {

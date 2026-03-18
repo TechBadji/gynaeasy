@@ -6,9 +6,9 @@ import { CreditCard, PlusCircle, CheckCircle2, XCircle, Clock, ChevronDown, Shie
 import toast from "react-hot-toast";
 
 const PLAN_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
-    PREMIUM: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30" },
+    CLINIQUE: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30" },
     PRO: { color: "text-violet-400", bg: "bg-violet-500/10", border: "border-violet-500/30" },
-    BASIQUE: { color: "text-slate-300", bg: "bg-slate-500/10", border: "border-slate-500/30" },
+    SOLO: { color: "text-slate-300", bg: "bg-slate-500/10", border: "border-slate-500/30" },
 };
 
 const STATUT_CONFIG: Record<string, { icon: any; color: string }> = {
@@ -61,7 +61,7 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
     };
 
     const calculatePrice = (ab: any) => {
-        const basePrices: Record<string, number> = { BASIQUE: 15000, PRO: 35000, PREMIUM: 75000 };
+        const basePrices: Record<string, number> = { SOLO: 25000, PRO: 50000, CLINIQUE: 95000 };
         let price = basePrices[ab.plan] || 0;
 
         if (ab.reductionType === "POURCENTAGE" && ab.reductionValeur) {
