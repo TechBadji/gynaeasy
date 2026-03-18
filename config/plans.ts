@@ -1,0 +1,53 @@
+export const SUBSCRIPTION_PLANS = [
+  {
+    id: "solo",
+    name: "PACK SOLO",
+    price: 25000,
+    currency: "FCFA",
+    period: "mois",
+    description: "L'essentiel pour un médecin exerçant seul en cabinet.",
+    features: [
+      { text: "Agenda complet & Dossier Patient HDS", included: true },
+      { text: "100 SMS de rappel inclus / mois", included: true },
+      { text: "Ordonnances & Certificats numériques", included: true },
+      { text: "Accès Secrétariat", included: false },
+      { text: "Gestion de caisse (Wave/Orange Money)", included: false },
+    ],
+    isPopular: false,
+    cta: "Démarrer Solo",
+  },
+  {
+    id: "pro",
+    name: "CABINET PRO",
+    price: 50000,
+    currency: "FCFA",
+    period: "mois",
+    description: "Le choix standard pour les cabinets avec secrétaire.",
+    features: [
+      { text: "Tout le pack Solo", included: true },
+      { text: "Accès Secrétariat dédié", included: true },
+      { text: "300 SMS de rappel inclus / mois", included: true },
+      { text: "Suivi des encaissements (Wave/OM/Espèces)", included: true },
+      { text: "Statistiques d'activité mensuelles", included: true },
+    ],
+    isPopular: true,
+    cta: "Choisir Pro",
+  },
+  {
+    id: "clinique",
+    name: "CLINIQUE VIP",
+    price: 95000,
+    currency: "FCFA",
+    period: "mois",
+    description: "Puissance maximale pour cliniques multi-praticiens.",
+    features: [
+      { text: "Jusqu'à 5 comptes Médecins", included: true },
+      { text: "1000 SMS de rappel inclus / mois", included: true },
+      { text: "Gestion du stock & Pharmacie", included: true },
+      { text: "Support prioritaire & Formation sur site", included: true },
+      { text: "Marque blanche (Logo Clinique)", included: true },
+    ],
+    isPopular: false,
+    cta: "Contacter Ventes",
+  }
+];

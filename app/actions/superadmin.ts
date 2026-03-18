@@ -172,7 +172,7 @@ export async function createUserAdmin(data: {
         await prisma.abonnement.create({
             data: {
                 userId: user.id,
-                plan: data.role === "SECRETAIRE" ? "PRO" : "PREMIUM",
+                plan: data.role === "SECRETAIRE" ? "SOLO" : "CLINIQUE",
                 statut: "ACTIF",
                 dateDebut: new Date(),
             }
@@ -282,7 +282,7 @@ export async function getAllAbonnements() {
 export async function updateAbonnement(
     id: string,
     data: {
-        plan?: "BASIQUE" | "PRO" | "PREMIUM";
+        plan?: "SOLO" | "PRO" | "CLINIQUE";
         statut?: "ACTIF" | "ANNULE" | "EXPIRE";
         dateFin?: Date | null;
         reductionType?: "POURCENTAGE" | "MONTANT_FIXE" | null;
@@ -298,7 +298,7 @@ export async function updateAbonnement(
 
 export async function createAbonnement(data: {
     userId: string;
-    plan: "BASIQUE" | "PRO" | "PREMIUM";
+    plan: "SOLO" | "PRO" | "CLINIQUE";
     statut: "ACTIF" | "ANNULE" | "EXPIRE";
     reductionType?: "POURCENTAGE" | "MONTANT_FIXE" | null;
     reductionValeur?: number | null;
@@ -319,7 +319,7 @@ export async function getPlanConfigs() {
     return JSON.parse(JSON.stringify(configs));
 }
 
-export async function updatePlanConfig(plan: "BASIQUE" | "PRO" | "PREMIUM", data: {
+export async function updatePlanConfig(plan: "SOLO" | "PRO" | "CLINIQUE", data: {
     prixMensuel: number;
     description?: string;
     features?: any;

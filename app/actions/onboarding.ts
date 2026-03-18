@@ -113,7 +113,7 @@ export async function approveRegistration(userId: string) {
         await prisma.abonnement.create({
             data: {
                 userId: user.id,
-                plan: "PREMIUM",
+                plan: "SOLO",
                 statut: "ACTIF",
                 dateDebut: new Date(),
             }

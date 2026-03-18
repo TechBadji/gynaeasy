@@ -1,6 +1,7 @@
 
-import { PrismaClient, Role, Civilite, StatutPaiement, ModePaiement, RDVSource, TypeRDV } from "@prisma/client";
+import { PrismaClient, Role, Civilite, StatutPaiement, ModePaiement, RDVSource, TypeRDV, PlanAbonnement, StatutFacture } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { SUBSCRIPTION_PLANS } from "../config/plans";
 
 const prisma = new PrismaClient();
 
@@ -8,6 +9,23 @@ async function main() {
     console.log("🇸🇳 Lancement du script de peuplement Gynaeasy Sénégal...");
 
     const hashedPassword = await bcrypt.hash("gynaeasy2026", 10);
+
+    // 0. PLANS D'ABONNEMENT (PlanConfig)
+    console.log("-> Synchronisation des plans SaaS...");
+    for (const plan of SUBSCRIPTION_PLANS) {
+        const planEnum = plan.id.toUpperCase() as PlanAbonnement;
+        await prisma.planConfig.upsert({
+            where: { plan: planEnum },
+            update: {},
+            create: {
+                plan: planEnum,
+                prixMensuel: plan.price,
+                description: plan.description,
+                features: plan.features as any,
+                isPromotional: plan.isPopular
+            }
+        });
+    }
 
     // 1. UTILISATEURS (Médecins & Secrétaires)
     const users = [
@@ -51,7 +69,7 @@ async function main() {
             create: {
                 userId: user.id,
                 stripeId: `sub_${user.id}`,
-                plan: u.role === Role.MEDECIN ? "PREMIUM" : "PRO",
+                plan: u.role === Role.MEDECIN ? "CLINIQUE" : "SOLO",
                 statut: "ACTIF",
                 dateDebut: new Date(),
             }
@@ -191,6 +209,22 @@ async function main() {
             }
         });
     }
+
+    // 5. FACTURES D'ABONNEMENT (Exemples)
+    console.log("-> Création des factures d'abonnement...");
+    await prisma.factureHote.upsert({
+        where: { numero: `FA-2024-001-${docKeita.id}` },
+        update: {},
+        create: {
+            userId: docKeita.id,
+            numero: `FA-2024-001-${docKeita.id}`,
+            periodeDebut: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            periodeFin: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+            montantHT: 95000,
+            montantTTC: 95000,
+            statut: StatutFacture.PAYEE
+        }
+    });
 
     console.log("🇸🇳 Population terminée avec succès !");
 }

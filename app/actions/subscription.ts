@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { SUBSCRIPTION_PLANS } from "@/config/plans";
+import { PlanAbonnement } from "@prisma/client";
 
 export async function getUserSubscription() {
     try {
@@ -96,6 +98,41 @@ export async function createDemoInvoice() {
         return { success: true };
     } catch (error) {
         console.error("Demo Invoice Error:", error);
+        return { success: false };
+    }
+}
+
+export async function syncSubscriptionPlans() {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user || (session.user as any).role !== 'ADMIN') {
+             return { success: false, message: "Non autorisé" };
+        }
+
+        for (const plan of SUBSCRIPTION_PLANS) {
+            const planEnum = plan.id.toUpperCase() as PlanAbonnement;
+            
+            await prisma.planConfig.upsert({
+                where: { plan: planEnum },
+                update: {
+                    prixMensuel: plan.price,
+                    description: plan.description,
+                    features: plan.features as any,
+                    isPromotional: plan.isPopular
+                },
+                create: {
+                    plan: planEnum,
+                    prixMensuel: plan.price,
+                    description: plan.description,
+                    features: plan.features as any,
+                    isPromotional: plan.isPopular
+                }
+            });
+        }
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Sync Plans Error:", error);
         return { success: false };
     }
 }

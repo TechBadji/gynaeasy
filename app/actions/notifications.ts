@@ -22,7 +22,7 @@ export async function getNotifications() {
         });
 
         // Sérialisation des dates
-        return notifications.map(n => ({
+        return notifications.map((n: any) => ({
             ...n,
             createdAt: n.createdAt.toISOString()
         }));

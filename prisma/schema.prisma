@@ -32,6 +32,8 @@ model User {
   patients          Patient[]
   facturesHote      FactureHote[]
   notifications     Notification[]
+  planId            String?
+  subscriptionStatus StatutAbonnement?
 }
 
 model Notification {
@@ -374,9 +376,9 @@ enum ReductionType {
 }
 
 enum PlanAbonnement {
-  BASIQUE
+  SOLO
   PRO
-  PREMIUM
+  CLINIQUE
 }
 
 enum StatutAbonnement {

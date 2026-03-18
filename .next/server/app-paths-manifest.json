@@ -1,4 +1,5 @@
 {
+  "/(protected)/abonnement/page": "app/(protected)/abonnement/page.js",
   "/(protected)/agenda/page": "app/(protected)/agenda/page.js",
   "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
   "/(protected)/facturation/page": "app/(protected)/facturation/page.js",
@@ -14,6 +15,7 @@
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
   "/api/documents/ordonnance/route": "app/api/documents/ordonnance/route.js",
   "/api/reminders/sms/route": "app/api/reminders/sms/route.js",
+  "/auth/error/page": "app/auth/error/page.js",
   "/auth/login/page": "app/auth/login/page.js",
   "/booking/page": "app/booking/page.js",
   "/onboarding/page": "app/onboarding/page.js",
