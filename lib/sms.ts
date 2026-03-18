@@ -63,7 +63,7 @@ export async function sendSMS(to: string, message: string) {
             body: JSON.stringify({
                 outboundSMSMessageRequest: {
                     address: formattedTo,
-                    senderAddress: formattedFrom,
+                    senderAddress: cleanFrom, // Sans le préfixe "tel:" selon certaines docs locales
                     outboundSMSTextMessage: {
                         message: message
                     }
