@@ -77,6 +77,13 @@ export async function sendSMS(to: string, message: string) {
         }
 
         const smsData = await smsResponse.json();
+        console.log("Orange SMS Request Successful:", {
+            to: formattedTo,
+            from: formattedFrom,
+            messageId: smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL?.split('/').pop()
+        });
+        console.log("Full Orange SMS Response:", JSON.stringify(smsData, null, 2));
+
         const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
         const messageId = resourceUrl.split('/').pop() || "sent";
 
