@@ -1,8 +1,10 @@
 "use client";
 
-import { CheckCircle2, Shield, Clock, AlertCircle, Info, Star } from "lucide-react";
+import { CheckCircle2, Shield, Clock, Info, Star } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { useRouter } from "next/navigation";
+import SubscriptionInvoices from "./subscription-invoices";
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
     ACTIF: { label: "Actif", color: "text-emerald-600", bg: "bg-emerald-50" },
@@ -17,6 +19,7 @@ const PLAN_MAP: Record<string, { label: string; color: string; bg: string; icon:
 };
 
 export default function SubscriptionView({ subscription }: { subscription: any }) {
+    const router = useRouter();
     const plan = PLAN_MAP[subscription.plan] || PLAN_MAP.BASIQUE;
     const status = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
     const PlanIcon = plan.icon;
@@ -32,7 +35,8 @@ export default function SubscriptionView({ subscription }: { subscription: any }
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-8">
+                {/* Main Plan Card */}
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-8">
                     <div className="flex items-start justify-between mb-8">
                         <div className="flex items-center gap-4">
@@ -75,20 +79,30 @@ export default function SubscriptionView({ subscription }: { subscription: any }
                     </div>
                 </div>
 
-                <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4">
-                    <div className="absolute top-0 right-0 p-8 opacity-10">
-                        <Star className="h-40 w-40" />
+                {/* Invoices List */}
+                <SubscriptionInvoices 
+                    factures={subscription.factures || []} 
+                    onUpdate={() => router.refresh()} 
+                />
+
+                {/* Upsell Card */}
+                {subscription.plan !== 'PREMIUM' && (
+                    <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4">
+                        <div className="absolute top-0 right-0 p-8 opacity-10">
+                            <Star className="h-40 w-40" />
+                        </div>
+                        <div className="relative z-10 space-y-2">
+                            <h3 className="text-xl font-bold">Besoin de plus de puissance ?</h3>
+                            <p className="text-indigo-100 text-sm max-w-sm">Passez au plan **Premium** pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
+                            <button className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105">
+                                Comparer les offres
+                            </button>
+                        </div>
                     </div>
-                    <div className="relative z-10 space-y-2">
-                        <h3 className="text-xl font-bold">Besoin de plus de puissance ?</h3>
-                        <p className="text-indigo-100 text-sm max-w-sm">Passez au plan **Premium** pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
-                        <button className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105">
-                            Comparer les offres
-                        </button>
-                    </div>
-                </div>
+                )}
             </div>
 
+            {/* Sidebar Column */}
             <div className="space-y-6">
                 <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-6 space-y-6">
                     <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
