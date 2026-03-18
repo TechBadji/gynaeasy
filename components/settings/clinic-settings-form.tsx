@@ -9,9 +9,11 @@ import {
     Quote,
     Save,
     Image as ImageIcon,
-    CheckCircle2
+    User,
+    Stethoscope
 } from "lucide-react";
 import { updateClinicSettings } from "@/app/actions/clinic";
+import { updateUserDetails } from "@/app/actions/user";
 import toast from "react-hot-toast";
 
 interface ClinicSettings {
@@ -23,41 +25,69 @@ interface ClinicSettings {
     slogan: string | null;
 }
 
-export default function ClinicSettingsForm({ initialSettings }: { initialSettings: ClinicSettings }) {
+interface UserSettings {
+    id: string;
+    name: string;
+    clinicName: string;
+    specialite: string;
+}
+
+export default function ClinicSettingsForm({ 
+    initialSettings, 
+    userSettings 
+}: { 
+    initialSettings: ClinicSettings,
+    userSettings: UserSettings
+}) {
     const [settings, setSettings] = useState(initialSettings);
+    const [userDetails, setUserDetails] = useState(userSettings);
     const [isSaving, setIsSaving] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSaving(true);
         try {
-            const res = await updateClinicSettings({
-                nom: settings.nom,
-                adresse: settings.adresse || undefined,
-                telephone: settings.telephone || undefined,
-                email: settings.email || undefined,
-                slogan: settings.slogan || undefined,
-            });
-            if (res.success) {
-                toast.success("Paramètres enregistrés");
+            // Mise à jour des identités
+            const [resClinic, resUser] = await Promise.all([
+                updateClinicSettings({
+                    nom: settings.nom,
+                    adresse: settings.adresse || undefined,
+                    telephone: settings.telephone || undefined,
+                    email: settings.email || undefined,
+                    slogan: settings.slogan || undefined,
+                }),
+                updateUserDetails({
+                    name: userDetails.name,
+                    clinicName: userDetails.clinicName,
+                    specialite: userDetails.specialite
+                })
+            ]);
+
+            if (resClinic.success && resUser.success) {
+                toast.success("Tous les paramètres ont été enregistrés");
+            } else if (resUser.success) {
+                toast.success("Identité mise à jour");
+            } else {
+                toast.error("Une erreur est survenue");
             }
         } catch (error) {
-            toast.error("Erreur lors de l'enregistrement");
+            toast.error("Erreur de communication avec le serveur");
         } finally {
             setIsSaving(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-8 max-w-4xl">
+        <form onSubmit={handleSubmit} className="space-y-12 max-w-4xl">
+            {/* Section 1: Identité Personnelle & Cabinet */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-8">
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="h-12 w-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-100">
-                        <Building2 className="h-6 w-6" />
+                    <div className="h-12 w-12 rounded-2xl bg-violet-50 flex items-center justify-center text-violet-600 border border-violet-100">
+                        <User className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-black text-slate-800">Identité du Cabinet</h2>
-                        <p className="text-sm text-slate-500 font-medium">Ces informations apparaîtront sur vos factures et comptes-rendus.</p>
+                        <h2 className="text-xl font-black text-slate-800">Votre Identité</h2>
+                        <p className="text-sm text-slate-500 font-medium">Informations affichées sur votre profil et vos ordonnances.</p>
                     </div>
                 </div>
 
@@ -65,101 +95,96 @@ export default function ClinicSettingsForm({ initialSettings }: { initialSetting
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                                <Building2 className="h-3 w-3" />
-                                Nom du Cabinet
+                                <User className="h-3 w-3" />
+                                Votre Nom Complet
                             </label>
                             <input
                                 type="text"
-                                value={settings.nom}
-                                onChange={(e) => setSettings({ ...settings, nom: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                                placeholder="ex: Centre Gynécologique Excellence"
+                                value={userDetails.name}
+                                onChange={(e) => setUserDetails({ ...userDetails, name: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-bold"
+                                placeholder="Dr. Prénom Nom"
                                 required
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Stethoscope className="h-3 w-3" />
+                                Spécialité
+                            </label>
+                            <input
+                                type="text"
+                                value={userDetails.specialite}
+                                onChange={(e) => setUserDetails({ ...userDetails, specialite: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all"
+                                placeholder="ex: Gynécologue Obstétricien"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Building2 className="h-3 w-3" />
+                                Nom de votre Cabinet
+                            </label>
+                            <input
+                                type="text"
+                                value={userDetails.clinicName}
+                                onChange={(e) => setUserDetails({ ...userDetails, clinicName: e.target.value })}
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-black text-indigo-600"
+                                placeholder="ex: Cabinet Médical Gynaeasy"
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Section 2: Identité Globale (Optionnel selon rôle, mais ici affichée) */}
+            <div className="bg-slate-50/50 rounded-3xl border border-slate-100 p-8">
+                <div className="flex items-center gap-4 mb-8">
+                    <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 border border-slate-200">
+                        <Globe className="h-5 w-5" />
+                    </div>
+                    <div>
+                        <h2 className="text-lg font-bold text-slate-800">Branding Global & Mentions</h2>
+                        <p className="text-xs text-slate-400">Paramètres partagés par l'ensemble de la plateforme.</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                 <Quote className="h-3 w-3" />
-                                Slogan ou Mention Légale
+                                Slogan / Mention Légale
                             </label>
                             <input
                                 type="text"
                                 value={settings.slogan || ""}
                                 onChange={(e) => setSettings({ ...settings, slogan: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-serif italic"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-serif italic"
                                 placeholder="ex: Votre santé, notre priorité"
                             />
                         </div>
                     </div>
 
-                    <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 border-dashed flex flex-col items-center justify-center text-center space-y-4">
-                        <div className="h-20 w-20 rounded-2xl bg-white flex items-center justify-center border border-slate-200 shadow-sm">
-                            <ImageIcon className="h-8 w-8 text-slate-300" />
+                    <div className="space-y-4">
+                         <div className="space-y-2">
+                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                <Mail className="h-3 w-3" />
+                                Email Support
+                            </label>
+                            <input
+                                type="email"
+                                value={settings.email || ""}
+                                onChange={(e) => setSettings({ ...settings, email: e.target.value })}
+                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                placeholder="contact@gynaeasy.com"
+                            />
                         </div>
-                        <div>
-                            <p className="text-xs font-bold text-slate-700">Logo du Cabinet</p>
-                            <p className="text-[10px] text-slate-400 mt-1 max-w-[150px]">Format PNG ou JPG. Recadré en carré de préférence.</p>
-                        </div>
-                        <button type="button" className="text-[10px] font-black uppercase text-indigo-600 bg-white px-4 py-2 rounded-lg border border-indigo-100 hover:bg-indigo-50 transition-all">
-                            Modifier le logo
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-8">
-                <div className="flex items-center gap-4 mb-8">
-                    <div className="h-12 w-12 rounded-2xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-100">
-                        <MapPin className="h-6 w-6" />
-                    </div>
-                    <div>
-                        <h2 className="text-xl font-black text-slate-800">Coordonnées</h2>
-                        <p className="text-sm text-slate-500 font-medium">Pour faciliter la communication avec vos patientes.</p>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2 md:col-span-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <MapPin className="h-3 w-3" />
-                            Adresse Complète
-                        </label>
-                        <input
-                            type="text"
-                            value={settings.adresse || ""}
-                            onChange={(e) => setSettings({ ...settings, adresse: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                            placeholder="ex: 12 Rue des Almadies, Dakar"
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <Phone className="h-3 w-3" />
-                            Téléphone
-                        </label>
-                        <input
-                            type="tel"
-                            value={settings.telephone || ""}
-                            onChange={(e) => setSettings({ ...settings, telephone: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                            placeholder="+221 ..."
-                        />
-                    </div>
-
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                            <Mail className="h-3 w-3" />
-                            Email de Contact
-                        </label>
-                        <input
-                            type="email"
-                            value={settings.email || ""}
-                            onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                            className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                            placeholder="contact@nomducabinet.com"
-                        />
                     </div>
                 </div>
             </div>
@@ -175,7 +200,7 @@ export default function ClinicSettingsForm({ initialSettings }: { initialSetting
                     ) : (
                         <>
                             <Save className="h-5 w-5" />
-                            Enregistrer les paramètres
+                            Enregistrer tous les paramètres
                         </>
                     )}
                 </button>
@@ -183,3 +208,6 @@ export default function ClinicSettingsForm({ initialSettings }: { initialSetting
         </form>
     );
 }
+
+// Helper icons
+import { Globe } from "lucide-react";
