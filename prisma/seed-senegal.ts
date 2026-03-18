@@ -48,6 +48,12 @@ async function main() {
             name: "Marième Fall",
             role: Role.SECRETAIRE,
             enabledModules: ["AGENDA", "PATIENTS", "FACTURATION"]
+        },
+        {
+            email: "supadmin@gynaeasy.com",
+            name: "Super Administrateur",
+            role: Role.ADMIN,
+            enabledModules: ["AGENDA", "PATIENTS", "FACTURATION", "CONSULTATION", "IMAGERIE"]
         }
     ];
 

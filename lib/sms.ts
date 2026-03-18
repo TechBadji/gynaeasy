@@ -44,19 +44,23 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Envoyer le SMS
-        // Orange support: Pas de + pour le SENDER.
+        // Orange exige la norme E.164 stricte pour tel: (ex: tel:+22177...)
         const cleanTo = to.replace(/^\+|^00/, '');
         const cleanFrom = senderNumber.replace(/^\+|^00/, '');
         
         const finalTo = `+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
         
-        // Si c'est un numéro court (ex: 326742), on ne met pas le code pays
-        const finalFrom = cleanFrom.length < 8 ? cleanFrom : (cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`);
+        // Si c'est un numéro court (ex: 3223), on ne met pas le format +221. Sinon format propre.
+        const isShortCode = cleanFrom.length < 8;
+        const finalFrom = isShortCode ? cleanFrom : `+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
 
         const formattedTo = `tel:${finalTo}`;
         const formattedFrom = `tel:${finalFrom}`;
 
-        const smsResponse = await fetch(`https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`, {
+        // L'URL d'Orange Message nécessite un URL encoding strict du + (%2B)
+        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
+
+        const smsResponse = await fetch(requestUrl, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
@@ -65,7 +69,9 @@ export async function sendSMS(to: string, message: string) {
             body: JSON.stringify({
                 outboundSMSMessageRequest: {
                     address: formattedTo, // tel:+221...
-                    senderAddress: formattedFrom, // tel:221...
+                    senderAddress: formattedFrom, // tel:+221...
+                    // Décommentez la ligne ci-dessous une fois 'Gynaeasy' validé par Orange SN
+                    // senderName: "Gynaeasy",
                     outboundSMSTextMessage: {
                         message: message
                     }
