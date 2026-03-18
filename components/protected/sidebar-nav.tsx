@@ -10,7 +10,8 @@ import {
     Activity,
     Shield,
     Package,
-    Settings
+    Settings,
+    CreditCard
 } from "lucide-react";
 
 interface SidebarNavProps {
@@ -84,6 +85,10 @@ export default function SidebarNav({ role, isImagingEnabled, isAdmin }: SidebarN
                     <Link href="/statistiques" className={linkClass("/statistiques")}>
                         <Activity className={iconClass("/statistiques", "text-slate-400")} />
                         Statistiques
+                    </Link>
+                    <Link href="/abonnement" className={linkClass("/abonnement")}>
+                        <CreditCard className={iconClass("/abonnement", "text-slate-400")} />
+                        Mon Abonnement
                     </Link>
                     <Link href="/parametres" className={linkClass("/parametres")}>
                         <Settings className={iconClass("/parametres", "text-slate-400")} />
