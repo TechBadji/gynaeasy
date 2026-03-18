@@ -99,3 +99,41 @@ export async function sendTestSMS(to: string, message: string) {
         return { success: false, message: error.message };
     }
 }
+
+/**
+ * Récupère les statistiques de consommation Orange SMS
+ */
+export async function getOrangeSMSStats() {
+    try {
+        const clientId = process.env.ORANGE_SMS_CLIENT_ID;
+        const clientSecret = process.env.ORANGE_SMS_CLIENT_SECRET;
+        if (!clientId || !clientSecret) return { success: false, error: "Clés non configurées" };
+
+        // 1. Obtenir le token (v3)
+        const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+        const tokenResponse = await fetch("https://api.orange.com/oauth/v3/token", {
+            method: "POST",
+            headers: {
+                "Authorization": `Basic ${authHeader}`,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "grant_type=client_credentials"
+        });
+
+        if (!tokenResponse.ok) throw new Error("Impossible d'obtenir le token pour les stats.");
+        const { access_token } = await tokenResponse.json();
+
+        // 2. Récupérer les stats (country=SEN pour Sénégal)
+        const statsResponse = await fetch("https://api.orange.com/sms/admin/v1/statistics?country=SEN", {
+            headers: { "Authorization": `Bearer ${access_token}` }
+        });
+
+        if (!statsResponse.ok) throw new Error("Erreur lors de la récupération des statistiques Orange.");
+        const data = await statsResponse.json();
+
+        return { success: true, data };
+    } catch (error: any) {
+        console.error("Orange Stats Error:", error);
+        return { success: false, error: error.message };
+    }
+}

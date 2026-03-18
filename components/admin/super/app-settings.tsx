@@ -1,9 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { updateAppSettings } from "@/app/actions/superadmin";
-import { sendTestSMS } from "@/app/actions/reminders";
-import { Settings, Save, Globe, Phone, Mail, MapPin, DollarSign, CheckCircle2, MessageSquare, Send, Loader2 } from "lucide-react";
+import { sendTestSMS, getOrangeSMSStats } from "@/app/actions/reminders";
+import { 
+    Settings, Save, Globe, Phone, Mail, MapPin, 
+    DollarSign, CheckCircle2, MessageSquare, Send, 
+    Loader2, BarChart3, RefreshCw, AlertCircle 
+} from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SuperAdminSettings({ settings, onlySMS = false }: { settings: any, onlySMS?: boolean }) {
@@ -17,8 +21,29 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         currency: settings?.currency || "FCFA",
     });
 
+    // SMS States
     const [testPhone, setTestPhone] = useState("");
     const [testLoading, setTestLoading] = useState(false);
+    const [stats, setStats] = useState<any>(null);
+    const [loadingStats, setLoadingStats] = useState(false);
+
+    const fetchStats = async () => {
+        setLoadingStats(true);
+        try {
+            const res = await getOrangeSMSStats();
+            if (res.success) {
+                setStats(res.data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingStats(false);
+        }
+    };
+
+    useEffect(() => {
+        if (onlySMS) fetchStats();
+    }, [onlySMS]);
 
     const handleChange = (field: string, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }));
@@ -46,6 +71,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
             const res = await sendTestSMS(testPhone, "Ceci est un test de configuration SMS Gynaeasy via l'API Orange Sénégal.");
             if (res.success) {
                 toast.success(res.message);
+                fetchStats(); // Update stats after sending
             } else {
                 toast.error(res.message);
             }
@@ -65,18 +91,35 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
     ];
 
     return (
-        <div className="space-y-6 max-w-2xl">
+        <div className="space-y-6 max-w-4xl">
             <div>
                 <h1 className="text-2xl font-bold text-white">
-                    {onlySMS ? "Gestion des SMS & Rappels" : "Paramètres Globaux"}
+                    {onlySMS ? "Consommation & Rappels SMS" : "Paramètres Globaux"}
                 </h1>
                 <p className="text-slate-400 text-sm mt-1">
-                    {onlySMS ? "Vérification et diagnostic du service d'envoi de messages" : "Configuration de la plateforme SaaS"}
+                    {onlySMS ? "Surveillez votre solde Orange et testez l'envoi." : "Configuration de la plateforme SaaS"}
                 </p>
             </div>
 
+            {onlySMS && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="bg-white/5 border border-indigo-500/20 rounded-2xl p-5">
+                        <div className="flex items-center justify-between mb-2">
+                            <BarChart3 className="h-4 w-4 text-indigo-400" />
+                            <button onClick={fetchStats} disabled={loadingStats} className="text-slate-500 hover:text-white transition-colors">
+                                <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? 'animate-spin' : ''}`} />
+                            </button>
+                        </div>
+                        <div className="text-2xl font-black text-white">
+                            {stats?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "—"}
+                        </div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Total)</div>
+                    </div>
+                </div>
+            )}
+
             {!onlySMS && (
-                <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden max-w-2xl">
                     <div className="flex items-center gap-2 p-5 border-b border-white/5">
                         <Settings className="h-4 w-4 text-violet-400" />
                         <span className="text-sm font-semibold text-white">Informations de la plateforme</span>
@@ -113,15 +156,15 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                 </div>
             )}
 
-            {/* SMS Test Card (Always shown if onlySMS is true, or shown at bottom if false) */}
-            <div className={`bg-white/5 rounded-xl border ${onlySMS ? 'border-indigo-500/30' : 'border-white/10'} overflow-hidden`}>
+            {/* SMS Test Card */}
+            <div className={`bg-white/5 rounded-xl border ${onlySMS ? 'border-indigo-500/30' : 'border-white/10'} overflow-hidden max-w-2xl`}>
                 <div className="flex items-center gap-2 p-5 border-b border-white/5 bg-indigo-500/5">
                     <MessageSquare className="h-4 w-4 text-indigo-400" />
                     <span className="text-sm font-semibold text-white">Test de l'API SMS Orange</span>
                 </div>
                 <div className="p-6">
                     <p className="text-xs text-slate-400 mb-4 italic">
-                        Utilisez ce champ pour vérifier si vos identifiants Orange API sont corrects.
+                        Vérifiez la configuration réelle en envoyant un message de test.
                     </p>
                     <div className="flex gap-2">
                         <div className="relative flex-1">
@@ -131,7 +174,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                                 value={testPhone}
                                 onChange={(e) => setTestPhone(e.target.value)}
                                 placeholder="+22177..."
-                                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all"
+                                className="w-full bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500/50 transition-all font-mono"
                             />
                         </div>
                         <button
@@ -146,33 +189,31 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                 </div>
             </div>
 
+            {onlySMS && stats && !stats.partnerStatistics?.statistics?.[0] && (
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-3 max-w-2xl">
+                    <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
+                    <p className="text-xs text-amber-200/80">
+                        Aucune statistique disponible pour le Sénégal. Assurez-vous d'avoir envoyé au moins un SMS et que vos crédits sont actifs.
+                    </p>
+                </div>
+            )}
+
             {!onlySMS && (
-                <div className="bg-red-500/5 rounded-xl border border-red-500/20 overflow-hidden">
+                <div className="bg-red-500/5 rounded-xl border border-red-500/20 overflow-hidden max-w-2xl">
                     <div className="flex items-center gap-2 p-5 border-b border-red-500/10">
                         <span className="text-sm font-semibold text-red-400">Zone de danger</span>
                     </div>
                     <div className="p-6 space-y-4">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between font-medium">
                             <div>
-                                <p className="text-sm font-medium text-white">Mode maintenance</p>
-                                <p className="text-xs text-slate-400 mt-0.5">Rend l'application inaccessible aux utilisateurs non-admin</p>
+                                <p className="text-sm text-white">Mode maintenance</p>
+                                <p className="text-xs text-slate-400 mt-0.5">Rend l'application inaccessible</p>
                             </div>
                             <button className="text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors">Activer</button>
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm font-medium text-white">Réinitialiser le catalogue CCAM</p>
-                                <p className="text-xs text-slate-400 mt-0.5">Réactive tous les actes désactivés</p>
-                            </div>
-                            <button className="text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors">Réinitialiser</button>
                         </div>
                     </div>
                 </div>
             )}
-
-            <div className="text-xs text-slate-600 space-y-1">
-                <p>Dernière modification : {settings?.updatedAt ? new Date(settings.updatedAt).toLocaleString("fr-FR") : "—"}</p>
-            </div>
         </div>
     );
 }
