@@ -1,15 +1,16 @@
 export const SUBSCRIPTION_PLANS = [
   {
     id: "solo",
-    name: "PACK SOLO",
+    name: "SOLO / DÉMARRAGE",
     price: 25000,
     currency: "FCFA",
     period: "mois",
-    description: "L'essentiel pour un médecin exerçant seul en cabinet.",
+    description: "Cible : Le médecin qui consulte seul (souvent dans un cabinet partagé).",
     features: [
-      { text: "Agenda complet & Dossier Patient HDS", included: true },
-      { text: "100 SMS de rappel inclus / mois", included: true },
-      { text: "Ordonnances & Certificats numériques", included: true },
+      { text: "Agenda & Dossier Patient HDS", included: true },
+      { text: "SMS Rappels : Pack de 100 SMS inclus", included: true },
+      { text: "Ordonnances numériques & Certificats", included: true },
+      { text: "Accès mobile (PWA)", included: true },
       { text: "Accès Secrétariat", included: false },
       { text: "Gestion de caisse (Wave/Orange Money)", included: false },
     ],

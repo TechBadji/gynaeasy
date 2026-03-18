@@ -5,11 +5,12 @@ import { SUBSCRIPTION_PLANS } from "@/config/plans";
  */
 
 export type FeatureKey = 
-  | "Agenda complet & Dossier Patient HDS"
-  | "100 SMS de rappel inclus / mois"
+  | "Agenda & Dossier Patient HDS"
+  | "SMS Rappels : Pack de 100 SMS inclus"
   | "300 SMS de rappel inclus / mois"
   | "1000 SMS de rappel inclus / mois"
-  | "Ordonnances & Certificats numériques"
+  | "Ordonnances numériques & Certificats"
+  | "Accès mobile (PWA)"
   | "Accès Secrétariat"
   | "Accès Secrétariat dédié"
   | "Gestion de caisse (Wave/Orange Money)"
