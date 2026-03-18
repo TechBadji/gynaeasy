@@ -31,7 +31,9 @@ export async function sendSMS(to: string, message: string) {
         });
 
         if (!tokenResponse.ok) {
-            throw new Error("Erreur lors de la récupération du token Orange");
+            const errBody = await tokenResponse.text();
+            console.error("Orange Token Error Detail:", errBody);
+            throw new Error(`Token Orange Refusé: ${tokenResponse.status} ${tokenResponse.statusText}`);
         }
 
         const tokenData = await tokenResponse.json();
