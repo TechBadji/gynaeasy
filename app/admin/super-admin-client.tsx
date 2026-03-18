@@ -26,6 +26,7 @@ const NAV_ITEMS = [
     { id: "promotions", label: "Promotions", icon: Shield },
     { id: "ccam", label: "Catalogue CCAM", icon: ClipboardList },
     { id: "settings", label: "Paramètres App", icon: Settings },
+    { id: "sms", label: "SMS & Rappels", icon: Bell },
     { id: "audit", label: "Audit Log", icon: Shield },
 ];
 
@@ -166,6 +167,7 @@ export default function SuperAdminClient({
                     {activeTab === "promotions" && <SuperAdminPromotions promotions={promotions} />}
                     {activeTab === "ccam" && <SuperAdminCCAM actes={actes} searchQuery={searchQuery} />}
                     {activeTab === "settings" && <SuperAdminSettings settings={settings} />}
+                    {activeTab === "sms" && <SuperAdminSettings settings={settings} onlySMS={true} />}
                     {activeTab === "audit" && <SuperAdminAudit logs={auditLogs} />}
                 </main>
             </div>
