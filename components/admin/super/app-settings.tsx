@@ -68,7 +68,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         
         setTestLoading(true);
         try {
-            const res = await sendTestSMS(testPhone, "Ceci est un test de configuration SMS Gynaeasy via l'API Orange Sénégal.");
+            const res = await sendTestSMS(testPhone, "Bonjour, rappel de votre rendez-vous Gynaeasy.");
             if (res.success) {
                 toast.success(res.message);
                 fetchStats(); // Update stats after sending
