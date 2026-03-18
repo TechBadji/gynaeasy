@@ -12,6 +12,8 @@ import {
     HeartPulse
 } from 'lucide-react';
 import Image from 'next/image';
+import { SUBSCRIPTION_PLANS } from '@/config/plans';
+import { formatFCFA } from '@/lib/subscriptions';
 
 export default function Home() {
     return (
@@ -28,6 +30,7 @@ export default function Home() {
 
                     <div className="hidden md:flex items-center gap-8">
                         <a href="#features" className="text-sm font-semibold text-slate-500 hover:text-violet-600 transition-colors">Fonctionnalités</a>
+                        <a href="#pricing" className="text-sm font-semibold text-slate-500 hover:text-violet-600 transition-colors">Tarifs</a>
                         <a href="#specialists" className="text-sm font-semibold text-slate-500 hover:text-violet-600 transition-colors">Spécialistes</a>
                         <Link href="/auth/login" className="text-sm font-semibold text-slate-900 hover:text-violet-600 transition-colors">Connexion</Link>
                         <Link
@@ -173,6 +176,63 @@ export default function Home() {
                                 </div>
                                 <h3 className="text-xl font-bold mb-3 text-slate-900">{f.title}</h3>
                                 <p className="text-slate-500 leading-relaxed text-sm">{f.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* --- PRICING SECTION --- */}
+            <section id="pricing" className="py-24 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100 text-emerald-600 text-[10px] font-black tracking-widest uppercase">
+                            Tarification
+                        </div>
+                        <h2 className="text-4xl font-black tracking-tight text-slate-900">Une offre adaptée à chaque structure.</h2>
+                        <p className="text-lg text-slate-500">
+                            Digitalisez votre cabinet sans compromis. Des tarifs clairs, sans frais d'installation.
+                        </p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {SUBSCRIPTION_PLANS.map((plan) => (
+                            <div key={plan.id} className={`relative flex flex-col p-8 bg-white rounded-[2.5rem] border ${plan.isPopular ? 'border-violet-200 shadow-2xl scale-105 z-10' : 'border-slate-100 shadow-sm'} transition-all hover:shadow-xl`}>
+                                {plan.isPopular && (
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-violet-600 to-pink-500 text-white text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full shadow-lg">
+                                        Le plus populaire
+                                    </div>
+                                )}
+                                <div className="mb-6">
+                                    <h3 className="text-xl font-bold text-slate-900">{plan.name}</h3>
+                                    <p className="text-sm text-slate-500 mt-2 min-h-[40px] leading-relaxed">{plan.description}</p>
+                                </div>
+                                <div className="mb-8 p-6 bg-slate-50 rounded-3xl">
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-4xl font-black text-slate-900">{formatFCFA(plan.price)}</span>
+                                        <span className="text-slate-400 text-sm font-medium">/{plan.period}</span>
+                                    </div>
+                                </div>
+                                <ul className="space-y-4 mb-10 flex-1">
+                                    {plan.features.map((feature, idx) => (
+                                        <li key={idx} className={`flex items-start gap-3 text-sm ${feature.included ? 'text-slate-600' : 'text-slate-400/60'}`}>
+                                            <div className={`mt-0.5 h-5 w-5 shrink-0 rounded-full flex items-center justify-center ${feature.included ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-300'}`}>
+                                                <CheckCircle2 className="h-3.5 w-3.5" />
+                                            </div>
+                                            <span className={feature.included ? 'font-medium' : 'line-through decoration-slate-300'}>{feature.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <Link
+                                    href="/onboarding"
+                                    className={`w-full py-5 rounded-2xl font-black text-sm transition-all text-center active:scale-95 ${
+                                        plan.isPopular 
+                                        ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10' 
+                                        : 'bg-white border-2 border-slate-100 text-slate-900 hover:border-violet-100 hover:bg-violet-50/30'
+                                    }`}
+                                >
+                                    {plan.cta}
+                                </Link>
                             </div>
                         ))}
                     </div>
