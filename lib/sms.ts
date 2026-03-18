@@ -32,8 +32,12 @@ export async function sendSMS(to: string, message: string) {
 
         if (!tokenResponse.ok) {
             const errBody = await tokenResponse.text();
-            console.error("Orange Token Error Detail:", errBody);
-            throw new Error(`Token Orange Refusé: ${tokenResponse.status} ${tokenResponse.statusText}`);
+            console.error("DEBUG ORANGE AUTH:", {
+                status: tokenResponse.status,
+                body: errBody,
+                clientIdPrefix: clientId.substring(0, 5) + "..." 
+            });
+            throw new Error(`Orange Auth Failed (${tokenResponse.status}): ${errBody || tokenResponse.statusText}`);
         }
 
         const tokenData = await tokenResponse.json();
