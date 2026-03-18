@@ -44,12 +44,14 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Envoyer le SMS
-        // Orange support: Pas de + pour le SENDER, mais le + est souvent requis pour le RECIPIENT
+        // Orange support: Pas de + pour le SENDER.
         const cleanTo = to.replace(/^\+|^00/, '');
         const cleanFrom = senderNumber.replace(/^\+|^00/, '');
         
         const finalTo = `+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
-        const finalFrom = cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`;
+        
+        // Si c'est un numéro court (ex: 326742), on ne met pas le code pays
+        const finalFrom = cleanFrom.length < 8 ? cleanFrom : (cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`);
 
         const formattedTo = `tel:${finalTo}`;
         const formattedFrom = `tel:${finalFrom}`;
@@ -62,8 +64,8 @@ export async function sendSMS(to: string, message: string) {
             },
             body: JSON.stringify({
                 outboundSMSMessageRequest: {
-                    address: formattedTo,
-                    senderAddress: cleanFrom, // Sans le préfixe "tel:" selon certaines docs locales
+                    address: formattedTo, // tel:+221...
+                    senderAddress: formattedFrom, // tel:221...
                     outboundSMSTextMessage: {
                         message: message
                     }
