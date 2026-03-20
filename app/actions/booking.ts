@@ -17,6 +17,21 @@ export async function validatePatientPhone(phone: string) {
     return patient;
 }
 
+export async function validatePatientCode(code: string) {
+    const patient = await prisma.patient.findFirst({
+        where: { codePatient: code },
+        select: {
+            id: true,
+            nom: true,
+            prenom: true,
+            email: true,
+            telephone: true,
+            codePatient: true,
+        }
+    });
+    return patient;
+}
+
 export async function createOnlineAppointment(patientId: string, doctorId: string, dateHeure: string, type: string) {
     try {
         const appointment = await prisma.consultation.create({
