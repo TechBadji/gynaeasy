@@ -138,16 +138,33 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                     ) : (
                         <>
                             <div className="text-2xl font-black text-indigo-400">
-                                {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits 
-                                 ?? stats?.contracts?.contracts?.[0]?.availableUnits 
-                                 ?? "0"}
+                                {(() => {
+                                    const contracts = stats?.contracts?.partnerContracts?.contracts 
+                                                   || stats?.contracts?.contracts 
+                                                   || [];
+                                    const total = Array.isArray(contracts) 
+                                        ? contracts.reduce((acc: number, c: any) => acc + (c.availableUnits || 0), 0)
+                                        : (contracts.availableUnits || 0);
+                                    return total;
+                                })()}
                             </div>
                             <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
-                            {(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires || stats?.contracts?.contracts?.[0]?.expires) && (
-                                <div className="text-[9px] text-slate-600 mt-1 italic">
-                                    Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires || stats?.contracts?.contracts?.[0]?.expires).toLocaleDateString()}
-                                </div>
-                            )}
+                            {(() => {
+                                const contracts = stats?.contracts?.partnerContracts?.contracts 
+                                               || stats?.contracts?.contracts 
+                                               || [];
+                                const firstWithExpiry = Array.isArray(contracts) 
+                                    ? contracts.find((c: any) => c.expires) 
+                                    : (contracts.expires ? contracts : null);
+                                if (firstWithExpiry?.expires) {
+                                    return (
+                                        <div className="text-[9px] text-slate-600 mt-1 italic">
+                                            Expire le : {new Date(firstWithExpiry.expires).toLocaleDateString()}
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })()}
                         </>
                     )}
                 </div>

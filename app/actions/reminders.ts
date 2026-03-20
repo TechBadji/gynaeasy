@@ -129,12 +129,16 @@ export async function getOrangeSMSStats() {
         });
         const statsData = statsResponse.ok ? await statsResponse.json() : null;
 
-        // 3. Récupérer le solde (contracts)
-        const contractsResponse = await fetch("https://api.orange.com/sms/admin/v1/contracts?country=SEN", {
+        // 3. Récupérer le solde (contracts) sans filtre de pays pour être plus large
+        const contractsResponse = await fetch("https://api.orange.com/sms/admin/v1/contracts", {
             headers: { "Authorization": `Bearer ${access_token}` }
         });
         const contractsData = contractsResponse.ok ? await contractsResponse.json() : null;
-        if (contractsData) console.log("Orange Contracts Raw Response:", JSON.stringify(contractsData));
+        
+        // Log pour debug structure (visible dans Vercel logs)
+        if (contractsData) {
+            console.log("Orange Contracts Raw Response:", JSON.stringify(contractsData));
+        }
 
         return { 
             success: true, 
