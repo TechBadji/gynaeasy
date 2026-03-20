@@ -54,16 +54,12 @@ export async function sendSMS(to: string, message: string) {
         const formattedTo = `tel:+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
         const formattedFrom = isShortCode ? `tel:${cleanFrom}` : `tel:+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
         
-        // Pour l'URL, certaines doc Orange indiquent de ne pas mettre le +
-        const urlFrom = isShortCode ? cleanFrom : (cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`);
-        const formattedUrlFrom = `tel:${urlFrom}`;
-
-        // URL Orange Message : l'expéditeur doit être encodé (tel%3A221...)
-        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedUrlFrom)}/requests`;
+        // URL Orange Message : l'expéditeur doit être encodé (tel%3A%2B221...)
+        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
 
         const body: any = {
             outboundSMSMessageRequest: {
-                address: formattedTo,
+                address: [formattedTo], // Utilisation d'un tableau car requis par certaines versions SN
                 senderAddress: formattedFrom,
                 outboundSMSTextMessage: { message }
             }
