@@ -5,7 +5,7 @@ import { signOut } from "next-auth/react";
 import {
     LayoutDashboard, Users, CreditCard, ClipboardList,
     Settings, Shield, Activity, LogOut, ChevronRight,
-    Search
+    Search, BookOpen
 } from "lucide-react";
 import SuperAdminOverview from "@/components/admin/super/overview";
 import SuperAdminUsers from "@/components/admin/super/users-management";
@@ -17,6 +17,7 @@ import SuperAdminPricing from "@/components/admin/super/pricing-management";
 import SuperAdminPromotions from "@/components/admin/super/promotions-management";
 import SuperAdminAdvertisements from "@/components/admin/super/advertisements-management";
 import SuperAdminApprovals from "@/components/admin/super/approvals";
+import SuperAdminDocu from "@/components/admin/super/documentation";
 import NotificationBell from "@/components/notifications/notification-bell";
 
 const NAV_ITEMS = [
@@ -30,6 +31,7 @@ const NAV_ITEMS = [
     { id: "ccam", label: "Catalogue CCAM", icon: ClipboardList },
     { id: "settings", label: "Paramètres App", icon: Settings },
     { id: "audit", label: "Audit Log", icon: Shield },
+    { id: "documentation", label: "Documentation", icon: BookOpen },
 ];
 
 interface SuperAdminClientProps {
@@ -170,6 +172,7 @@ export default function SuperAdminClient({
                     {activeTab === "ccam" && <SuperAdminCCAM actes={actes} searchQuery={searchQuery} />}
                     {activeTab === "settings" && <SuperAdminSettings settings={settings} />}
                     {activeTab === "audit" && <SuperAdminAudit logs={auditLogs} />}
+                    {activeTab === "documentation" && <SuperAdminDocu />}
                 </main>
             </div>
         </div>
