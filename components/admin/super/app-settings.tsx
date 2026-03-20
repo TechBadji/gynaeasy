@@ -197,9 +197,15 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
 
             {/* SMS Test Card */}
             <div className={`bg-white/5 rounded-xl border ${onlySMS ? 'border-indigo-500/30' : 'border-white/10'} overflow-hidden max-w-2xl mt-6`}>
-                <div className="flex items-center gap-2 p-5 border-b border-white/5 bg-indigo-500/5">
-                    <MessageSquare className="h-4 w-4 text-indigo-400" />
-                    <span className="text-sm font-semibold text-white">Test de l'API SMS Orange</span>
+                <div className="flex items-center justify-between p-5 border-b border-white/5 bg-indigo-500/5">
+                    <div className="flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4 text-indigo-400" />
+                        <span className="text-sm font-semibold text-white">Test de l'API SMS Orange</span>
+                    </div>
+                    {/* Badge Mode */}
+                    <div className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${stats ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-500 border border-amber-500/30'}`}>
+                        {stats ? "Mode Réel" : "Mode Simulation"}
+                    </div>
                 </div>
                 <div className="p-6">
                     <p className="text-xs text-slate-400 mb-4 italic">

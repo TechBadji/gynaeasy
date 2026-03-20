@@ -6,10 +6,12 @@ export async function sendSMS(to: string, message: string) {
     const clientId = process.env.ORANGE_SMS_CLIENT_ID;
     const clientSecret = process.env.ORANGE_SMS_CLIENT_SECRET;
     const senderNumber = process.env.ORANGE_SMS_SENDER_NUMBER; // Format: +221XXXXXXXXX
+    const senderName = process.env.ORANGE_SMS_SENDER_NAME; // Optionnel
     
     // Mode Simulation par défaut si pas de clés
     if (!clientId || !clientSecret || !senderNumber) {
-        console.log(`[SIMULATION SMS ORANGE] Vers: ${to} | Message: ${message}`);
+        console.warn("⚠️ SMS ORANGE : Clés manquantes. Passage en MODE SIMULATION.");
+        console.log(`[SIMULATION SMS] Vers: ${to} | Message: ${message}`);
         await new Promise(resolve => setTimeout(resolve, 800));
         return { 
             success: true, 
@@ -19,6 +21,8 @@ export async function sendSMS(to: string, message: string) {
     }
 
     try {
+        console.log(`🚀 Tentative d'envoi SMS Réel (Orange SN) vers ${to}...`);
+
         // 1. Obtenir le token d'accès
         const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
         const tokenResponse = await fetch("https://api.orange.com/oauth/v3/token", {
@@ -32,33 +36,43 @@ export async function sendSMS(to: string, message: string) {
 
         if (!tokenResponse.ok) {
             const errBody = await tokenResponse.text();
-            console.error("DEBUG ORANGE AUTH:", {
-                status: tokenResponse.status,
-                body: errBody,
-                clientIdPrefix: clientId.substring(0, 5) + "..." 
-            });
-            throw new Error(`Orange Auth Failed (${tokenResponse.status}): ${errBody || tokenResponse.statusText}`);
+            console.error("❌ Erreur Auth Orange SMS:", { status: tokenResponse.status, body: errBody });
+            throw new Error(`Échec Authentification Orange (${tokenResponse.status})`);
         }
 
         const tokenData = await tokenResponse.json();
         const accessToken = tokenData.access_token;
 
-        // 2. Envoyer le SMS
-        // Orange exige la norme E.164 stricte pour tel: (ex: tel:+22177...)
+        // 2. Préparer les numéros (Norme E.164 tel:+221...)
         const cleanTo = to.replace(/^\+|^00/, '');
         const cleanFrom = senderNumber.replace(/^\+|^00/, '');
         
         const finalTo = `+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
-        
-        // Si c'est un numéro court (ex: 3223), on ne met pas le format +221. Sinon format propre.
         const isShortCode = cleanFrom.length < 8;
         const finalFrom = isShortCode ? cleanFrom : `+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
 
-        const formattedTo = `tel:${finalTo}`;
-        const formattedFrom = `tel:${finalFrom}`;
+        const formattedTo = `tel:+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
+        const formattedFrom = isShortCode ? `tel:${cleanFrom}` : `tel:+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
+        
+        // Pour l'URL, certaines doc Orange indiquent de ne pas mettre le +
+        const urlFrom = isShortCode ? cleanFrom : (cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`);
+        const formattedUrlFrom = `tel:${urlFrom}`;
 
-        // L'URL d'Orange Message nécessite un URL encoding strict du + (%2B)
-        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
+        // URL Orange Message : l'expéditeur doit être encodé (tel%3A221...)
+        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedUrlFrom)}/requests`;
+
+        const body: any = {
+            outboundSMSMessageRequest: {
+                address: formattedTo,
+                senderAddress: formattedFrom,
+                outboundSMSTextMessage: { message }
+            }
+        };
+
+        // Si un nom d'expéditeur est configuré et validé par Orange
+        if (senderName) {
+            body.outboundSMSMessageRequest.senderName = senderName;
+        }
 
         const smsResponse = await fetch(requestUrl, {
             method: "POST",
@@ -66,34 +80,29 @@ export async function sendSMS(to: string, message: string) {
                 "Authorization": `Bearer ${accessToken}`,
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({
-                outboundSMSMessageRequest: {
-                    address: formattedTo, // tel:+221...
-                    senderAddress: formattedFrom, // tel:+221...
-                    // Décommentez la ligne ci-dessous une fois 'Gynaeasy' validé par Orange SN
-                    // senderName: "Gynaeasy",
-                    outboundSMSTextMessage: {
-                        message: message
-                    }
-                }
-            })
+            body: JSON.stringify(body)
         });
 
         if (!smsResponse.ok) {
-            const errorData = await smsResponse.json();
-            throw new Error(errorData.requestError?.serviceException?.variables?.[0] || "Erreur lors de l'envoi du SMS Orange");
+            const errorBody = await smsResponse.text();
+            let errorMessage = "Erreur API Orange";
+            try {
+                const errorJson = JSON.parse(errorBody);
+                errorMessage = errorJson.requestError?.serviceException?.variables?.[0] 
+                            || errorJson.requestError?.policyException?.variables?.[0]
+                            || `Erreur ${smsResponse.status}`;
+            } catch {
+                errorMessage = `Erreur HTTP ${smsResponse.status}`;
+            }
+            console.error("❌ Échec envoi SMS Orange:", errorBody);
+            throw new Error(errorMessage);
         }
 
         const smsData = await smsResponse.json();
-        console.log("Orange SMS Request Successful:", {
-            to: formattedTo,
-            from: formattedFrom,
-            messageId: smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL?.split('/').pop()
-        });
-        console.log("Full Orange SMS Response:", JSON.stringify(smsData, null, 2));
-
         const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
         const messageId = resourceUrl.split('/').pop() || "sent";
+
+        console.log(`✅ SMS envoyé avec succès ! ID: ${messageId}`);
 
         return { 
             success: true, 
@@ -101,7 +110,7 @@ export async function sendSMS(to: string, message: string) {
             simulated: false 
         };
     } catch (error: any) {
-        console.error("Orange SMS Error:", error);
+        console.error("🚨 Erreur Service SMS:", error.message);
         return { success: false, error: error.message, messageId: null, simulated: false };
     }
 }
