@@ -209,6 +209,7 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
                             <tr className="border-b border-white/5">
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Client / Clinique</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plan</th>
+                                <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Date Début</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Réduction</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Prix Final</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Statut</th>
@@ -228,6 +229,14 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
                                         <div className="flex items-center gap-2">
                                             <Shield className="h-3 w-3 text-violet-400" />
                                             <span className="text-xs font-medium text-slate-300">{ab.plan}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-1.5">
+                                            <Clock className="h-3 w-3 text-slate-500" />
+                                            <span className="text-xs text-slate-300">
+                                                {ab.dateDebut ? new Date(ab.dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : "—"}
+                                            </span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -273,7 +282,7 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
                                 </tr>
                             )) : (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500 italic">
+                                    <td colSpan={7} className="px-6 py-12 text-center text-slate-500 italic">
                                         Aucun abonnement enregistré
                                     </td>
                                 </tr>
