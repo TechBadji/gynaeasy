@@ -81,3 +81,17 @@ export async function updatePassword(data: {
         return { success: false, error: error.message };
     }
 }
+
+export async function updateUserAvatar(userId: string, imageData: string) {
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { image: imageData }
+        });
+        revalidatePath("/", "layout");
+        return { success: true };
+    } catch (error) {
+        console.error("Avatar Update Error:", error);
+        return { success: false, error: "Erreur lors de la mise à jour de l'avatar." };
+    }
+}

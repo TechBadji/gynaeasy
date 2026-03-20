@@ -1,9 +1,115 @@
 {
   "node": {
+    "6009c91b219ede87cb18e26328b0a8d49cc3628da1": {
+      "workers": {
+        "app/(protected)/abonnement/page": {
+          "moduleId": 837570,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/agenda/page": {
+          "moduleId": 119053,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/aide/page": {
+          "moduleId": 756034,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/change-password/page": {
+          "moduleId": 650629,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/confidentialite/page": {
+          "moduleId": 90065,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/contact/page": {
+          "moduleId": 118586,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/dashboard/page": {
+          "moduleId": 414908,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/facturation/page": {
+          "moduleId": 284127,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/imagerie/page": {
+          "moduleId": 792443,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/inventaire/page": {
+          "moduleId": 397371,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/parametres/page": {
+          "moduleId": 124062,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/patients/[id]/page": {
+          "moduleId": 949566,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/patients/page": {
+          "moduleId": 823750,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/statistiques/page": {
+          "moduleId": 897782,
+          "async": false,
+          "exportedName": "updateUserAvatar",
+          "filename": "app/actions/user.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/abonnement/page": "action-browser",
+        "app/(protected)/agenda/page": "action-browser",
+        "app/(protected)/aide/page": "action-browser",
+        "app/(protected)/change-password/page": "action-browser",
+        "app/(protected)/confidentialite/page": "action-browser",
+        "app/(protected)/contact/page": "action-browser",
+        "app/(protected)/dashboard/page": "action-browser",
+        "app/(protected)/facturation/page": "action-browser",
+        "app/(protected)/imagerie/page": "action-browser",
+        "app/(protected)/inventaire/page": "action-browser",
+        "app/(protected)/parametres/page": "action-browser",
+        "app/(protected)/patients/[id]/page": "action-browser",
+        "app/(protected)/patients/page": "action-browser",
+        "app/(protected)/statistiques/page": "action-browser"
+      },
+      "filename": "app/actions/user.ts",
+      "exportedName": "updateUserAvatar"
+    },
     "003ba49224313be683c44e5e2af1fee0348964080f": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 765603,
+          "moduleId": 837570,
           "async": false,
           "exportedName": "getUserSubscription",
           "filename": "app/actions/subscription.ts"
@@ -18,7 +124,7 @@
     "00bbd608d81533d21422e7997bc0352d5fe54ee03c": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 765603,
+          "moduleId": 837570,
           "async": false,
           "exportedName": "getActiveAdvertisements",
           "filename": "app/actions/subscription.ts"
@@ -33,7 +139,7 @@
     "00db92cd7cef5ef0125cd095cf04d0ce54914752b2": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 765603,
+          "moduleId": 837570,
           "async": false,
           "exportedName": "syncSubscriptionPlans",
           "filename": "app/actions/subscription.ts"
@@ -48,7 +154,7 @@
     "00f52e01bac84fe5ebdd868c7db2b981ebce291274": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 765603,
+          "moduleId": 837570,
           "async": false,
           "exportedName": "createDemoInvoice",
           "filename": "app/actions/subscription.ts"
@@ -63,7 +169,7 @@
     "40b48e9ebf1d91e3aa4753af1ee75e0c3c7a3a7428": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 765603,
+          "moduleId": 837570,
           "async": false,
           "exportedName": "requestPlanUpgrade",
           "filename": "app/actions/subscription.ts"
@@ -78,7 +184,7 @@
     "40816899b6cab7075d5e1b8729d0b8b547aea2df1a": {
       "workers": {
         "app/(protected)/agenda/page": {
-          "moduleId": 176143,
+          "moduleId": 119053,
           "async": false,
           "exportedName": "createRdv",
           "filename": "app/actions/rdv.ts"
@@ -93,7 +199,7 @@
     "4030a0f8680391a148f28dfe81a7e4264cb6d9f9c1": {
       "workers": {
         "app/(protected)/agenda/page": {
-          "moduleId": 176143,
+          "moduleId": 119053,
           "async": false,
           "exportedName": "cancelRdv",
           "filename": "app/actions/rdv.ts"
@@ -114,7 +220,7 @@
           "filename": "app/actions/user.ts"
         },
         "app/(protected)/parametres/page": {
-          "moduleId": 568530,
+          "moduleId": 124062,
           "async": false,
           "exportedName": "updatePassword",
           "filename": "app/actions/user.ts"
@@ -130,7 +236,7 @@
     "6051da566a5e4f43ff0ff2332fed38b00ecc5d2694": {
       "workers": {
         "app/(protected)/dashboard/page": {
-          "moduleId": 71165,
+          "moduleId": 414908,
           "async": false,
           "exportedName": "handleAccessRequest",
           "filename": "app/actions/patient.ts"
@@ -145,7 +251,7 @@
     "406dd4e95f0175e28d8bb56283f6387b285af22b97": {
       "workers": {
         "app/(protected)/dashboard/page": {
-          "moduleId": 71165,
+          "moduleId": 414908,
           "async": false,
           "exportedName": "searchPatients",
           "filename": "app/actions/patient.ts"
@@ -160,7 +266,7 @@
     "40ca4973f0bedb6b77adca9bf7c297f4ff45d74df9": {
       "workers": {
         "app/(protected)/dashboard/page": {
-          "moduleId": 71165,
+          "moduleId": 414908,
           "async": false,
           "exportedName": "getRemindersCount",
           "filename": "app/actions/reminders.ts"
@@ -175,7 +281,7 @@
     "402a93445e95953d6c0f5d82983241c4441f9c1d7a": {
       "workers": {
         "app/(protected)/dashboard/page": {
-          "moduleId": 71165,
+          "moduleId": 414908,
           "async": false,
           "exportedName": "sendDailyReminders",
           "filename": "app/actions/reminders.ts"
@@ -190,7 +296,7 @@
     "404e879daad318e36f0f44200ea534c8edcdb5092e": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 124760,
+          "moduleId": 284127,
           "async": false,
           "exportedName": "createReglement",
           "filename": "app/actions/billing.ts"
@@ -205,19 +311,19 @@
     "002d402b88654d5bb1581350a030087b1bb8cae0f1": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 124760,
+          "moduleId": 284127,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/imagerie/page": {
-          "moduleId": 510153,
+          "moduleId": 792443,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/parametres/page": {
-          "moduleId": 568530,
+          "moduleId": 124062,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
@@ -234,19 +340,19 @@
     "40179a2160723cf1bd1c7344bc012cb88ccdc76647": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 124760,
+          "moduleId": 284127,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/imagerie/page": {
-          "moduleId": 510153,
+          "moduleId": 792443,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/parametres/page": {
-          "moduleId": 568530,
+          "moduleId": 124062,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
@@ -263,7 +369,7 @@
     "7086b314137d0926488a8e65405a53a320c6ffdd7b": {
       "workers": {
         "app/(protected)/imagerie/page": {
-          "moduleId": 510153,
+          "moduleId": 792443,
           "async": false,
           "exportedName": "saveImagingReport",
           "filename": "app/actions/imaging.ts"
@@ -278,7 +384,7 @@
     "60eb7b032a6ca7bbc6e290cc28a56f0606120dc580": {
       "workers": {
         "app/(protected)/imagerie/page": {
-          "moduleId": 510153,
+          "moduleId": 792443,
           "async": false,
           "exportedName": "consumeStockItem",
           "filename": "app/actions/stock.ts"
@@ -293,7 +399,7 @@
     "60c4801cad552e73adc30f2fa7391c8cf0c761eb0b": {
       "workers": {
         "app/(protected)/inventaire/page": {
-          "moduleId": 722849,
+          "moduleId": 397371,
           "async": false,
           "exportedName": "updateStockItem",
           "filename": "app/actions/stock.ts"
@@ -308,7 +414,7 @@
     "407da1a02bae9df1196c12f8eef0135c06e3a5eefc": {
       "workers": {
         "app/(protected)/inventaire/page": {
-          "moduleId": 722849,
+          "moduleId": 397371,
           "async": false,
           "exportedName": "deleteStockItem",
           "filename": "app/actions/stock.ts"
@@ -323,7 +429,7 @@
     "404cd4f9dd665b47c24a0335e276e10f1bfb657ed1": {
       "workers": {
         "app/(protected)/parametres/page": {
-          "moduleId": 568530,
+          "moduleId": 124062,
           "async": false,
           "exportedName": "updateUserDetails",
           "filename": "app/actions/user.ts"
@@ -338,7 +444,7 @@
     "4016b6d3da919f13ad8c6634ef2e4965b89c164bc0": {
       "workers": {
         "app/(protected)/patients/page": {
-          "moduleId": 655694,
+          "moduleId": 823750,
           "async": false,
           "exportedName": "createPatient",
           "filename": "app/actions/patient.ts"
@@ -353,7 +459,7 @@
     "605d4054fb706a390308610691d708c3c8de946869": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 925420,
+          "moduleId": 949566,
           "async": false,
           "exportedName": "declareGrossesse",
           "filename": "app/actions/patient.ts"
@@ -368,7 +474,7 @@
     "60b3f13d2345b395b6f580c4384af77bdff7eae037": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 925420,
+          "moduleId": 949566,
           "async": false,
           "exportedName": "updateConsultationMedicalData",
           "filename": "app/actions/consultation.ts"
@@ -383,7 +489,7 @@
     "402b86ccddd52ce701205a1e3a9cff03e1fd294b21": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 925420,
+          "moduleId": 949566,
           "async": false,
           "exportedName": "createEmptyConsultation",
           "filename": "app/actions/consultation.ts"
@@ -398,7 +504,7 @@
     "40b5de53dba0c86d00860b958bc27c2b7cddd5a00c": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 925420,
+          "moduleId": 949566,
           "async": false,
           "exportedName": "requestAccess",
           "filename": "app/actions/patient.ts"
