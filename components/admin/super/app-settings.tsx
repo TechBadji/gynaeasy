@@ -102,6 +102,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                 </p>
             </div>
 
+            {/* Stats SMS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {/* Consommation */}
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
@@ -111,9 +112,13 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                             <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? 'animate-spin' : ''}`} />
                         </button>
                     </div>
-                    <div className="text-2xl font-black text-white">
-                        {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
-                    </div>
+                    {stats?.success === false ? (
+                        <div className="text-xs text-red-400 font-medium">Erreur de chargement</div>
+                    ) : (
+                        <div className="text-2xl font-black text-white">
+                            {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
+                        </div>
+                    )}
                     <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Usage)</div>
                 </div>
 
@@ -127,14 +132,23 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                             <MessageSquare className="h-4 w-4 text-indigo-400" />
                         </div>
                     </div>
-                    <div className="text-2xl font-black text-indigo-400">
-                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits ?? "0"}
-                    </div>
-                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
-                    {stats?.contracts?.partnerContracts?.contracts?.[0]?.expires && (
-                        <div className="text-[9px] text-slate-600 mt-1 italic">
-                            Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires).toLocaleDateString()}
-                        </div>
+                    
+                    {stats?.success === false ? (
+                        <div className="text-xs text-red-400 font-medium">Clés ou API invalides</div>
+                    ) : (
+                        <>
+                            <div className="text-2xl font-black text-indigo-400">
+                                {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits 
+                                 ?? stats?.contracts?.contracts?.[0]?.availableUnits 
+                                 ?? "0"}
+                            </div>
+                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
+                            {(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires || stats?.contracts?.contracts?.[0]?.expires) && (
+                                <div className="text-[9px] text-slate-600 mt-1 italic">
+                                    Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires || stats?.contracts?.contracts?.[0]?.expires).toLocaleDateString()}
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

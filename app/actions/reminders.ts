@@ -134,6 +134,7 @@ export async function getOrangeSMSStats() {
             headers: { "Authorization": `Bearer ${access_token}` }
         });
         const contractsData = contractsResponse.ok ? await contractsResponse.json() : null;
+        if (contractsData) console.log("Orange Contracts Raw Response:", JSON.stringify(contractsData));
 
         return { 
             success: true, 
