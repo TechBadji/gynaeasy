@@ -101,7 +101,7 @@ export async function sendTestSMS(to: string, message: string) {
 }
 
 /**
- * Récupère les statistiques de consommation Orange SMS
+ * Récupère les statistiques et le solde (contrats) Orange SMS
  */
 export async function getOrangeSMSStats() {
     try {
@@ -120,20 +120,28 @@ export async function getOrangeSMSStats() {
             body: "grant_type=client_credentials"
         });
 
-        if (!tokenResponse.ok) throw new Error("Impossible d'obtenir le token pour les stats.");
+        if (!tokenResponse.ok) throw new Error("Impossible d'obtenir le token Orange.");
         const { access_token } = await tokenResponse.json();
 
-        // 2. Récupérer les stats (country=SEN pour Sénégal)
+        // 2. Récupérer les stats d'usage
         const statsResponse = await fetch("https://api.orange.com/sms/admin/v1/statistics?country=SEN", {
             headers: { "Authorization": `Bearer ${access_token}` }
         });
+        const statsData = statsResponse.ok ? await statsResponse.json() : null;
 
-        if (!statsResponse.ok) throw new Error("Erreur lors de la récupération des statistiques Orange.");
-        const data = await statsResponse.json();
+        // 3. Récupérer le solde (contracts)
+        const contractsResponse = await fetch("https://api.orange.com/sms/admin/v1/contracts?country=SEN", {
+            headers: { "Authorization": `Bearer ${access_token}` }
+        });
+        const contractsData = contractsResponse.ok ? await contractsResponse.json() : null;
 
-        return { success: true, data };
+        return { 
+            success: true, 
+            usage: statsData,
+            contracts: contractsData 
+        };
     } catch (error: any) {
-        console.error("Orange Stats Error:", error);
+        console.error("Orange SMS API Error:", error);
         return { success: false, error: error.message };
     }
 }

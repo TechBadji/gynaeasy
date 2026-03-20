@@ -33,7 +33,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         try {
             const res = await getOrangeSMSStats();
             if (res.success) {
-                setStats(res.data);
+                setStats(res);
             }
         } catch (error) {
             console.error(error);
@@ -104,17 +104,39 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
 
             {onlySMS && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white/5 border border-indigo-500/20 rounded-2xl p-5">
+                    {/* Consommation */}
+                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
                         <div className="flex items-center justify-between mb-2">
-                            <BarChart3 className="h-4 w-4 text-indigo-400" />
+                            <BarChart3 className="h-4 w-4 text-slate-400" />
                             <button onClick={fetchStats} disabled={loadingStats} className="text-slate-500 hover:text-white transition-colors">
                                 <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? 'animate-spin' : ''}`} />
                             </button>
                         </div>
                         <div className="text-2xl font-black text-white">
-                            {stats?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "—"}
+                            {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
                         </div>
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Total)</div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Usage)</div>
+                    </div>
+
+                    {/* Solde Restant */}
+                    <div className="bg-white/5 border border-indigo-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <ShieldCheck className="h-12 w-12 text-indigo-400" />
+                        </div>
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="p-1.5 bg-indigo-500/10 rounded-lg">
+                                <MessageSquare className="h-4 w-4 text-indigo-400" />
+                            </div>
+                        </div>
+                        <div className="text-2xl font-black text-indigo-400">
+                            {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits ?? "0"}
+                        </div>
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
+                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.expires && (
+                            <div className="text-[9px] text-slate-600 mt-1 italic">
+                                Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires).toLocaleDateString()}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
