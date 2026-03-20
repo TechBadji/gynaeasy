@@ -202,3 +202,29 @@ export async function requestPlanUpgrade(newPlan: string) {
         return { success: false, message: "Erreur lors du changement de plan" };
     }
 }
+
+export async function getActiveAdvertisements() {
+    try {
+        const now = new Date();
+        const ads = await prisma.advertisement.findMany({
+            where: {
+                statut: "ACTIF",
+                dateDebut: { lte: now },
+                dateFin: { gte: now }
+            },
+            take: 1, // Only show one active ad at a time (can be randomized later)
+            orderBy: { createdAt: "desc" }
+        });
+        
+        return ads.map(ad => ({
+            ...ad,
+            dateDebut: ad.dateDebut.toISOString(),
+            dateFin: ad.dateFin.toISOString(),
+            createdAt: ad.createdAt.toISOString(),
+            updatedAt: ad.updatedAt.toISOString(),
+        }));
+    } catch (error) {
+        console.error("Ads Error:", error);
+        return [];
+    }
+}

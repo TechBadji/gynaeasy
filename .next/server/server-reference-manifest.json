@@ -3,7 +3,7 @@
     "003ba49224313be683c44e5e2af1fee0348964080f": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 65603,
+          "moduleId": 765603,
           "async": false,
           "exportedName": "getUserSubscription",
           "filename": "app/actions/subscription.ts"
@@ -15,10 +15,25 @@
       "filename": "app/actions/subscription.ts",
       "exportedName": "getUserSubscription"
     },
+    "00bbd608d81533d21422e7997bc0352d5fe54ee03c": {
+      "workers": {
+        "app/(protected)/abonnement/page": {
+          "moduleId": 765603,
+          "async": false,
+          "exportedName": "getActiveAdvertisements",
+          "filename": "app/actions/subscription.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/abonnement/page": "rsc"
+      },
+      "filename": "app/actions/subscription.ts",
+      "exportedName": "getActiveAdvertisements"
+    },
     "00db92cd7cef5ef0125cd095cf04d0ce54914752b2": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 65603,
+          "moduleId": 765603,
           "async": false,
           "exportedName": "syncSubscriptionPlans",
           "filename": "app/actions/subscription.ts"
@@ -33,7 +48,7 @@
     "00f52e01bac84fe5ebdd868c7db2b981ebce291274": {
       "workers": {
         "app/(protected)/abonnement/page": {
-          "moduleId": 65603,
+          "moduleId": 765603,
           "async": false,
           "exportedName": "createDemoInvoice",
           "filename": "app/actions/subscription.ts"
@@ -45,10 +60,25 @@
       "filename": "app/actions/subscription.ts",
       "exportedName": "createDemoInvoice"
     },
+    "40b48e9ebf1d91e3aa4753af1ee75e0c3c7a3a7428": {
+      "workers": {
+        "app/(protected)/abonnement/page": {
+          "moduleId": 765603,
+          "async": false,
+          "exportedName": "requestPlanUpgrade",
+          "filename": "app/actions/subscription.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/abonnement/page": "action-browser"
+      },
+      "filename": "app/actions/subscription.ts",
+      "exportedName": "requestPlanUpgrade"
+    },
     "40816899b6cab7075d5e1b8729d0b8b547aea2df1a": {
       "workers": {
         "app/(protected)/agenda/page": {
-          "moduleId": 76143,
+          "moduleId": 176143,
           "async": false,
           "exportedName": "createRdv",
           "filename": "app/actions/rdv.ts"
@@ -59,6 +89,43 @@
       },
       "filename": "app/actions/rdv.ts",
       "exportedName": "createRdv"
+    },
+    "4030a0f8680391a148f28dfe81a7e4264cb6d9f9c1": {
+      "workers": {
+        "app/(protected)/agenda/page": {
+          "moduleId": 176143,
+          "async": false,
+          "exportedName": "cancelRdv",
+          "filename": "app/actions/rdv.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/agenda/page": "action-browser"
+      },
+      "filename": "app/actions/rdv.ts",
+      "exportedName": "cancelRdv"
+    },
+    "40d747198c84243122e83e76e9cde31b9b48d3ac95": {
+      "workers": {
+        "app/(protected)/change-password/page": {
+          "moduleId": 650629,
+          "async": false,
+          "exportedName": "updatePassword",
+          "filename": "app/actions/user.ts"
+        },
+        "app/(protected)/parametres/page": {
+          "moduleId": 568530,
+          "async": false,
+          "exportedName": "updatePassword",
+          "filename": "app/actions/user.ts"
+        }
+      },
+      "layer": {
+        "app/(protected)/change-password/page": "action-browser",
+        "app/(protected)/parametres/page": "action-browser"
+      },
+      "filename": "app/actions/user.ts",
+      "exportedName": "updatePassword"
     },
     "6051da566a5e4f43ff0ff2332fed38b00ecc5d2694": {
       "workers": {
@@ -123,7 +190,7 @@
     "404e879daad318e36f0f44200ea534c8edcdb5092e": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 24760,
+          "moduleId": 124760,
           "async": false,
           "exportedName": "createReglement",
           "filename": "app/actions/billing.ts"
@@ -138,19 +205,19 @@
     "002d402b88654d5bb1581350a030087b1bb8cae0f1": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 24760,
+          "moduleId": 124760,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/imagerie/page": {
-          "moduleId": 10153,
+          "moduleId": 510153,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/parametres/page": {
-          "moduleId": 68530,
+          "moduleId": 568530,
           "async": false,
           "exportedName": "getClinicSettings",
           "filename": "app/actions/clinic.ts"
@@ -167,19 +234,19 @@
     "40179a2160723cf1bd1c7344bc012cb88ccdc76647": {
       "workers": {
         "app/(protected)/facturation/page": {
-          "moduleId": 24760,
+          "moduleId": 124760,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/imagerie/page": {
-          "moduleId": 10153,
+          "moduleId": 510153,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
         },
         "app/(protected)/parametres/page": {
-          "moduleId": 68530,
+          "moduleId": 568530,
           "async": false,
           "exportedName": "updateClinicSettings",
           "filename": "app/actions/clinic.ts"
@@ -196,7 +263,7 @@
     "7086b314137d0926488a8e65405a53a320c6ffdd7b": {
       "workers": {
         "app/(protected)/imagerie/page": {
-          "moduleId": 10153,
+          "moduleId": 510153,
           "async": false,
           "exportedName": "saveImagingReport",
           "filename": "app/actions/imaging.ts"
@@ -211,7 +278,7 @@
     "60eb7b032a6ca7bbc6e290cc28a56f0606120dc580": {
       "workers": {
         "app/(protected)/imagerie/page": {
-          "moduleId": 10153,
+          "moduleId": 510153,
           "async": false,
           "exportedName": "consumeStockItem",
           "filename": "app/actions/stock.ts"
@@ -226,7 +293,7 @@
     "60c4801cad552e73adc30f2fa7391c8cf0c761eb0b": {
       "workers": {
         "app/(protected)/inventaire/page": {
-          "moduleId": 22849,
+          "moduleId": 722849,
           "async": false,
           "exportedName": "updateStockItem",
           "filename": "app/actions/stock.ts"
@@ -241,7 +308,7 @@
     "407da1a02bae9df1196c12f8eef0135c06e3a5eefc": {
       "workers": {
         "app/(protected)/inventaire/page": {
-          "moduleId": 22849,
+          "moduleId": 722849,
           "async": false,
           "exportedName": "deleteStockItem",
           "filename": "app/actions/stock.ts"
@@ -256,7 +323,7 @@
     "404cd4f9dd665b47c24a0335e276e10f1bfb657ed1": {
       "workers": {
         "app/(protected)/parametres/page": {
-          "moduleId": 68530,
+          "moduleId": 568530,
           "async": false,
           "exportedName": "updateUserDetails",
           "filename": "app/actions/user.ts"
@@ -268,25 +335,10 @@
       "filename": "app/actions/user.ts",
       "exportedName": "updateUserDetails"
     },
-    "40d747198c84243122e83e76e9cde31b9b48d3ac95": {
-      "workers": {
-        "app/(protected)/parametres/page": {
-          "moduleId": 68530,
-          "async": false,
-          "exportedName": "updatePassword",
-          "filename": "app/actions/user.ts"
-        }
-      },
-      "layer": {
-        "app/(protected)/parametres/page": "action-browser"
-      },
-      "filename": "app/actions/user.ts",
-      "exportedName": "updatePassword"
-    },
     "4016b6d3da919f13ad8c6634ef2e4965b89c164bc0": {
       "workers": {
         "app/(protected)/patients/page": {
-          "moduleId": 55694,
+          "moduleId": 655694,
           "async": false,
           "exportedName": "createPatient",
           "filename": "app/actions/patient.ts"
@@ -301,7 +353,7 @@
     "605d4054fb706a390308610691d708c3c8de946869": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 25420,
+          "moduleId": 925420,
           "async": false,
           "exportedName": "declareGrossesse",
           "filename": "app/actions/patient.ts"
@@ -316,7 +368,7 @@
     "60b3f13d2345b395b6f580c4384af77bdff7eae037": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 25420,
+          "moduleId": 925420,
           "async": false,
           "exportedName": "updateConsultationMedicalData",
           "filename": "app/actions/consultation.ts"
@@ -331,7 +383,7 @@
     "402b86ccddd52ce701205a1e3a9cff03e1fd294b21": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 25420,
+          "moduleId": 925420,
           "async": false,
           "exportedName": "createEmptyConsultation",
           "filename": "app/actions/consultation.ts"
@@ -346,7 +398,7 @@
     "40b5de53dba0c86d00860b958bc27c2b7cddd5a00c": {
       "workers": {
         "app/(protected)/patients/[id]/page": {
-          "moduleId": 25420,
+          "moduleId": 925420,
           "async": false,
           "exportedName": "requestAccess",
           "filename": "app/actions/patient.ts"
@@ -361,7 +413,7 @@
     "001d457236218e74c885c78958d10490842b8bc6d4": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getPlanConfigs",
           "filename": "app/actions/superadmin.ts"
@@ -376,13 +428,13 @@
     "002bef64c314ff6c30fd2015e98fdcdf08e5d81c71": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getActiveDoctors",
           "filename": "app/actions/superadmin.ts"
         },
         "app/booking/page": {
-          "moduleId": 74862,
+          "moduleId": 737120,
           "async": false,
           "exportedName": "getActiveDoctors",
           "filename": "app/actions/superadmin.ts"
@@ -398,7 +450,7 @@
     "002d178925b59a475971b79b17830893f59611f688": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getAllAbonnements",
           "filename": "app/actions/superadmin.ts"
@@ -413,7 +465,7 @@
     "002e56de673574e299ce67b0788a6cfb0751d54374": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getPromotions",
           "filename": "app/actions/superadmin.ts"
@@ -428,7 +480,7 @@
     "005fc7a04e516d5e38997acd1acb711d1f2551a146": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getAllUsers",
           "filename": "app/actions/superadmin.ts"
@@ -443,7 +495,7 @@
     "007ea371e3f2aa32b1efda4e47c7925a9b5f7941d0": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getAppSettings",
           "filename": "app/actions/superadmin.ts"
@@ -458,7 +510,7 @@
     "00c318e49ce3033ff160bffaeaabf23a4c11588b92": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getAllActesCCAM",
           "filename": "app/actions/superadmin.ts"
@@ -473,7 +525,7 @@
     "00c9b8d7ffadb4cde5a226384619c4cd6b1d5d0733": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getSuperAdminStats",
           "filename": "app/actions/superadmin.ts"
@@ -485,10 +537,40 @@
       "filename": "app/actions/superadmin.ts",
       "exportedName": "getSuperAdminStats"
     },
+    "00d37f0d312b6b912d841a59ba71154e780334dbc5": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 875875,
+          "async": false,
+          "exportedName": "getAdvertisements",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "rsc"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "getAdvertisements"
+    },
+    "4008787a543fd819e2251485557e146b04a53eb7eb": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 875875,
+          "async": false,
+          "exportedName": "createAdvertisement",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "createAdvertisement"
+    },
     "4008cf4aad4e82a632bc5450bf5beb7bff47afbd5a": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getAuditLogs",
           "filename": "app/actions/superadmin.ts"
@@ -500,10 +582,25 @@
       "filename": "app/actions/superadmin.ts",
       "exportedName": "getAuditLogs"
     },
+    "40102c175cef5bf815fa6ebdde48f64708b42bbc9f": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 875875,
+          "async": false,
+          "exportedName": "deleteAdvertisement",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "deleteAdvertisement"
+    },
     "4012076682574de1131f843378314d490523149bdb": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "deleteUserAdmin",
           "filename": "app/actions/superadmin.ts"
@@ -518,7 +615,7 @@
     "40150f5ada5bc478e5a548d3f5d3ad216186f73528": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "createAbonnement",
           "filename": "app/actions/superadmin.ts"
@@ -533,7 +630,7 @@
     "4075bab8c3ba0e689754017b83dbb65734e3555d4c": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "createPromotion",
           "filename": "app/actions/superadmin.ts"
@@ -548,7 +645,7 @@
     "408bf72025497684d07d3153cd80617dcddd74e90e": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updateAppSettings",
           "filename": "app/actions/superadmin.ts"
@@ -563,7 +660,7 @@
     "40b27065992a2691ddac0b44d146f6af7d13f8b3c4": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "createUserAdmin",
           "filename": "app/actions/superadmin.ts"
@@ -578,7 +675,7 @@
     "40cc61ceba3e8e3ded16a4f44bc1fa0a528a47d7c0": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "deletePromotion",
           "filename": "app/actions/superadmin.ts"
@@ -593,7 +690,7 @@
     "604153d895f4cf15472df91d7bf2622a072f534cbc": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "toggleUserModule",
           "filename": "app/actions/superadmin.ts"
@@ -608,7 +705,7 @@
     "6050b453ca0c671cc3b2fce9f4e4a2322faf78be67": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updatePromotion",
           "filename": "app/actions/superadmin.ts"
@@ -623,7 +720,7 @@
     "606def1410383fb72487611ecea716f4efc5c80145": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "setUserStatusAdmin",
           "filename": "app/actions/superadmin.ts"
@@ -635,10 +732,25 @@
       "filename": "app/actions/superadmin.ts",
       "exportedName": "setUserStatusAdmin"
     },
+    "6070b78e0849c4149a2dc44547d068fcf6ad16bc0f": {
+      "workers": {
+        "app/admin/page": {
+          "moduleId": 875875,
+          "async": false,
+          "exportedName": "updateAdvertisement",
+          "filename": "app/actions/superadmin.ts"
+        }
+      },
+      "layer": {
+        "app/admin/page": "action-browser"
+      },
+      "filename": "app/actions/superadmin.ts",
+      "exportedName": "updateAdvertisement"
+    },
     "6074e24cda55579c3200594c4a645192c1ed76d1d9": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updateAbonnement",
           "filename": "app/actions/superadmin.ts"
@@ -653,7 +765,7 @@
     "6079728569511daaa8959653fdf5581d447317de4d": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updateUserRoleAdmin",
           "filename": "app/actions/superadmin.ts"
@@ -668,7 +780,7 @@
     "60937d6ee25c7f1cde061b389e7b4a4a0b99f77650": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updateActeCCAMAdmin",
           "filename": "app/actions/superadmin.ts"
@@ -683,7 +795,7 @@
     "609b9cc5a05a6bd3e35b77962be414dc9e8ce5ac44": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "updatePlanConfig",
           "filename": "app/actions/superadmin.ts"
@@ -698,7 +810,7 @@
     "00d75fb3d80209fbd48f9fd7d38c4746fdf6fc6e19": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getPendingRegistrations",
           "filename": "app/actions/onboarding.ts"
@@ -713,13 +825,13 @@
     "402d1d47d5129f20331922b7a802f0a020edaa737d": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "registerDoctor",
           "filename": "app/actions/onboarding.ts"
         },
         "app/onboarding/page": {
-          "moduleId": 53978,
+          "moduleId": 453978,
           "async": false,
           "exportedName": "registerDoctor",
           "filename": "app/actions/onboarding.ts"
@@ -735,7 +847,7 @@
     "408089ec83c03b3a4f4638822f777d66f47f4152a5": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "approveRegistration",
           "filename": "app/actions/onboarding.ts"
@@ -750,13 +862,13 @@
     "40d07e1ad780cbeb0e53078ea862750dd24501acb3": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "verifyDoctorEmail",
           "filename": "app/actions/onboarding.ts"
         },
         "app/onboarding/verify/page": {
-          "moduleId": 9609,
+          "moduleId": 509609,
           "async": false,
           "exportedName": "verifyDoctorEmail",
           "filename": "app/actions/onboarding.ts"
@@ -772,7 +884,7 @@
     "608130b10b47b9f3621e0b27ccc738959b308e2122": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "sendTestSMS",
           "filename": "app/actions/reminders.ts"
@@ -787,7 +899,7 @@
     "005ff5d1626d948fde059c8155b9b612f7da75da42": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getOrangeSMSStats",
           "filename": "app/actions/reminders.ts"
@@ -802,7 +914,7 @@
     "00a1c4e0e9decdc0113599c35ac211a1db44621f5f": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "getNotifications",
           "filename": "app/actions/notifications.ts"
@@ -817,7 +929,7 @@
     "4033b88116f750a83ed19863625b6cceca9f7183d0": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "markAsRead",
           "filename": "app/actions/notifications.ts"
@@ -832,7 +944,7 @@
     "00109b788abcf8a6348a0e4d3ea4315a17a705378d": {
       "workers": {
         "app/admin/page": {
-          "moduleId": 75875,
+          "moduleId": 875875,
           "async": false,
           "exportedName": "markAllAsRead",
           "filename": "app/actions/notifications.ts"
@@ -844,12 +956,12 @@
       "filename": "app/actions/notifications.ts",
       "exportedName": "markAllAsRead"
     },
-    "40ccd0464b369d53f1544e5f0294ab63af8af45a87": {
+    "409ac7fbcc04524fe127eaa921078736ec009b671a": {
       "workers": {
         "app/booking/page": {
-          "moduleId": 74862,
+          "moduleId": 737120,
           "async": false,
-          "exportedName": "validatePatientCode",
+          "exportedName": "validatePatientPhone",
           "filename": "app/actions/booking.ts"
         }
       },
@@ -857,12 +969,12 @@
         "app/booking/page": "action-browser"
       },
       "filename": "app/actions/booking.ts",
-      "exportedName": "validatePatientCode"
+      "exportedName": "validatePatientPhone"
     },
     "783462a21dcdd9ae981a48fc91e8e781faa69166e9": {
       "workers": {
         "app/booking/page": {
-          "moduleId": 74862,
+          "moduleId": 737120,
           "async": false,
           "exportedName": "createOnlineAppointment",
           "filename": "app/actions/booking.ts"

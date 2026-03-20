@@ -1,6 +1,10 @@
 {
   "/(protected)/abonnement/page": "app/(protected)/abonnement/page.js",
   "/(protected)/agenda/page": "app/(protected)/agenda/page.js",
+  "/(protected)/aide/page": "app/(protected)/aide/page.js",
+  "/(protected)/change-password/page": "app/(protected)/change-password/page.js",
+  "/(protected)/confidentialite/page": "app/(protected)/confidentialite/page.js",
+  "/(protected)/contact/page": "app/(protected)/contact/page.js",
   "/(protected)/dashboard/page": "app/(protected)/dashboard/page.js",
   "/(protected)/facturation/page": "app/(protected)/facturation/page.js",
   "/(protected)/imagerie/page": "app/(protected)/imagerie/page.js",

@@ -390,3 +390,25 @@ enum StatutAbonnement {
   ANNULE
   EXPIRE
 }
+
+enum StatutAd {
+  ACTIF
+  PAUSE
+  TERMINE
+}
+
+model Advertisement {
+  id             String    @id @default(cuid())
+  partenaire     String    
+  titre          String
+  description    String?
+  imageUrl       String?
+  lienClick      String?   
+  dateDebut      DateTime
+  dateFin        DateTime
+  prixParJour    Float
+  prixTotal      Float
+  statut         StatutAd  @default(ACTIF)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}

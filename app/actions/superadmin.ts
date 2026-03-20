@@ -467,3 +467,68 @@ export async function getActiveDoctors() {
         await p.$disconnect();
     }
 }
+
+// ============================================
+// GESTION DES PUBLICITÉS / CAMPAGNES (PARTENAIRES)
+// ============================================
+export async function getAdvertisements() {
+    await checkSuperAdmin();
+    const ads = await prisma.advertisement.findMany({ orderBy: { createdAt: "desc" } });
+    return JSON.parse(JSON.stringify(ads));
+}
+
+export async function createAdvertisement(data: {
+    partenaire: string;
+    titre: string;
+    description?: string;
+    imageUrl?: string;
+    lienClick?: string;
+    dateDebut: Date;
+    dateFin: Date;
+    prixParJour: number;
+}) {
+    await checkSuperAdmin();
+    
+    // Calculer le prix total (nombre de jours * prix par jour)
+    const diffTime = Math.abs(new Date(data.dateFin).getTime() - new Date(data.dateDebut).getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 pour inclure le jour même
+    const prixTotal = diffDays * data.prixParJour;
+
+    const ad = await prisma.advertisement.create({
+        data: {
+            ...data,
+            dateDebut: new Date(data.dateDebut),
+            dateFin: new Date(data.dateFin),
+            prixTotal
+        }
+    });
+    revalidatePath("/admin/super");
+    revalidatePath("/abonnement");
+    return JSON.parse(JSON.stringify(ad));
+}
+
+export async function updateAdvertisement(id: string, data: any) {
+    await checkSuperAdmin();
+    
+    if (data.dateDebut && data.dateFin && data.prixParJour) {
+        const diffTime = Math.abs(new Date(data.dateFin).getTime() - new Date(data.dateDebut).getTime());
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        data.prixTotal = diffDays * data.prixParJour;
+    }
+
+    if (data.dateDebut) data.dateDebut = new Date(data.dateDebut);
+    if (data.dateFin) data.dateFin = new Date(data.dateFin);
+
+    const ad = await prisma.advertisement.update({ where: { id }, data });
+    revalidatePath("/admin/super");
+    revalidatePath("/abonnement");
+    return JSON.parse(JSON.stringify(ad));
+}
+
+export async function deleteAdvertisement(id: string) {
+    await checkSuperAdmin();
+    await prisma.advertisement.delete({ where: { id } });
+    revalidatePath("/admin/super");
+    revalidatePath("/abonnement");
+    return { success: true };
+}

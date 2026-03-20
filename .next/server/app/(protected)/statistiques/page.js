@@ -16,5 +16,5 @@ R.c("server/chunks/ssr/[root-of-the-server]__da64b0aa._.js")
 R.c("server/chunks/ssr/node_modules_next_dist_3bd4d890._.js")
 R.c("server/chunks/ssr/_434acb16._.js")
 R.c("server/chunks/ssr/_next-internal_server_app_(protected)_statistiques_page_actions_50b14716.js")
-R.m(65619)
-module.exports=R.m(65619).exports
+R.m(265619)
+module.exports=R.m(265619).exports

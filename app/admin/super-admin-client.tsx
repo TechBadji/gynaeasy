@@ -15,6 +15,7 @@ import SuperAdminSettings from "@/components/admin/super/app-settings";
 import SuperAdminAudit from "@/components/admin/super/audit-logs";
 import SuperAdminPricing from "@/components/admin/super/pricing-management";
 import SuperAdminPromotions from "@/components/admin/super/promotions-management";
+import SuperAdminAdvertisements from "@/components/admin/super/advertisements-management";
 import SuperAdminApprovals from "@/components/admin/super/approvals";
 import NotificationBell from "@/components/notifications/notification-bell";
 
@@ -25,6 +26,7 @@ const NAV_ITEMS = [
     { id: "abonnements", label: "Abonnements", icon: CreditCard },
     { id: "pricing", label: "Prix & Plans", icon: Settings },
     { id: "promotions", label: "Promotions", icon: Shield },
+    { id: "publicites", label: "Campagnes Ads", icon: Activity },
     { id: "ccam", label: "Catalogue CCAM", icon: ClipboardList },
     { id: "settings", label: "Paramètres App", icon: Settings },
     { id: "audit", label: "Audit Log", icon: Shield },
@@ -40,6 +42,7 @@ interface SuperAdminClientProps {
     planConfigs: any[];
     promotions: any[];
     pendingUsers: any[];
+    advertisements: any[];
     adminEmail: string;
 }
 
@@ -53,6 +56,7 @@ export default function SuperAdminClient({
     planConfigs,
     promotions,
     pendingUsers,
+    advertisements,
     adminEmail
 }: SuperAdminClientProps) {
     const [activeTab, setActiveTab] = useState("overview");
@@ -162,6 +166,7 @@ export default function SuperAdminClient({
                     {activeTab === "abonnements" && <SuperAdminAbonnements abonnements={abonnements} users={users} promotions={promotions} />}
                     {activeTab === "pricing" && <SuperAdminPricing planConfigs={planConfigs} />}
                     {activeTab === "promotions" && <SuperAdminPromotions promotions={promotions} />}
+                    {activeTab === "publicites" && <SuperAdminAdvertisements advertisements={advertisements} />}
                     {activeTab === "ccam" && <SuperAdminCCAM actes={actes} searchQuery={searchQuery} />}
                     {activeTab === "settings" && <SuperAdminSettings settings={settings} />}
                     {activeTab === "audit" && <SuperAdminAudit logs={auditLogs} />}

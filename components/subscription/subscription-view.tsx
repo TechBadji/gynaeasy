@@ -18,7 +18,7 @@ const PLAN_MAP: Record<string, { label: string; color: string; bg: string; icon:
     CLINIQUE: { label: "Gynaeasy Clinique", color: "text-amber-600", bg: "bg-amber-50", icon: Star },
 };
 
-export default function SubscriptionView({ subscription }: { subscription: any }) {
+export default function SubscriptionView({ subscription, activeAd }: { subscription: any, activeAd?: any }) {
     const router = useRouter();
     const plan = PLAN_MAP[subscription.plan] || PLAN_MAP.SOLO;
     const status = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
@@ -85,20 +85,47 @@ export default function SubscriptionView({ subscription }: { subscription: any }
                     onUpdate={() => router.refresh()} 
                 />
 
-                {/* Upsell Card */}
-                {subscription.plan !== 'CLINIQUE' && (
-                    <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4">
-                        <div className="absolute top-0 right-0 p-8 opacity-10">
-                            <Star className="h-40 w-40" />
-                        </div>
+                {/* Advertisement or Upsell Card */}
+                {activeAd ? (
+                    <a href={activeAd.lienClick || "#"} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4 group cursor-pointer block hover:scale-[1.02] transition-transform">
+                        {activeAd.imageUrl && (
+                            <div className="absolute inset-0 opacity-20 mix-blend-overlay">
+                                <img src={activeAd.imageUrl} alt="" className="w-full h-full object-cover" />
+                            </div>
+                        )}
+                        {!activeAd.imageUrl && (
+                            <div className="absolute top-0 right-0 p-8 opacity-10">
+                                <Star className="h-40 w-40" />
+                            </div>
+                        )}
                         <div className="relative z-10 space-y-2">
-                            <h3 className="text-xl font-bold">Besoin de plus de puissance ?</h3>
-                            <p className="text-indigo-100 text-sm max-w-sm">Passez au plan <strong>Clinique</strong> pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
-                            <button className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105">
-                                Comparer les offres
-                            </button>
+                            <span className="bg-white/20 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">
+                                Partenaire: {activeAd.partenaire}
+                            </span>
+                            <h3 className="text-xl font-bold mt-2">{activeAd.titre}</h3>
+                            <p className="text-indigo-100 text-sm max-w-sm">{activeAd.description}</p>
+                            <div className="pt-2">
+                                <span className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg group-hover:bg-slate-50 transition-colors">
+                                    Découvrir l&apos;offre
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
+                ) : (
+                    subscription.plan !== 'CLINIQUE' && (
+                        <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4">
+                            <div className="absolute top-0 right-0 p-8 opacity-10">
+                                <Star className="h-40 w-40" />
+                            </div>
+                            <div className="relative z-10 space-y-2">
+                                <h3 className="text-xl font-bold">Besoin de plus de puissance ?</h3>
+                                <p className="text-indigo-100 text-sm max-w-sm">Passez au plan <strong>Clinique</strong> pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
+                                <button onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })} className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105">
+                                    Comparer les offres
+                                </button>
+                            </div>
+                        </div>
+                    )
                 )}
             </div>
 

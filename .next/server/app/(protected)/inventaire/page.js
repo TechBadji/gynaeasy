@@ -17,5 +17,5 @@ R.c("server/chunks/ssr/node_modules_next_dist_3bd4d890._.js")
 R.c("server/chunks/ssr/_434acb16._.js")
 R.c("server/chunks/ssr/_eca86f4a._.js")
 R.c("server/chunks/ssr/node_modules_next_b5b87ce8._.js")
-R.m(93336)
-module.exports=R.m(93336).exports
+R.m(793336)
+module.exports=R.m(793336).exports
