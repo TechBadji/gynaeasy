@@ -64,7 +64,7 @@ export async function registerDoctor(data: {
     }
 }
 
-export async function verifyDoctorEmail(token: string) {
+export async function verifyDoctorEmail(token: string): Promise<{ success: boolean; message?: string; error?: string }> {
     try {
         const user = await prisma.user.findUnique({
             where: { verificationToken: token }
@@ -83,7 +83,7 @@ export async function verifyDoctorEmail(token: string) {
         if (!settings.requireApproval) {
             // APPROBATION AUTOMATIQUE
             const res = await approveRegistration(user.id);
-            if (!res.success) return res;
+            if (!res.success) return { success: false, error: res.error };
             
             return { success: true, message: "Email vérifié et compte activé avec succès !" };
         } else {
