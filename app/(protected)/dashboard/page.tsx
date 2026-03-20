@@ -18,35 +18,60 @@ export default async function DashboardPage() {
     const userId = (session?.user as any).id;
     const role = (session?.user as any).role;
 
-    // Récupérer les statistiques réelles
-    const totalPatients = await prisma.patient.count();
-    const consultationsAujourdhui = await prisma.consultation.count({
-        where: {
-            dateHeure: {
-                gte: new Date(new Date().setHours(0, 0, 0, 0)),
-                lt: new Date(new Date().setHours(23, 59, 59, 999)),
-            }
-        }
-    });
+    const today = {
+        gte: new Date(new Date().setHours(0, 0, 0, 0)),
+        lt: new Date(new Date().setHours(23, 59, 59, 999)),
+    };
 
-    // Récupérer les demandes d'accès en attente pour ce médecin
-    const pendingRequests = await prisma.accessRequest.findMany({
-        where: {
-            patient: {
-                treatingDoctorId: userId
-            },
-            status: "PENDING"
-        },
-        include: {
-            doctor: {
-                select: { name: true }
-            },
-            patient: {
-                select: { nom: true, prenom: true, codePatient: true }
+    // Toutes les stats sont filtrées par userId — aucune fuite inter-cabinets
+    const [
+        totalPatients,
+        consultationsAujourdhui,
+        grossessesActives,
+        reglementsDuJour,
+        pendingRequests
+    ] = await Promise.all([
+        // Patients dont ce médecin est le soignant référent
+        prisma.patient.count({
+            where: { treatingDoctorId: userId }
+        }),
+        // RDV d'aujourd'hui pour ce médecin
+        prisma.consultation.count({
+            where: { userId, dateHeure: today }
+        }),
+        // Grossesses en cours pour les patients de ce médecin
+        prisma.grossesse.count({
+            where: {
+                statut: "EN_COURS",
+                patient: { treatingDoctorId: userId }
             }
-        },
-        orderBy: { createdAt: "desc" }
-    });
+        }),
+        // CA du jour : somme des règlements payés des consultations de ce médecin
+        prisma.reglement.aggregate({
+            _sum: { montant: true },
+            where: {
+                statut: "PAYE",
+                consultation: {
+                    userId,
+                    dateHeure: today
+                }
+            }
+        }),
+        // Demandes d'accès en attente pour ce médecin
+        prisma.accessRequest.findMany({
+            where: {
+                patient: { treatingDoctorId: userId },
+                status: "PENDING"
+            },
+            include: {
+                doctor: { select: { name: true } },
+                patient: { select: { nom: true, prenom: true, codePatient: true } }
+            },
+            orderBy: { createdAt: "desc" }
+        })
+    ]);
+
+    const caJour = reglementsDuJour._sum.montant || 0;
 
     return (
         <div className="space-y-6">
@@ -74,12 +99,12 @@ export default async function DashboardPage() {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Patients</CardTitle>
+                        <CardTitle className="text-sm font-medium">Mes Patients</CardTitle>
                         <Users className="h-4 w-4 text-slate-500" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{totalPatients}</div>
-                        <p className="text-xs text-slate-500">+12% depuis le mois dernier</p>
+                        <p className="text-xs text-slate-500">Patients enregistrés dans votre cabinet</p>
                     </CardContent>
                 </Card>
 
@@ -90,7 +115,7 @@ export default async function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{consultationsAujourdhui}</div>
-                        <p className="text-xs text-slate-500">3 urgences, 4 suivis de grossesse</p>
+                        <p className="text-xs text-slate-500">Consultations planifiées ce jour</p>
                     </CardContent>
                 </Card>
 
@@ -100,19 +125,19 @@ export default async function DashboardPage() {
                         <Activity className="h-4 w-4 text-slate-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">42</div>
-                        <p className="text-xs text-slate-500">3 accouchements prévus ce mois</p>
+                        <div className="text-2xl font-bold">{grossessesActives}</div>
+                        <p className="text-xs text-slate-500">Grossesses en cours dans votre cabinet</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">CA Estimé (Jour)</CardTitle>
+                        <CardTitle className="text-sm font-medium">CA Aujourd&apos;hui</CardTitle>
                         <TrendingUp className="h-4 w-4 text-slate-500" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{formatCurrency(250000)}</div>
-                        <p className="text-xs text-slate-500">Basé sur cotations CCAM prévues</p>
+                        <div className="text-2xl font-bold">{formatCurrency(caJour)}</div>
+                        <p className="text-xs text-slate-500">Règlements encaissés ce jour</p>
                     </CardContent>
                 </Card>
             </div>
@@ -123,16 +148,16 @@ export default async function DashboardPage() {
                         <CardTitle>Agenda du jour</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <UpcomingAppointments doctorId={role === "MEDECIN" ? userId : undefined} />
+                        <UpcomingAppointments doctorId={userId} />
                     </CardContent>
                 </Card>
 
                 <Card className="col-span-3">
                     <CardHeader>
-                        <CardTitle>Alertes & Suivi</CardTitle>
+                        <CardTitle>Alertes &amp; Suivi</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <AlertsList />
+                        <AlertsList doctorId={userId} />
                     </CardContent>
                 </Card>
             </div>
