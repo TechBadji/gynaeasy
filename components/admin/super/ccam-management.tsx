@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { updateActeCCAMAdmin } from "@/app/actions/superadmin";
-import { ClipboardList, ToggleLeft, ToggleRight, Pencil, Check, X } from "lucide-react";
+import { ClipboardList, ToggleLeft, ToggleRight, Pencil, Check, X, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SuperAdminCCAM({ actes, searchQuery }: { actes: any[]; searchQuery: string }) {
@@ -11,10 +11,22 @@ export default function SuperAdminCCAM({ actes, searchQuery }: { actes: any[]; s
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editValues, setEditValues] = useState<{ tarif: string; libelle: string }>({ tarif: "", libelle: "" });
 
+    const [localSearch, setLocalSearch] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 15;
+
     const filtered = list.filter((a) => {
-        const q = searchQuery.toLowerCase();
+        const q = localSearch.toLowerCase() || searchQuery.toLowerCase();
         return !q || a.code?.toLowerCase().includes(q) || a.libelle?.toLowerCase().includes(q) || a.chapitre?.toLowerCase().includes(q);
     });
+
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    const paginatedItems = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+    // Reset pagination when search changes
+    if (currentPage > totalPages && totalPages > 0) {
+        setCurrentPage(totalPages);
+    }
 
     const toggleActive = (id: string, active: boolean) => {
         startTransition(async () => {
@@ -75,10 +87,25 @@ export default function SuperAdminCCAM({ actes, searchQuery }: { actes: any[]; s
             </div>
 
             <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
-                <div className="p-4 border-b border-white/5 flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-violet-400" />
-                    <span className="text-sm font-medium text-white">Actes médicaux</span>
-                    {searchQuery && <span className="text-xs text-slate-400">— {filtered.length} résultat(s)</span>}
+                <div className="p-4 border-b border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-2">
+                        <ClipboardList className="h-4 w-4 text-violet-400" />
+                        <span className="text-sm font-medium text-white">Actes médicaux</span>
+                        <span className="text-xs text-slate-400">— {filtered.length} résultat(s)</span>
+                    </div>
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                        <input
+                            type="text"
+                            placeholder="Recherche rapide (code, libellé...)"
+                            value={localSearch}
+                            onChange={(e) => {
+                                setLocalSearch(e.target.value);
+                                setCurrentPage(1);
+                            }}
+                            className="bg-white/5 border border-white/10 rounded-lg pl-9 pr-4 py-1.5 text-sm text-white focus:outline-none focus:border-violet-500/50 w-full sm:w-64 transition-colors"
+                        />
+                    </div>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -93,7 +120,7 @@ export default function SuperAdminCCAM({ actes, searchQuery }: { actes: any[]; s
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
-                            {filtered.length > 0 ? filtered.map((acte) => (
+                            {paginatedItems.length > 0 ? paginatedItems.map((acte) => (
                                 <tr key={acte.id} className={`hover:bg-white/3 transition-colors ${!acte.active ? "opacity-50" : ""}`}>
                                     <td className="px-4 py-3 font-mono text-violet-300 text-xs">{acte.code}</td>
                                     <td className="px-4 py-3 max-w-xs">
@@ -162,6 +189,34 @@ export default function SuperAdminCCAM({ actes, searchQuery }: { actes: any[]; s
                         </tbody>
                     </table>
                 </div>
+                
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                    <div className="p-4 border-t border-white/5 flex items-center justify-between">
+                        <span className="text-xs text-slate-400">
+                            Affichage {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filtered.length)} sur {filtered.length}
+                        </span>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="p-1 rounded bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronLeft className="h-4 w-4" />
+                            </button>
+                            <span className="text-xs text-white px-3 font-medium">
+                                Page {currentPage} / {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="p-1 rounded bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <ChevronRight className="h-4 w-4" />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
