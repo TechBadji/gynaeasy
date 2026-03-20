@@ -472,9 +472,14 @@ export async function getActiveDoctors() {
 // GESTION DES PUBLICITÉS / CAMPAGNES (PARTENAIRES)
 // ============================================
 export async function getAdvertisements() {
-    await checkSuperAdmin();
-    const ads = await prisma.advertisement.findMany({ orderBy: { createdAt: "desc" } });
-    return JSON.parse(JSON.stringify(ads));
+    try {
+        await checkSuperAdmin();
+        const ads = await prisma.advertisement.findMany({ orderBy: { createdAt: "desc" } });
+        return JSON.parse(JSON.stringify(ads));
+    } catch (e) {
+        console.error("SuperAdmin Ads Error:", e);
+        return [];
+    }
 }
 
 export async function createAdvertisement(data: {
