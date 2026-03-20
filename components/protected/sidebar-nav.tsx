@@ -11,7 +11,11 @@ import {
     Shield,
     Package,
     Settings,
-    CreditCard
+    CreditCard,
+    HelpCircle,
+    MessageCircle,
+    Book,
+    Lock
 } from "lucide-react";
 
 interface SidebarNavProps {
@@ -93,6 +97,23 @@ export default function SidebarNav({ role, isImagingEnabled, isAdmin }: SidebarN
                     <Link href="/parametres" className={linkClass("/parametres")}>
                         <Settings className={iconClass("/parametres", "text-slate-400")} />
                         Paramètres
+                    </Link>
+
+                    <div className="pt-4 pb-2">
+                        <p className="px-3 text-[10px] font-black text-slate-400 uppercase tracking-widest">Support & Aide</p>
+                    </div>
+
+                    <Link href="/aide" className={linkClass("/aide")}>
+                        <HelpCircle className={iconClass("/aide", "text-slate-400")} />
+                        Centre d'aide
+                    </Link>
+                    <Link href="/contact" className={linkClass("/contact")}>
+                        <MessageCircle className={iconClass("/contact", "text-slate-400")} />
+                        Contactez-nous
+                    </Link>
+                    <Link href="/confidentialite" className={linkClass("/confidentialite")}>
+                        <Lock className={iconClass("/confidentialite", "text-slate-400")} />
+                        Confidentialité
                     </Link>
                 </>
             )}

@@ -75,3 +75,48 @@ export const sendCredentialsEmail = async (email: string, name: string, password
         console.error("Resend error (Credentials):", error);
     }
 };
+
+export const sendBookingNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
+    if (!resend) return;
+    try {
+        await resend.emails.send({
+            from: `Gynaeasy <${FROM_EMAIL}>`,
+            to: email,
+            subject: 'Confirmation de votre rendez-vous - Gynaeasy',
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+                    <h1 style="color: #4f46e5;">Rendez-vous Confirmé</h1>
+                    <p>Bonjour ${patientName},</p>
+                    <p>Votre rendez-vous avec le <b>${doctorName}</b> est confirmé pour le :</p>
+                    <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center;">
+                        <p style="margin: 0; font-size: 18px; font-weight: bold; color: #1e293b;">${date} à ${time}</p>
+                    </div>
+                    <p style="color: #64748b; font-size: 14px;">Merci d'arriver 10 minutes à l'avance. En cas d'empêchement, merci de nous prévenir.</p>
+                </div>
+            `
+        });
+    } catch (error) {
+        console.error("Resend error (Booking Notification):", error);
+    }
+};
+
+export const sendCancellationNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
+    if (!resend) return;
+    try {
+        await resend.emails.send({
+            from: `Gynaeasy <${FROM_EMAIL}>`,
+            to: email,
+            subject: 'Annulation de votre rendez-vous - Gynaeasy',
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #ef4444; border-radius: 12px; padding: 24px;">
+                    <h1 style="color: #ef4444;">Rendez-vous Annulé</h1>
+                    <p>Bonjour ${patientName},</p>
+                    <p>Nous vous informons que votre rendez-vous prévu avec le <b>${doctorName}</b> le ${date} à ${time} a été annulé par le praticien en raison d'une indisponibilité.</p>
+                    <p style="margin-top: 24px; font-weight: bold;">Nous vous prions de nous excuser pour ce désagrément.</p>
+                </div>
+            `
+        });
+    } catch (error) {
+        console.error("Resend error (Cancellation Notification):", error);
+    }
+};

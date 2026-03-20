@@ -9,7 +9,17 @@ import {
     PlusCircle,
     Smartphone,
     TrendingUp,
-    HeartPulse
+    HeartPulse,
+    FileText,
+    Video,
+    Bell,
+    Microscope,
+    CreditCard,
+    Brain,
+    ShieldCheck,
+    Stethoscope,
+    Baby,
+    UserCircle
 } from 'lucide-react';
 import Image from 'next/image';
 import { SUBSCRIPTION_PLANS } from '@/config/plans';
@@ -46,13 +56,16 @@ export default function Home() {
             {/* --- HERO SECTION --- */}
             <section className="relative pt-32 pb-20 overflow-hidden">
                 {/* Background Decor */}
-                <div className="absolute top-0 right-0 -z-10 w-1/2 h-full opacity-10">
+                <div className="absolute top-0 right-0 -z-10 w-full lg:w-3/5 h-full opacity-30 lg:opacity-70">
                     <Image
-                        src="/medical_hero_bg_1773342439073.png"
-                        alt="Background"
+                        src="/hero-background.png"
+                        alt="Background Gynaeasy"
                         fill
-                        className="object-cover"
+                        className="object-cover mask-gradient-to-l"
+                        priority
+                        unoptimized={true}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent lg:block hidden" />
                 </div>
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-violet-200/40 rounded-full blur-[120px] -z-10" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-pink-100/40 rounded-full blur-[120px] -z-10" />
@@ -64,8 +77,8 @@ export default function Home() {
                             L'IA au service de la gynécologie
                         </div>
 
-                        <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] text-slate-900">
-                            Digitalisez votre <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-500">expertise médicale</span> en un clic.
+                        <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[1] text-slate-900">
+                            Digitalisez votre <span className="bg-clip-text text-transparent bg-gradient-to-r from-violet-600 to-pink-500 underline decoration-pink-500/20">vision médicale</span>.
                         </h1>
 
                         <p className="text-lg md:text-xl text-slate-500 leading-relaxed max-w-xl mx-auto lg:mx-0">
@@ -149,33 +162,186 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-8">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {[
                             {
-                                icon: Calendar,
-                                title: "Agenda Dynamique",
-                                desc: "Gérez vos consultations, échographies et urgences avec une vue claire et des rappels SMS automatiques.",
-                                color: "bg-violet-500"
+                                icon: FileText,
+                                title: "Dossier Médical Spécialisé",
+                                desc: "Dossiers patients pensés pour la gynécologie-obstétrique : suivi de grossesse, fiches d'échographie et historique vaccinal.",
+                                color: "bg-violet-600",
+                                shadow: "shadow-violet-200"
                             },
                             {
-                                icon: Smartphone,
-                                title: "Multi-Support",
-                                desc: "Accédez à votre dossier patient sur ordinateur, tablette ou mobile, où que vous soyez.",
-                                color: "bg-pink-500"
+                                icon: Video,
+                                title: "Téléconsultation Sécurisée",
+                                desc: "Réalisez des consultations à distance via notre canal vidéo HD chiffré, conforme aux normes de santé.",
+                                color: "bg-pink-600",
+                                shadow: "shadow-pink-200"
                             },
                             {
-                                icon: TrendingUp,
-                                title: "Statistiques & Finance",
-                                desc: "Visualisez en temps réel l'activité de votre cabinet et exportez vos bilans comptables.",
-                                color: "bg-emerald-500"
+                                icon: Brain,
+                                title: "IA & Aide au Diagnostic",
+                                desc: "Gagnez du temps avec la génération automatique de comptes-rendus et l'analyse intelligente des données cliniques.",
+                                color: "bg-indigo-600",
+                                shadow: "shadow-indigo-200"
+                            },
+                            {
+                                icon: Bell,
+                                title: "Rappels & Notifications",
+                                desc: "Réduisez les rendez-vous manqués de 40% grâce aux rappels SMS et WhatsApp envoyés automatiquement à vos patientes.",
+                                color: "bg-amber-500",
+                                shadow: "shadow-amber-200"
+                            },
+                            {
+                                icon: Microscope,
+                                title: "Gestion Labo & Imagerie",
+                                desc: "Centralisez tous les examens biologiques et les clichés d'imagerie directement dans la fiche de votre patiente.",
+                                color: "bg-emerald-600",
+                                shadow: "shadow-emerald-200"
+                            },
+                            {
+                                icon: CreditCard,
+                                title: "Facturation & Comptabilité",
+                                desc: "Suivez vos revenus en temps réel, gérez les paiements mobiles (Orange Money, Wave) et exportez vos bilans.",
+                                color: "bg-sky-600",
+                                shadow: "shadow-sky-200"
                             }
                         ].map((f, i) => (
-                            <div key={i} className="group p-8 bg-white rounded-3xl border border-slate-100 hover:border-violet-200 transition-all hover:shadow-xl hover:-translate-y-1">
-                                <div className={`h-14 w-14 rounded-2xl ${f.color} flex items-center justify-center text-white mb-6 shadow-lg shadow-${f.color.split('-')[1]}-500/20`}>
+                            <div key={i} className="group p-8 bg-white rounded-[2rem] border border-slate-100 hover:border-violet-200 transition-all hover:shadow-2xl hover:-translate-y-2 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-slate-50 rounded-bl-[4rem] -mr-8 -mt-8 transition-all group-hover:bg-violet-50/50" />
+                                <div className={`relative h-14 w-14 rounded-2xl ${f.color} flex items-center justify-center text-white mb-8 shadow-xl ${f.shadow}`}>
                                     <f.icon className="h-7 w-7" />
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 text-slate-900">{f.title}</h3>
-                                <p className="text-slate-500 leading-relaxed text-sm">{f.desc}</p>
+                                <h3 className="text-xl font-bold mb-4 text-slate-900 group-hover:text-violet-600 transition-colors">{f.title}</h3>
+                                <p className="text-slate-500 leading-relaxed text-sm font-medium">
+                                    {f.desc}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+            {/* --- TRUST & SECURITY SECTION --- */}
+            <section className="py-24 bg-white overflow-hidden">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid lg:grid-cols-2 gap-16 items-center">
+                        <div className="relative">
+                            <div className="absolute -top-20 -left-20 w-64 h-64 bg-violet-100 rounded-full blur-3xl opacity-50" />
+                            <div className="relative bg-slate-900 rounded-[3rem] p-8 md:p-12 shadow-2xl transform -rotate-2">
+                                <div className="space-y-6">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-12 w-12 rounded-2xl bg-violet-500 flex items-center justify-center">
+                                            <ShieldCheck className="h-6 w-6 text-white" />
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-white">Données Sécurisées</h3>
+                                    </div>
+                                    <p className="text-slate-400 leading-relaxed font-medium">
+                                        Vos données de santé sont chiffrées de bout en bout et hébergées sur des serveurs certifiés HDS (Hébergeur de Données de Santé).
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-4 pt-4">
+                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <p className="text-violet-400 font-bold mb-1">A2F</p>
+                                            <p className="text-xs text-slate-500">Double authentification</p>
+                                        </div>
+                                        <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <p className="text-pink-400 font-bold mb-1">Backup</p>
+                                            <p className="text-xs text-slate-500">Sauvegarde automatique</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Decorative Badge */}
+                            <div className="absolute -bottom-6 -right-6 bg-emerald-500 text-white p-6 rounded-3xl shadow-xl flex items-center gap-3 animate-pulse">
+                                <CheckCircle2 className="h-6 w-6" />
+                                <span className="font-bold">Conforme RGPD</span>
+                            </div>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-50 border border-violet-100 text-violet-600 text-[10px] font-black tracking-widest uppercase">
+                                Pourquoi nous choisir ?
+                            </div>
+                            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 leading-tight">
+                                Conçu pour la sérénité du <span className="text-violet-600">praticien</span>.
+                            </h2>
+                            <p className="text-lg text-slate-500 leading-relaxed">
+                                Gynaeasy n'est pas juste un logiciel, c'est un assistant qui s'occupe de la logistique pendant que vous vous concentrez sur vos patientes.
+                            </p>
+                            
+                            <ul className="space-y-6">
+                                {[
+                                    { title: "Zéro Installation", desc: "Pas de serveur à gérer. Accédez à votre cabinet via un simple navigateur." },
+                                    { title: "Migration Facile", desc: "Nous importons gratuitement vos dossiers patients existants depuis votre ancien logiciel." },
+                                    { title: "Support Premium 24/7", desc: "Une équipe dédiée pour vous accompagner par téléphone ou WhatsApp à tout moment." }
+                                ].map((item, i) => (
+                                    <li key={i} className="flex gap-4">
+                                        <div className="h-6 w-6 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
+                                            <div className="h-2 w-2 rounded-full bg-violet-600" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-bold text-slate-900">{item.title}</h4>
+                                            <p className="text-sm text-slate-500 font-medium">{item.desc}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* --- SPECIALISTS SECTION --- */}
+            <section id="specialists" className="py-24 bg-slate-900 overflow-hidden relative">
+                {/* Patterns */}
+                <div className="absolute top-0 right-0 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px]" />
+                <div className="absolute bottom-0 left-0 w-96 h-96 bg-pink-500/10 rounded-full blur-[120px]" />
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center max-w-3xl mx-auto mb-20 space-y-4">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] font-black tracking-widest uppercase">
+                            Spécialités
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-white">Une solution pour chaque <span className="text-violet-400">praticien</span> de la femme.</h2>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {[
+                            {
+                                icon: Stethoscope,
+                                name: "Gynécologues",
+                                desc: "Suivi pathologique complet, gestion des frottis et dépistages.",
+                                accent: "border-violet-500/50"
+                            },
+                            {
+                                icon: Baby,
+                                name: "Obstétriciens",
+                                desc: "Surveillance de grossesse à haut risque et gestion des accouchements.",
+                                accent: "border-pink-500/50"
+                            },
+                            {
+                                icon: Activity,
+                                name: "Échographistes",
+                                desc: "Édition rapide de comptes-rendus d'échographie morphologique.",
+                                accent: "border-emerald-500/50"
+                            },
+                            {
+                                icon: UserCircle,
+                                name: "Sages-femmes",
+                                desc: "Suivi de grossesse physiologique et conseils post-partum.",
+                                accent: "border-amber-500/50"
+                            }
+                        ].map((spec, i) => (
+                            <div key={i} className={`group bg-white/5 backdrop-blur-sm border-2 ${spec.accent} p-8 rounded-[2.5rem] hover:bg-white/10 transition-all cursor-default overflow-hidden relative`}>
+                                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
+                                    <spec.icon className="h-24 w-24 text-white" />
+                                </div>
+                                <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center text-white mb-6 group-hover:scale-110 transition-transform">
+                                    <spec.icon className="h-6 w-6" />
+                                </div>
+                                <h3 className="text-xl font-bold text-white mb-2">{spec.name}</h3>
+                                <p className="text-slate-400 text-sm leading-relaxed">
+                                    {spec.desc}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -224,7 +390,7 @@ export default function Home() {
                                     ))}
                                 </ul>
                                 <Link
-                                    href="/onboarding"
+                                    href={`/onboarding?plan=${plan.id}`}
                                     className={`w-full py-5 rounded-2xl font-black text-sm transition-all text-center active:scale-95 ${
                                         plan.isPopular 
                                         ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-900/10' 
@@ -300,9 +466,9 @@ export default function Home() {
                     <div className="space-y-6">
                         <h4 className="font-bold text-slate-900">Support</h4>
                         <ul className="space-y-4 text-slate-500 text-sm font-medium">
-                            <li><a href="#" className="hover:text-violet-600 transition-colors">Centre d'aide</a></li>
-                            <li><a href="#" className="hover:text-violet-600 transition-colors">Contact</a></li>
-                            <li><a href="#" className="hover:text-violet-600 transition-colors">Confidentialité</a></li>
+                            <li><Link href="/aide" className="hover:text-violet-600 transition-colors">Centre d'aide</Link></li>
+                            <li><Link href="/contact" className="hover:text-violet-600 transition-colors">Contact</Link></li>
+                            <li><Link href="/confidentialite" className="hover:text-violet-600 transition-colors">Confidentialité</Link></li>
                         </ul>
                     </div>
                 </div>

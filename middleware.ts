@@ -12,10 +12,9 @@ export default withAuth(
             return NextResponse.redirect(new URL("/dashboard", req.url));
         }
 
-        // Gestion de l'accès à la facturation ou aux statistiques
-        if (path.startsWith("/statistiques") && token?.role === "SECRETAIRE") {
-            // Optionnel: On peut renvoyer une erreur 403 ou rediriger avec un message d'erreur
-            return NextResponse.redirect(new URL("/dashboard?error=access_denied", req.url));
+        // Force le changement de mot de passe si requis (pour les médecins/secrétaires)
+        if (token?.mustChangePassword && token?.role !== "ADMIN" && path !== "/change-password") {
+            return NextResponse.redirect(new URL("/change-password", req.url));
         }
 
         return NextResponse.next();

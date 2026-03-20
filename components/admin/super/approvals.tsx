@@ -11,7 +11,8 @@ import {
     Stethoscope,
     Calendar,
     Loader2,
-    AlertCircle
+    AlertCircle,
+    Shield
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -97,18 +98,25 @@ export default function SuperAdminApprovals({ pendingUsers: initialUsers }: Supe
                                     <Stethoscope className="h-4 w-4" />
                                     <span className="truncate">{user.specialite}</span>
                                 </div>
-                                {user.status === "PENDING_VERIFICATION" ? (
-                                    <div className="flex items-center gap-2.5 text-amber-400 font-bold">
-                                        <AlertCircle className="h-4 w-4" />
-                                        Email Non Vérifié
-                                    </div>
-                                ) : (
-                                    <div className="flex items-center gap-2.5 text-emerald-400 font-bold">
-                                        <CheckCircle2 className="h-4 w-4" />
-                                        Email Vérifié
-                                    </div>
-                                )}
+                                <div className="flex items-center gap-2.5">
+                                    <Shield className="h-4 w-4 text-violet-400" />
+                                    <span className="text-xs font-black text-violet-400 uppercase tracking-widest">Offre : {user.planId || "SOLO"}</span>
+                                </div>
                             </div>
+                        </div>
+
+                        <div className="mb-8">
+                            {user.status === "PENDING_VERIFICATION" ? (
+                                <div className="flex items-center gap-2.5 text-amber-400 font-bold text-sm bg-amber-500/5 p-3 rounded-2xl border border-amber-500/10">
+                                    <AlertCircle className="h-4 w-4" />
+                                    Email Non Vérifié
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2.5 text-emerald-400 font-bold text-sm bg-emerald-500/5 p-3 rounded-2xl border border-emerald-500/10">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    Email Vérifié
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex gap-3">

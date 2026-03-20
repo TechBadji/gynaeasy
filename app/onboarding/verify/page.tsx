@@ -33,6 +33,7 @@ function VerifyContent() {
                 const res = await verifyDoctorEmail(token);
                 if (res.success) {
                     setStatus("success");
+                    if (res.message) setMessage(res.message);
                 } else {
                     setStatus("error");
                     setMessage(res.error || "La vérification a échoué.");
@@ -70,8 +71,7 @@ function VerifyContent() {
                     <div className="space-y-2">
                         <h1 className="text-3xl font-black">Email Vérifié !</h1>
                         <p className="text-slate-400 font-medium">
-                            Merci, votre email a été confirmé. Votre dossier est maintenant entre les mains de notre équipe administrative.
-                            Vous recevrez un email avec vos identifiants dès que votre compte sera prêt.
+                            {message || "Merci, votre email a été confirmé. Vous recevrez un email avec vos identifiants dès que votre compte sera prêt."}
                         </p>
                     </div>
                     <div className="pt-4">

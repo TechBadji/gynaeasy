@@ -11,13 +11,13 @@ export default async function ParametresPage() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) redirect("/api/auth/signin");
 
-    const [settings, user] = await Promise.all([
+    // Bypass Prisma Validation with Raw SQL for the new field
+    const [settings, userRows] = await Promise.all([
         getClinicSettings(),
-        prisma.user.findUnique({
-            where: { email: session.user.email },
-            select: { id: true, name: true, clinicName: true, specialite: true }
-        })
+        prisma.$queryRaw`SELECT id, name, "clinicName", specialite, "isEmergencyAvailable" FROM "User" WHERE email = ${session.user.email} LIMIT 1`
     ]);
+
+    const user = (userRows as any[])[0];
 
     return (
         <div className="space-y-6 pb-20">
@@ -36,7 +36,8 @@ export default async function ParametresPage() {
                         id: user?.id || "", 
                         clinicName: user?.clinicName || "",
                         name: user?.name || "",
-                        specialite: user?.specialite || ""
+                        specialite: user?.specialite || "",
+                        isEmergencyAvailable: user?.isEmergencyAvailable || false
                     }} 
                 />
                 

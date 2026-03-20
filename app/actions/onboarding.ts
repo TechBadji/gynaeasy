@@ -23,6 +23,7 @@ export async function registerDoctor(data: {
     email: string;
     clinicName: string;
     specialite: string;
+    plan?: string;
 }) {
     try {
         // Validation basique
@@ -46,6 +47,7 @@ export async function registerDoctor(data: {
                 role: "MEDECIN",
                 status: "PENDING_VERIFICATION",
                 verificationToken,
+                planId: data.plan || "SOLO",
             }
         });
 
@@ -72,16 +74,31 @@ export async function verifyDoctorEmail(token: string) {
             return { success: false, error: "Jeton de vérification invalide." };
         }
 
-        await prisma.user.update({
-            where: { id: user.id },
-            data: {
-                emailVerified: new Date(),
-                status: "PENDING_APPROVAL",
-                verificationToken: null,
-            }
-        });
+        // Vérification des paramètres système
+        let settings = await prisma.clinicSettings.findUnique({ where: { id: "singleton" } });
+        if (!settings) {
+            settings = await prisma.clinicSettings.create({ data: { id: "singleton" } });
+        }
 
-        return { success: true };
+        if (!settings.requireApproval) {
+            // APPROBATION AUTOMATIQUE
+            const res = await approveRegistration(user.id);
+            if (!res.success) return res;
+            
+            return { success: true, message: "Email vérifié et compte activé avec succès !" };
+        } else {
+            // ATTENTE APPROBATION MANUELLE
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    emailVerified: new Date(),
+                    status: "PENDING_APPROVAL",
+                    verificationToken: null,
+                }
+            });
+
+            return { success: true, message: "Email vérifié ! Votre compte est en attente d'approbation par l'administration." };
+        }
     } catch (error: any) {
         return { success: false, error: error.message };
     }
@@ -107,13 +124,14 @@ export async function approveRegistration(userId: string) {
                 password: hashedPassword,
                 status: "ACTIVE",
                 enabledModules: defaultModules,
+                mustChangePassword: true,
             }
         });
 
         await prisma.abonnement.create({
             data: {
                 userId: user.id,
-                plan: "SOLO",
+                plan: (user.planId as any) || "SOLO",
                 statut: "ACTIF",
                 dateDebut: new Date(),
             }

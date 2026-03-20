@@ -7,6 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { requestPlanUpgrade } from "@/app/actions/subscription";
+import toast from "react-hot-toast";
+import { useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 const PLAN_ICONS: Record<string, any> = {
   solo: Shield,
@@ -14,7 +18,33 @@ const PLAN_ICONS: Record<string, any> = {
   clinique: Building2,
 };
 
-export default function PricingCards() {
+export default function PricingCards({ currentPlan }: { currentPlan?: string }) {
+  const [isPending, startTransition] = useTransition();
+
+  const handleUpgrade = (planId: string) => {
+    console.log("DEBUG handleUpgrade:", { planId, currentPlan });
+    if (planId.toUpperCase() === currentPlan?.toUpperCase()) {
+      toast.error("Vous utilisez déjà ce plan");
+      return;
+    }
+
+    startTransition(async () => {
+      try {
+        const res = await requestPlanUpgrade(planId);
+        console.log("DEBUG UPGRADE RES:", res);
+        if (res.success) {
+          toast.success(res.message);
+          setTimeout(() => window.location.reload(), 1500); // Reload after toast
+        } else {
+          toast.error(res.message);
+        }
+      } catch (error) {
+        console.error("DEBUG UPGRADE ERR:", error);
+        toast.error("Erreur technique lors du changement de plan");
+      }
+    });
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR').format(price);
   };
@@ -88,12 +118,24 @@ export default function PricingCards() {
 
               <CardFooter className="pb-8">
                 <Button 
+                  disabled={isPending || plan.id.toUpperCase() === currentPlan?.toUpperCase()}
+                  onClick={() => handleUpgrade(plan.id)}
                   className={cn(
                     "w-full h-12 rounded-2xl font-black uppercase tracking-widest text-xs transition-all transform hover:scale-[1.02] active:scale-[0.98]",
-                    isPro ? "bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-100" : "bg-slate-800 hover:bg-slate-900 text-white"
+                    plan.id.toUpperCase() === currentPlan?.toUpperCase() 
+                      ? "bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed"
+                      : isPro 
+                        ? "bg-violet-600 hover:bg-violet-700 text-white shadow-xl shadow-violet-100" 
+                        : "bg-slate-800 hover:bg-slate-900 text-white"
                   )}
                 >
-                  {plan.cta}
+                  {isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : plan.id.toUpperCase() === currentPlan?.toUpperCase() ? (
+                    "Plan Actuel"
+                  ) : (
+                    plan.cta
+                  )}
                 </Button>
               </CardFooter>
             </Card>

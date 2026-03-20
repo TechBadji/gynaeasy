@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { registerDoctor } from "@/app/actions/onboarding";
 import {
     Activity,
@@ -16,6 +17,17 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 export default function OnboardingPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-[#0a0f1e] flex items-center justify-center text-white">Chargement...</div>}>
+            <OnboardingForm />
+        </Suspense>
+    );
+}
+
+function OnboardingForm() {
+    const searchParams = useSearchParams();
+    const planFromUrl = searchParams.get("plan")?.toUpperCase() || "SOLO";
+    
     const [isPending, startTransition] = useTransition();
     const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -30,7 +42,10 @@ export default function OnboardingPage() {
         e.preventDefault();
         startTransition(async () => {
             try {
-                const res = await registerDoctor(formData);
+                const res = await registerDoctor({
+                    ...formData,
+                    plan: planFromUrl as any
+                });
                 if (res.success) {
                     setIsSubmitted(true);
                     toast.success("Demande envoyée !");
@@ -119,6 +134,9 @@ export default function OnboardingPage() {
                     <div className="space-y-2">
                         <h1 className="text-3xl font-black text-white">Inscrivez votre cabinet</h1>
                         <p className="text-slate-400 font-medium">Commencez votre digitalisation en quelques secondes.</p>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-400 text-[10px] font-black tracking-widest uppercase mt-2">
+                            Offre choisie : {planFromUrl}
+                        </div>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-6">

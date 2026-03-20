@@ -28,8 +28,19 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Email et mot de passe requis");
                 }
 
-                const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
+                const user = await (prisma.user as any).findUnique({
+                    where: { email: credentials.email.toLowerCase() },
+                    select: {
+                        id: true,
+                        email: true,
+                        name: true,
+                        password: true,
+                        status: true,
+                        role: true,
+                        twoFactorEnabled: true,
+                        twoFactorSecret: true,
+                        mustChangePassword: true,
+                    }
                 });
 
                 // Use IP for audit logging
@@ -47,6 +58,8 @@ export const authOptions: NextAuthOptions = {
                     credentials.password,
                     user.password
                 );
+
+                console.log("DEBUG PASS:", { isPasswordValid });
 
                 if (!isPasswordValid) {
                     // Log failed login attempt
@@ -92,15 +105,21 @@ export const authOptions: NextAuthOptions = {
                     email: user.email,
                     name: user.name,
                     role: user.role, // Custom role added to JWT
+                    mustChangePassword: user.mustChangePassword,
                 };
             },
         }),
     ],
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
                 token.role = (user as any).role;
+                token.mustChangePassword = (user as any).mustChangePassword;
+            }
+            // Update token if session is updated (useful after password change)
+            if (trigger === "update" && session?.mustChangePassword === false) {
+                token.mustChangePassword = false;
             }
             return token;
         },
@@ -108,6 +127,7 @@ export const authOptions: NextAuthOptions = {
             if (token && session.user) {
                 (session.user as any).id = token.id as string;
                 (session.user as any).role = token.role as string;
+                (session.user as any).mustChangePassword = token.mustChangePassword as boolean;
             }
             return session;
         },

@@ -10,7 +10,9 @@ import {
     Save,
     Image as ImageIcon,
     User,
-    Stethoscope
+    Stethoscope,
+    AlertCircle,
+    Bell
 } from "lucide-react";
 import { updateClinicSettings } from "@/app/actions/clinic";
 import { updateUserDetails } from "@/app/actions/user";
@@ -30,6 +32,7 @@ interface UserSettings {
     name: string;
     clinicName: string;
     specialite: string;
+    isEmergencyAvailable: boolean;
 }
 
 export default function ClinicSettingsForm({ 
@@ -59,7 +62,8 @@ export default function ClinicSettingsForm({
                 updateUserDetails({
                     name: userDetails.name,
                     clinicName: userDetails.clinicName,
-                    specialite: userDetails.specialite
+                    specialite: userDetails.specialite,
+                    isEmergencyAvailable: userDetails.isEmergencyAvailable
                 })
             ]);
 
@@ -138,6 +142,29 @@ export default function ClinicSettingsForm({
                                 required
                             />
                         </div>
+                    </div>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-slate-50 space-y-4">
+                    <div className="flex items-center justify-between p-4 bg-orange-50/50 rounded-2xl border border-orange-100">
+                        <div className="flex items-center gap-4">
+                            <div className="h-10 w-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
+                                <AlertCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-sm font-bold text-slate-800">Disponibilité Urgences</h3>
+                                <p className="text-xs text-slate-500">Apparaître dans la section "Urgences" de la page de réservation publique.</p>
+                            </div>
+                        </div>
+                        <label className="relative inline-flex items-center cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                className="sr-only peer" 
+                                checked={userDetails.isEmergencyAvailable}
+                                onChange={(e) => setUserDetails({ ...userDetails, isEmergencyAvailable: e.target.checked })}
+                            />
+                            <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-orange-600"></div>
+                        </label>
                     </div>
                 </div>
             </div>

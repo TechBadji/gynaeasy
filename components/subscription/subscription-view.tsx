@@ -13,14 +13,14 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> =
 };
 
 const PLAN_MAP: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-    BASIQUE: { label: "Gynaeasy Basique", color: "text-slate-600", bg: "bg-slate-50", icon: Shield },
+    SOLO: { label: "Gynaeasy Solo", color: "text-slate-600", bg: "bg-slate-50", icon: Shield },
     PRO: { label: "Gynaeasy Pro", color: "text-violet-600", bg: "bg-violet-50", icon: Star },
-    PREMIUM: { label: "Gynaeasy Premium", color: "text-amber-600", bg: "bg-amber-50", icon: Star },
+    CLINIQUE: { label: "Gynaeasy Clinique", color: "text-amber-600", bg: "bg-amber-50", icon: Star },
 };
 
 export default function SubscriptionView({ subscription }: { subscription: any }) {
     const router = useRouter();
-    const plan = PLAN_MAP[subscription.plan] || PLAN_MAP.BASIQUE;
+    const plan = PLAN_MAP[subscription.plan] || PLAN_MAP.SOLO;
     const status = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
     const PlanIcon = plan.icon;
 
@@ -86,14 +86,14 @@ export default function SubscriptionView({ subscription }: { subscription: any }
                 />
 
                 {/* Upsell Card */}
-                {subscription.plan !== 'PREMIUM' && (
+                {subscription.plan !== 'CLINIQUE' && (
                     <div className="bg-indigo-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4">
                         <div className="absolute top-0 right-0 p-8 opacity-10">
                             <Star className="h-40 w-40" />
                         </div>
                         <div className="relative z-10 space-y-2">
                             <h3 className="text-xl font-bold">Besoin de plus de puissance ?</h3>
-                            <p className="text-indigo-100 text-sm max-w-sm">Passez au plan **Premium** pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
+                            <p className="text-indigo-100 text-sm max-w-sm">Passez au plan <strong>Clinique</strong> pour débloquer l&apos;intelligence artificielle et le multi-cabinet.</p>
                             <button className="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg hover:bg-slate-50 transition-all transform hover:scale-105">
                                 Comparer les offres
                             </button>
@@ -121,7 +121,7 @@ export default function SubscriptionView({ subscription }: { subscription: any }
                         <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
                             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Méthode de paiement</p>
                             <div className="flex items-center justify-between">
-                                <p className="text-sm font-black text-slate-800">Prélèvement Bancaire</p>
+                                <p className="text-sm font-black text-slate-800">Wave/OM</p>
                                 <button className="text-[10px] font-bold text-indigo-600 hover:underline">Editer</button>
                             </div>
                         </div>

@@ -6,7 +6,7 @@ import { sendTestSMS, getOrangeSMSStats } from "@/app/actions/reminders";
 import { 
     Settings, Save, Globe, Phone, Mail, MapPin, 
     DollarSign, CheckCircle2, MessageSquare, Send, 
-    Loader2, BarChart3, RefreshCw, AlertCircle 
+    Loader2, BarChart3, RefreshCw, AlertCircle, ShieldCheck, UserCheck 
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -19,6 +19,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         phone: settings?.phone || "",
         email: settings?.email || "",
         currency: settings?.currency || "FCFA",
+        requireApproval: settings?.requireApproval ?? false,
     });
 
     // SMS States
@@ -45,7 +46,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         if (onlySMS) fetchStats();
     }, [onlySMS]);
 
-    const handleChange = (field: string, value: string) => {
+    const handleChange = (field: string, value: any) => {
         setForm((prev) => ({ ...prev, [field]: value }));
         setSaved(false);
     };
@@ -119,45 +120,83 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
             )}
 
             {!onlySMS && (
-                <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden max-w-2xl">
-                    <div className="flex items-center gap-2 p-5 border-b border-white/5">
-                        <Settings className="h-4 w-4 text-violet-400" />
-                        <span className="text-sm font-semibold text-white">Informations de la plateforme</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* General Settings */}
+                    <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                        <div className="flex items-center gap-2 p-5 border-b border-white/5">
+                            <Settings className="h-4 w-4 text-violet-400" />
+                            <span className="text-sm font-semibold text-white">Informations de la plateforme</span>
+                        </div>
+                        <div className="p-6 space-y-5">
+                            {fields.map((field) => {
+                                const Icon = field.icon;
+                                return (
+                                    <div key={field.key}>
+                                        <label className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-2">
+                                            <Icon className="h-3.5 w-3.5" />
+                                            {field.label}
+                                        </label>
+                                        <input
+                                            type={field.type}
+                                            value={(form as any)[field.key]}
+                                            onChange={(e) => handleChange(field.key, e.target.value)}
+                                            placeholder={field.placeholder}
+                                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 focus:bg-white/8 transition-all"
+                                        />
+                                    </div>
+                                );
+                            })}
+                        </div>
                     </div>
-                    <div className="p-6 space-y-5">
-                        {fields.map((field) => {
-                            const Icon = field.icon;
-                            return (
-                                <div key={field.key}>
-                                    <label className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-2">
-                                        <Icon className="h-3.5 w-3.5" />
-                                        {field.label}
-                                    </label>
-                                    <input
-                                        type={field.type}
-                                        value={(form as any)[field.key]}
-                                        onChange={(e) => handleChange(field.key, e.target.value)}
-                                        placeholder={field.placeholder}
-                                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-violet-500/50 focus:bg-white/8 transition-all"
-                                    />
+
+                    {/* Security & Access */}
+                    <div className="space-y-6">
+                        <div className="bg-white/5 rounded-xl border border-white/10 overflow-hidden">
+                            <div className="flex items-center gap-2 p-5 border-b border-white/5 bg-violet-500/5">
+                                <ShieldCheck className="h-4 w-4 text-violet-400" />
+                                <span className="text-sm font-semibold text-white">Sécurité & Accès</span>
+                            </div>
+                            <div className="p-6">
+                                <div className="flex items-center justify-between p-4 bg-white/3 rounded-xl border border-white/5">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400">
+                                            <UserCheck className="h-5 w-5" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold text-white">Approbation manuelle</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">Validation admin requise pour les nouveaux médecins</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleChange("requireApproval", !form.requireApproval)}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${form.requireApproval ? "bg-violet-600" : "bg-slate-700"}`}
+                                    >
+                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.requireApproval ? "translate-x-6" : "translate-x-1"}`} />
+                                    </button>
                                 </div>
-                            );
-                        })}
-                    </div>
-                    <div className="px-6 pb-6">
-                        <button
-                            onClick={handleSave}
-                            disabled={isPending}
-                            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${saved || isPending ? "bg-emerald-600 text-white" : "bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white"}`}
-                        >
-                            {saved ? <><CheckCircle2 className="h-4 w-4" /> Sauvegardé !</> : <><Save className="h-4 w-4" /> {isPending ? "Sauvegarde..." : "Sauvegarder"}</>}
-                        </button>
+                            </div>
+                        </div>
+
+                        {/* Save Button */}
+                        <div className="bg-white/5 rounded-xl border border-white/10 p-6 flex items-center justify-between">
+                            <div>
+                                <p className="text-xs text-slate-400">Modifications non enregistrées</p>
+                                <p className="text-[10px] text-slate-600 italic">Dernière mise à jour: {new Date(settings.updatedAt).toLocaleString()}</p>
+                            </div>
+                            <button
+                                onClick={handleSave}
+                                disabled={isPending}
+                                className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg ${saved || isPending ? "bg-emerald-600 text-white" : "bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white shadow-violet-500/20"}`}
+                            >
+                                {saved ? <><CheckCircle2 className="h-4 w-4" /> Sauvegardé !</> : <><Save className="h-4 w-4" /> {isPending ? "Sauvegarde..." : "Enregistrer tout"}</>}
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* SMS Test Card */}
-            <div className={`bg-white/5 rounded-xl border ${onlySMS ? 'border-indigo-500/30' : 'border-white/10'} overflow-hidden max-w-2xl`}>
+            <div className={`bg-white/5 rounded-xl border ${onlySMS ? 'border-indigo-500/30' : 'border-white/10'} overflow-hidden max-w-2xl mt-6`}>
                 <div className="flex items-center gap-2 p-5 border-b border-white/5 bg-indigo-500/5">
                     <MessageSquare className="h-4 w-4 text-indigo-400" />
                     <span className="text-sm font-semibold text-white">Test de l'API SMS Orange</span>
@@ -188,32 +227,6 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                     </div>
                 </div>
             </div>
-
-            {onlySMS && stats && !stats.partnerStatistics?.statistics?.[0] && (
-                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex gap-3 max-w-2xl">
-                    <AlertCircle className="h-5 w-5 text-amber-500 shrink-0" />
-                    <p className="text-xs text-amber-200/80">
-                        Aucune statistique disponible pour le Sénégal. Assurez-vous d'avoir envoyé au moins un SMS et que vos crédits sont actifs.
-                    </p>
-                </div>
-            )}
-
-            {!onlySMS && (
-                <div className="bg-red-500/5 rounded-xl border border-red-500/20 overflow-hidden max-w-2xl">
-                    <div className="flex items-center gap-2 p-5 border-b border-red-500/10">
-                        <span className="text-sm font-semibold text-red-400">Zone de danger</span>
-                    </div>
-                    <div className="p-6 space-y-4">
-                        <div className="flex items-center justify-between font-medium">
-                            <div>
-                                <p className="text-sm text-white">Mode maintenance</p>
-                                <p className="text-xs text-slate-400 mt-0.5">Rend l'application inaccessible</p>
-                            </div>
-                            <button className="text-xs border border-red-500/30 text-red-400 hover:bg-red-500/10 px-3 py-1.5 rounded-lg transition-colors">Activer</button>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 }

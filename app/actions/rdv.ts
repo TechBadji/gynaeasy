@@ -113,3 +113,56 @@ export async function getPatients() {
         orderBy: { nom: "asc" },
     });
 }
+
+export async function cancelRdv(id: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non autorisé" };
+
+    try {
+        const appointment = await prisma.consultation.findUnique({
+            where: { id },
+            include: { patient: true, user: true }
+        });
+
+        if (!appointment) return { success: false, message: "Rendez-vous introuvable" };
+
+        // Deletion (or mark as cancelled if field exists)
+        await prisma.consultation.delete({ where: { id } });
+
+        // Notifications
+        const { sendSMS } = await import("@/lib/sms");
+        const { sendWhatsApp } = await import("@/lib/whatsapp");
+        const { sendCancellationNotificationEmail } = await import("@/lib/mail");
+        const { format } = await import("date-fns");
+        const { fr } = await import("date-fns/locale");
+
+        const dt = new Date(appointment.dateHeure);
+        const dateStr = format(dt, "dd/MM/yyyy", { locale: fr });
+        const timeStr = format(dt, "HH:mm", { locale: fr });
+
+        // SMS & WhatsApp
+        if (appointment.patient.telephone) {
+            const msg = `Annulation: Votre RDV du ${dateStr} à ${timeStr} avec le ${appointment.user.name} a été annulé par le cabinet. Gynaeasy`;
+            await sendSMS(appointment.patient.telephone, msg);
+            await sendWhatsApp(appointment.patient.telephone, `❌ *ANNULATION RDV*\n\nBonjour, nous vous informons que votre rendez-vous du *${dateStr}* à *${timeStr}* avec le *${appointment.user.name}* a été annulé par le cabinet. Gynaeasy.`);
+        }
+
+        // Email
+        if (appointment.patient.email) {
+            await sendCancellationNotificationEmail(
+                appointment.patient.email,
+                appointment.patient.nom.toUpperCase(),
+                appointment.user.name || "Médecin",
+                dateStr,
+                timeStr
+            );
+        }
+
+        revalidatePath("/dashboard");
+        revalidatePath("/agenda");
+
+        return { success: true, message: "Rendez-vous annulé et patient notifié" };
+    } catch (error: any) {
+        return { success: false, message: error.message };
+    }
+}

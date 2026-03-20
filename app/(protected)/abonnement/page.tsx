@@ -23,7 +23,7 @@ export default async function AbonnementPage() {
                     <SubscriptionView subscription={sub} />
                     <div className="mt-16 pt-8 border-t border-slate-100">
                         <h2 className="text-xl font-bold text-slate-800 text-center mb-8">Mettre à niveau mon abonnement</h2>
-                        <PricingCards />
+                        <PricingCards currentPlan={sub.plan} />
                     </div>
                 </>
             ) : (

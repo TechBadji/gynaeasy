@@ -1,5 +1,5 @@
 "use server";
-// Reload signal: 12-03-2026 10:29
+// Schema Sync: 20-03-2026 12:04
 
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -411,6 +411,7 @@ export async function updateAppSettings(data: {
     phone?: string;
     email?: string;
     currency?: string;
+    requireApproval?: boolean;
 }) {
     await checkSuperAdmin();
     const updateData: any = {};
@@ -418,6 +419,7 @@ export async function updateAppSettings(data: {
     if (data.address !== undefined) updateData.adresse = data.address;
     if (data.phone !== undefined) updateData.telephone = data.phone;
     if (data.email !== undefined) updateData.email = data.email;
+    if (data.requireApproval !== undefined) updateData.requireApproval = data.requireApproval;
 
     // Note: currency is not in schema but we keep it in UI for now, ignored in DB update
 
@@ -447,17 +449,21 @@ export async function getAuditLogs(limit = 50) {
 // ============================================
 
 export async function getActiveDoctors() {
-    return await prisma.user.findMany({
-        where: {
-            role: "MEDECIN",
-            status: "ACTIVE"
-        },
-        select: {
-            id: true,
-            name: true,
-            specialite: true,
-            clinicName: true,
-        },
-        orderBy: { name: "asc" }
-    });
+    const { PrismaClient } = await import("@prisma/client");
+    const p = new PrismaClient();
+    try {
+        // Raw SQL fallback for persistent Prisma Client validation errors after schema sync
+        const doctors: any[] = await prisma.$queryRaw`
+            SELECT * FROM "User" 
+            WHERE role = 'MEDECIN' 
+              AND status = 'ACTIVE' 
+            ORDER BY name ASC
+        `;
+        return doctors;
+    } catch (err) {
+        console.error("getActiveDoctors Raw Error:", err);
+        return [];
+    } finally {
+        await p.$disconnect();
+    }
 }

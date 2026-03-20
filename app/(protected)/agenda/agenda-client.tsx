@@ -7,7 +7,9 @@ import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Plus, X, Loader2, CalendarPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { createRdv, type RdvFormState } from "@/app/actions/rdv";
+import { createRdv, cancelRdv, type RdvFormState } from "@/app/actions/rdv";
+import toast from "react-hot-toast";
+import { Trash2, Info } from "lucide-react";
 
 const locales = { fr };
 const localizer = dateFnsLocalizer({
@@ -84,6 +86,8 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
     const [showDropdown, setShowDropdown] = useState(false);
     const [isNewPatient, setIsNewPatient] = useState(false);
     const [newPatientInfo, setNewPatientInfo] = useState({ nom: "", prenom: "" });
+    const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+    const [isDetailOpen, setIsDetailOpen] = useState(false);
     const formRef = useRef<HTMLFormElement>(null);
 
     // Auto-open modal if ?new=true is present in URL
@@ -141,6 +145,28 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
                 router.push("/agenda");
                 router.refresh();
             }, 1200);
+        }
+    };
+
+    const handleCancelRdv = async () => {
+        if (!selectedEvent) return;
+        if (!confirm("Voulez-vous vraiment annuler ce rendez-vous ? Le patient recevra une notification par SMS et Email.")) return;
+
+        setIsLoading(true);
+        try {
+            const res = await cancelRdv(selectedEvent.id);
+            if (res.success) {
+                toast.success(res.message);
+                setIsDetailOpen(false);
+                setSelectedEvent(null);
+                router.refresh();
+            } else {
+                toast.error(res.message);
+            }
+        } catch (error) {
+            toast.error("Erreur lors de l'annulation");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -216,6 +242,10 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
                     onView={(v) => setView(v as any)}
                     date={date}
                     onNavigate={(d) => setDate(d)}
+                    onSelectEvent={(event) => {
+                        setSelectedEvent(event as CalendarEvent);
+                        setIsDetailOpen(true);
+                    }}
                     eventPropGetter={eventStyleGetter}
                     min={new Date(0, 0, 0, 8, 0, 0)}
                     max={new Date(0, 0, 0, 20, 0, 0)}
@@ -225,6 +255,58 @@ export default function AgendaClient({ initialEvents, patients }: Props) {
                     selectable
                 />
             </div>
+
+            {/* Modal Détails RDV */}
+            {isDetailOpen && selectedEvent && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setIsDetailOpen(false)} />
+                    <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-300">
+                        <div className="bg-slate-50 p-6 border-b flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-white rounded-lg border shadow-sm text-slate-400">
+                                    <Info className="h-5 w-5" />
+                                </div>
+                                <h2 className="font-bold text-slate-900">Détails du RDV</h2>
+                            </div>
+                            <button onClick={() => setIsDetailOpen(false)} className="text-slate-400 hover:text-slate-600 transition-colors">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <div className="p-8 space-y-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Patient & Motif</label>
+                                    <p className="text-lg font-black text-slate-900 leading-tight mt-1">{selectedEvent.title}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="p-3 bg-violet-50 rounded-xl border border-violet-100">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-violet-400 block mb-1">Date</label>
+                                        <span className="text-sm font-bold text-violet-700">{format(selectedEvent.start, "dd MMMM yyyy", { locale: fr })}</span>
+                                    </div>
+                                    <div className="p-3 bg-pink-50 rounded-xl border border-pink-100">
+                                        <label className="text-[9px] font-black uppercase tracking-widest text-pink-400 block mb-1">Heure</label>
+                                        <span className="text-sm font-bold text-pink-700">{format(selectedEvent.start, "HH:mm")}</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                     <span className="text-xs font-bold px-3 py-1 bg-slate-100 rounded-full border border-slate-200 text-slate-600 uppercase tracking-widest">
+                                        {selectedEvent.type.replace('_', ' ')}
+                                     </span>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={handleCancelRdv}
+                                disabled={isLoading}
+                                className="w-full flex items-center justify-center gap-2 py-4 bg-red-50 text-red-600 hover:bg-red-100 rounded-2xl border border-red-100 transition-all font-bold text-sm active:scale-95 disabled:opacity-50"
+                            >
+                                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                                Annuler ce rendez-vous
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Modal RDV */}
             {isOpen && (

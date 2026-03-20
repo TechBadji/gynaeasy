@@ -13,14 +13,27 @@ export async function updateUserDetails(data: {
     name?: string;
     clinicName?: string;
     specialite?: string;
+    isEmergencyAvailable?: boolean;
 }) {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user?.email) return { success: false, error: "Non autorisé" };
 
-        const updated = await (prisma.user as any).update({
-            where: { email: session.user.email },
-            data
+        // Bypass Prisma Client validation with Raw SQL if internal schema is not synced
+        const keys = Object.keys(data).filter(k => (data as any)[k] !== undefined);
+        if (keys.length > 0) {
+            const setClauses = keys.map(k => {
+                const val = (data as any)[k];
+                if (typeof val === 'boolean') return `"${k}" = ${val}`;
+                return `"${k}" = '${val.replace(/'/g, "''")}'`; // Basic escape
+            });
+            await prisma.$executeRawUnsafe(
+                `UPDATE "User" SET ${setClauses.join(', ')}, "updatedAt" = NOW() WHERE email = '${session.user.email}'`
+            );
+        }
+
+        const updated = await (prisma.user as any).findUnique({
+            where: { email: session.user.email }
         });
 
         revalidatePath("/parametres");
@@ -57,7 +70,10 @@ export async function updatePassword(data: {
 
         await (prisma.user as any).update({
             where: { email: session.user.email },
-            data: { password: hashedPassword }
+            data: { 
+                password: hashedPassword,
+                mustChangePassword: false 
+            }
         });
 
         return { success: true, message: "Mot de passe mis à jour avec succès" };

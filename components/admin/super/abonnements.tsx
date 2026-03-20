@@ -21,12 +21,19 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
     const [list, setList] = useState(abonnements);
     const [isPending, startTransition] = useTransition();
     const [creating, setCreating] = useState(false);
-    const [newAb, setNewAb] = useState({
+    const [newAb, setNewAb] = useState<{
+        userId: string;
+        plan: string;
+        statut: "ACTIF" | "ANNULE" | "EXPIRE";
+        reductionType: string | null;
+        reductionValeur: number | null;
+        notesPromo: string;
+    }>({
         userId: "",
-        plan: "PRO" as const,
-        statut: "ACTIF" as const,
-        reductionType: null as any,
-        reductionValeur: null as any,
+        plan: "PRO",
+        statut: "ACTIF",
+        reductionType: null,
+        reductionValeur: null,
         notesPromo: ""
     });
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -49,7 +56,7 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
         startTransition(async () => {
             try {
                 const user = users.find(u => u.id === newAb.userId);
-                const created = await createAbonnement(newAb);
+                const created = await createAbonnement(newAb as any);
                 setList((prev) => [{ ...created, user }, ...prev]);
                 toast.success("Abonnement créé");
                 setCreating(false);
@@ -134,7 +141,7 @@ export default function SuperAdminAbonnements({ abonnements, users, promotions }
                                 onChange={(e) => setNewAb((p) => ({ ...p, plan: e.target.value as any }))}
                                 className="w-full bg-[#1a2340] border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-violet-500/50"
                             >
-                                {["BASIQUE", "PRO", "PREMIUM"].map((p) => (
+                                {["SOLO", "PRO", "CLINIQUE"].map((p) => (
                                     <option key={p} value={p}>{p}</option>
                                 ))}
                             </select>

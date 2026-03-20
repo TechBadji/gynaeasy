@@ -8,52 +8,46 @@ datasource db {
 }
 
 model User {
-  id                String          @id @default(cuid())
-  name              String?
-  email             String?         @unique
-  emailVerified     DateTime?
-  image             String?
-  password          String?
-  role              Role            @default(MEDECIN)
-  twoFactorEnabled  Boolean         @default(false)
-  twoFactorSecret   String?
-  createdAt         DateTime        @default(now())
-  updatedAt         DateTime        @updatedAt
-  specialite        String?
-  enabledModules    String[]        @default(["AGENDA", "PATIENTS"])
-  clinicName        String?
-  status            AccountStatus   @default(ACTIVE)
-  verificationToken String?         @unique
-  abonnements       Abonnement[]
-  accessRequests    AccessRequest[]
-  consultations     Consultation[]
-  auditLogs         AuditLog[]
-  asTreating        Patient[]       @relation("TreatingDoctor")
-  patients          Patient[]
-  facturesHote      FactureHote[]
-  notifications     Notification[]
-  planId            String?
-  subscriptionStatus StatutAbonnement?
+  id                   String            @id @default(cuid())
+  name                 String?
+  email                String?           @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  role                 Role              @default(MEDECIN)
+  twoFactorEnabled     Boolean           @default(false)
+  twoFactorSecret      String?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+  specialite           String?
+  enabledModules       String[]          @default(["AGENDA", "PATIENTS"])
+  clinicName           String?
+  status               AccountStatus     @default(ACTIVE)
+  verificationToken    String?           @unique
+  mustChangePassword   Boolean           @default(false)
+  planId               String?
+  subscriptionStatus   StatutAbonnement?
+  isEmergencyAvailable Boolean           @default(false)
+  abonnements          Abonnement[]
+  accessRequests       AccessRequest[]
+  auditLogs            AuditLog[]
+  consultations        Consultation[]
+  facturesHote         FactureHote[]
+  notifications        Notification[]
+  asTreating           Patient[]         @relation("TreatingDoctor")
+  patients             Patient[]
 }
 
 model Notification {
   id        String           @id @default(cuid())
-  userId    String           // Destinataire (SA ou Médecin)
+  userId    String
   titre     String
   message   String
   type      TypeNotification @default(INFO)
   read      Boolean          @default(false)
-  link      String?          // Lien direct vers l'action (ex: /admin/users/clerk_id)
+  link      String?
   createdAt DateTime         @default(now())
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum TypeNotification {
-  INFO
-  SUCCESS
-  WARNING
-  ERROR
-  URGENT
 }
 
 model Patient {
@@ -206,12 +200,12 @@ model ModeleDocument {
 model AuditLog {
   id        String   @id @default(cuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   action    String
   patientId String?
   details   String?
   ipAddress String?
   timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([patientId])
@@ -235,24 +229,18 @@ model Abonnement {
 }
 
 model FactureHote {
-  id               String   @id @default(cuid())
-  userId           String
-  numero           String   @unique // ex: FA-2024-001
-  periodeDebut     DateTime
-  periodeFin       DateTime
-  montantHT        Float
-  montantTVA       Float    @default(0)
-  montantTTC       Float
-  statut           StatutFacture @default(PAYEE)
-  url              String?  // PDF stocké
-  createdAt        DateTime @default(now())
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-enum StatutFacture {
-  EN_ATTENTE
-  PAYEE
-  ANNULEE
+  id           String        @id @default(cuid())
+  userId       String
+  numero       String        @unique
+  periodeDebut DateTime
+  periodeFin   DateTime
+  montantHT    Float
+  montantTVA   Float         @default(0)
+  montantTTC   Float
+  statut       StatutFacture @default(PAYEE)
+  url          String?
+  createdAt    DateTime      @default(now())
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PlanConfig {
@@ -290,13 +278,29 @@ model StockItem {
 }
 
 model ClinicSettings {
-  id        String   @id @default("singleton")
-  nom       String   @default("Gynaeasy Clinic")
-  adresse   String?
-  telephone String?
-  email     String?
-  slogan    String?
-  updatedAt DateTime @updatedAt
+  id              String   @id @default("singleton")
+  nom             String   @default("Gynaeasy Clinic")
+  adresse         String?
+  telephone       String?
+  email           String?
+  slogan          String?
+  updatedAt       DateTime @updatedAt
+  logo            String?
+  requireApproval Boolean  @default(false)
+}
+
+enum TypeNotification {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+  URGENT
+}
+
+enum StatutFacture {
+  EN_ATTENTE
+  PAYEE
+  ANNULEE
 }
 
 enum Role {
