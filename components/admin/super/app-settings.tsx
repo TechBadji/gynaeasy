@@ -43,8 +43,8 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
     };
 
     useEffect(() => {
-        if (onlySMS) fetchStats();
-    }, [onlySMS]);
+        fetchStats();
+    }, []);
 
     const handleChange = (field: string, value: any) => {
         setForm((prev) => ({ ...prev, [field]: value }));
@@ -102,44 +102,42 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                 </p>
             </div>
 
-            {onlySMS && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Consommation */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
-                        <div className="flex items-center justify-between mb-2">
-                            <BarChart3 className="h-4 w-4 text-slate-400" />
-                            <button onClick={fetchStats} disabled={loadingStats} className="text-slate-500 hover:text-white transition-colors">
-                                <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? 'animate-spin' : ''}`} />
-                            </button>
-                        </div>
-                        <div className="text-2xl font-black text-white">
-                            {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
-                        </div>
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Usage)</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Consommation */}
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+                    <div className="flex items-center justify-between mb-2">
+                        <BarChart3 className="h-4 w-4 text-slate-400" />
+                        <button onClick={fetchStats} disabled={loadingStats} className="text-slate-500 hover:text-white transition-colors">
+                            <RefreshCw className={`h-3.5 w-3.5 ${loadingStats ? 'animate-spin' : ''}`} />
+                        </button>
                     </div>
-
-                    {/* Solde Restant */}
-                    <div className="bg-white/5 border border-indigo-500/20 rounded-2xl p-5 relative overflow-hidden group">
-                        <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
-                            <ShieldCheck className="h-12 w-12 text-indigo-400" />
-                        </div>
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="p-1.5 bg-indigo-500/10 rounded-lg">
-                                <MessageSquare className="h-4 w-4 text-indigo-400" />
-                            </div>
-                        </div>
-                        <div className="text-2xl font-black text-indigo-400">
-                            {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits ?? "0"}
-                        </div>
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
-                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.expires && (
-                            <div className="text-[9px] text-slate-600 mt-1 italic">
-                                Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires).toLocaleDateString()}
-                            </div>
-                        )}
+                    <div className="text-2xl font-black text-white">
+                        {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
                     </div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Usage)</div>
                 </div>
-            )}
+
+                {/* Solde Restant */}
+                <div className="bg-white/5 border border-indigo-500/20 rounded-2xl p-5 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-3 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <ShieldCheck className="h-12 w-12 text-indigo-400" />
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                        <div className="p-1.5 bg-indigo-500/10 rounded-lg">
+                            <MessageSquare className="h-4 w-4 text-indigo-400" />
+                        </div>
+                    </div>
+                    <div className="text-2xl font-black text-indigo-400">
+                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits ?? "0"}
+                    </div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
+                    {stats?.contracts?.partnerContracts?.contracts?.[0]?.expires && (
+                        <div className="text-[9px] text-slate-600 mt-1 italic">
+                            Expire le : {new Date(stats?.contracts?.partnerContracts?.contracts?.[0]?.expires).toLocaleDateString()}
+                        </div>
+                    )}
+                </div>
+            </div>
 
             {!onlySMS && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -230,9 +228,19 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                     </div>
                 </div>
                 <div className="p-6">
-                    <p className="text-xs text-slate-400 mb-4 italic">
-                        Vérifiez la configuration réelle en envoyant un message de test.
-                    </p>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-2">
+                        <p className="text-xs text-slate-400 italic">
+                            Vérifiez la configuration réelle en envoyant un message de test.
+                        </p>
+                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits !== undefined && (
+                            <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg">
+                                <span className="text-[10px] font-bold text-indigo-300 uppercase">Solde Pack :</span>
+                                <span className="text-sm font-black text-white">
+                                    {stats.contracts.partnerContracts.contracts[0].availableUnits} SMS
+                                </span>
+                            </div>
+                        )}
+                    </div>
                     <div className="flex gap-2">
                         <div className="relative flex-1">
                             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-500" />
