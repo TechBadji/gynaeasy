@@ -109,7 +109,7 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
 
             {/* Stats SMS */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Consommation */}
+                {/* SMS Envoyés */}
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
                     <div className="flex items-center justify-between mb-2">
                         <BarChart3 className="h-4 w-4 text-slate-400" />
@@ -121,10 +121,10 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                         <div className="text-xs text-red-400 font-medium">Erreur de chargement</div>
                     ) : (
                         <div className="text-2xl font-black text-white">
-                            {stats?.usage?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage ?? "0"}
+                            {loadingStats ? "..." : (stats?.smsSent ?? "0")}
                         </div>
                     )}
-                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés (Usage)</div>
+                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Envoyés</div>
                 </div>
 
                 {/* Solde Restant */}
@@ -137,39 +137,22 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                             <MessageSquare className="h-4 w-4 text-indigo-400" />
                         </div>
                     </div>
-                    
+
                     {stats?.success === false ? (
                         <div className="text-xs text-red-400 font-medium">Clés ou API invalides</div>
                     ) : (
                         <>
                             <div className="text-2xl font-black text-indigo-400">
-                                {(() => {
-                                    const contracts = stats?.contracts?.partnerContracts?.contracts 
-                                                   || stats?.contracts?.contracts 
-                                                   || [];
-                                    const total = Array.isArray(contracts) 
-                                        ? contracts.reduce((acc: number, c: any) => acc + (c.availableUnits || 0), 0)
-                                        : (contracts.availableUnits || 0);
-                                    return total;
-                                })()}
+                                {loadingStats ? "..." : (stats?.availableUnits ?? "—")}
                             </div>
-                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SMS Restants (Pack)</div>
-                            {(() => {
-                                const contracts = stats?.contracts?.partnerContracts?.contracts 
-                                               || stats?.contracts?.contracts 
-                                               || [];
-                                const firstWithExpiry = Array.isArray(contracts) 
-                                    ? contracts.find((c: any) => c.expires) 
-                                    : (contracts.expires ? contracts : null);
-                                if (firstWithExpiry?.expires) {
-                                    return (
-                                        <div className="text-[9px] text-slate-600 mt-1 italic">
-                                            Expire le : {new Date(firstWithExpiry.expires).toLocaleDateString()}
-                                        </div>
-                                    );
-                                }
-                                return null;
-                            })()}
+                            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                SMS Restants {stats?.country ? `(${stats.country})` : ""}
+                            </div>
+                            {stats?.expirationDate && (
+                                <div className="text-[9px] text-slate-600 mt-1 italic">
+                                    Expire le : {new Date(stats.expirationDate).toLocaleDateString("fr-FR")}
+                                </div>
+                            )}
                         </>
                     )}
                 </div>
@@ -268,11 +251,11 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                         <p className="text-xs text-slate-400 italic">
                             Vérifiez la configuration réelle en envoyant un message de test.
                         </p>
-                        {stats?.contracts?.partnerContracts?.contracts?.[0]?.availableUnits !== undefined && (
+                        {stats?.availableUnits !== undefined && (
                             <div className="flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 px-3 py-1.5 rounded-lg">
                                 <span className="text-[10px] font-bold text-indigo-300 uppercase">Solde Pack :</span>
                                 <span className="text-sm font-black text-white">
-                                    {stats.contracts.partnerContracts.contracts[0].availableUnits} SMS
+                                    {stats.availableUnits} SMS
                                 </span>
                             </div>
                         )}

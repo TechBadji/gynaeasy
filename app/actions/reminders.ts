@@ -130,21 +130,43 @@ export async function getOrangeSMSStats() {
         const { access_token } = await tokenResponse.json();
 
         // 2. Récupérer les stats d'usage
-        const statsResponse = await fetch("https://api.orange.com/sms/admin/v1/statistics?country=SEN", {
+        const statsResponse = await fetch("https://api.orange.com/sms/admin/v1/statistics", {
             headers: { "Authorization": `Bearer ${access_token}` }
         });
         const statsData = statsResponse.ok ? await statsResponse.json() : null;
 
-        // 3. Récupérer le solde (contracts) sans filtre de pays pour être plus large
+        // 3. Récupérer le solde (contracts)
         const contractsResponse = await fetch("https://api.orange.com/sms/admin/v1/contracts", {
             headers: { "Authorization": `Bearer ${access_token}` }
         });
-        const contractsData = contractsResponse.ok ? await contractsResponse.json() : null;
-        
+        const contractsRaw = contractsResponse.ok ? await contractsResponse.json() : null;
+
+        // Orange returns either an array directly or wrapped — normalize it
+        const contractsList: any[] = Array.isArray(contractsRaw)
+            ? contractsRaw
+            : Array.isArray(contractsRaw?.contracts)
+                ? contractsRaw.contracts
+                : Array.isArray(contractsRaw?.partnerContracts?.contracts)
+                    ? contractsRaw.partnerContracts.contracts
+                    : [];
+
+        const activeContracts = contractsList.filter((c: any) => c.status === "ACTIVE");
+        const availableUnits = activeContracts.reduce((acc: number, c: any) => acc + (c.availableUnits || 0), 0);
+        const expirationDate = activeContracts[0]?.expirationDate ?? null;
+        const country = activeContracts[0]?.country ?? null;
+
+        // Normalize usage: try multiple known Orange response shapes
+        const smsSent = statsData?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage
+            ?? statsData?.statistics?.[0]?.usage
+            ?? statsData?.usage
+            ?? 0;
+
         return {
-            success: true, 
-            usage: statsData,
-            contracts: contractsData 
+            success: true,
+            availableUnits,
+            expirationDate,
+            country,
+            smsSent,
         };
     } catch (error: any) {
         console.error("Orange SMS API Error:", error);
