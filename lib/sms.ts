@@ -76,9 +76,9 @@ export async function sendSMS(to: string, message: string) {
         const isShortCode = rawSender.length < 8;
 
         const formattedTo = `tel:+${cleanTo}`;
-        // Short code : pas de "tel:" ni de "+" — juste les chiffres bruts (ex: 326742)
-        // Numéro long : format E.164 complet avec préfixe tel:+221...
-        const formattedFrom = isShortCode ? rawSender : `tel:+${cleanFrom}`;
+        // Short code : tel:326742 (pas de +, pas de code pays)
+        // Numéro long : tel:+221XXXXXXXXX
+        const formattedFrom = isShortCode ? `tel:${rawSender}` : `tel:+${cleanFrom}`;
 
         // URL Orange Message : l'expéditeur doit être encodé
         const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
