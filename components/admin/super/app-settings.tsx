@@ -32,7 +32,6 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
         setLoadingStats(true);
         try {
             const res = await getOrangeSMSStats();
-            console.info("[ORANGE STATS RAW]", JSON.stringify(res, null, 2));
             if (res.success) {
                 setStats(res);
             }

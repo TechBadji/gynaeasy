@@ -167,7 +167,6 @@ export async function getOrangeSMSStats() {
             expirationDate,
             country,
             smsSent,
-            _rawContracts: contractsRaw, // debug temporaire
         };
     } catch (error: any) {
         console.error("Orange SMS API Error:", error);
