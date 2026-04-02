@@ -35,13 +35,12 @@ export async function sendSMS(to: string, message: string) {
     
     // Mode Simulation par défaut si pas de clés
     if (!clientId || !clientSecret || !senderNumber) {
-        console.warn("⚠️ SMS ORANGE : Clés manquantes. Passage en MODE SIMULATION.");
-        console.log(`[SIMULATION SMS] Vers: ${to} | Message: ${message}`);
+        console.warn("[SMS] Clés Orange manquantes — MODE SIMULATION. Configurez ORANGE_SMS_CLIENT_ID, ORANGE_SMS_CLIENT_SECRET, ORANGE_SMS_SENDER_NUMBER sur Vercel.");
         await new Promise(resolve => setTimeout(resolve, 800));
-        return { 
-            success: true, 
-            messageId: `sim_${Math.random().toString(36).substring(2, 9)}`, 
-            simulated: true 
+        return {
+            success: true as const,
+            messageId: `sim_${Math.random().toString(36).substring(2, 9)}`,
+            simulated: true as const
         };
     }
 
@@ -133,10 +132,10 @@ export async function sendSMS(to: string, message: string) {
 
         console.log(`✅ SMS envoyé avec succès ! ID: ${messageId}`);
 
-        return { 
-            success: true, 
-            messageId, 
-            simulated: false 
+        return {
+            success: true as const,
+            messageId,
+            simulated: false as const
         };
     } catch (error: any) {
         console.error("🚨 Erreur Service SMS:", error.message);
