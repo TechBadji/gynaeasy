@@ -96,6 +96,10 @@ export async function sendSMS(to: string, message: string) {
             body.outboundSMSMessageRequest.senderName = senderName;
         }
 
+        // [DEBUG] Log exact request for diagnosis
+        console.log("[SMS DEBUG] URL:", requestUrl);
+        console.log("[SMS DEBUG] Body:", JSON.stringify(body, null, 2));
+
         const smsResponse = await fetch(requestUrl, {
             method: "POST",
             headers: {
@@ -105,22 +109,25 @@ export async function sendSMS(to: string, message: string) {
             body: JSON.stringify(body)
         });
 
+        const rawResponseText = await smsResponse.text();
+        console.log("[SMS DEBUG] HTTP Status:", smsResponse.status);
+        console.log("[SMS DEBUG] Full Response:", rawResponseText);
+
         if (!smsResponse.ok) {
-            const errorBody = await smsResponse.text();
             let errorMessage = "Erreur API Orange";
             try {
-                const errorJson = JSON.parse(errorBody);
-                errorMessage = errorJson.requestError?.serviceException?.variables?.[0] 
+                const errorJson = JSON.parse(rawResponseText);
+                errorMessage = errorJson.requestError?.serviceException?.variables?.[0]
                             || errorJson.requestError?.policyException?.variables?.[0]
                             || `Erreur ${smsResponse.status}`;
             } catch {
                 errorMessage = `Erreur HTTP ${smsResponse.status}`;
             }
-            console.error("❌ Échec envoi SMS Orange:", errorBody);
+            console.error("❌ Échec envoi SMS Orange:", rawResponseText);
             throw new Error(errorMessage);
         }
 
-        const smsData = await smsResponse.json();
+        const smsData = JSON.parse(rawResponseText);
         const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
         const messageId = resourceUrl.split('/').pop() || "sent";
 
