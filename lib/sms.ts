@@ -35,12 +35,16 @@ export async function sendSMS(to: string, message: string) {
     
     // Mode Simulation par défaut si pas de clés
     if (!clientId || !clientSecret || !senderNumber) {
-        console.warn("[SMS] Clés Orange manquantes — MODE SIMULATION. Configurez ORANGE_SMS_CLIENT_ID, ORANGE_SMS_CLIENT_SECRET, ORANGE_SMS_SENDER_NUMBER sur Vercel.");
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const missing = [
+            !clientId && "ORANGE_SMS_CLIENT_ID",
+            !clientSecret && "ORANGE_SMS_CLIENT_SECRET",
+            !senderNumber && "ORANGE_SMS_SENDER_NUMBER",
+        ].filter(Boolean).join(", ");
         return {
             success: true as const,
             messageId: `sim_${Math.random().toString(36).substring(2, 9)}`,
-            simulated: true as const
+            simulated: true as const,
+            debug: { mode: "SIMULATION", reason: `Variables manquantes: ${missing}` }
         };
     }
 
@@ -95,9 +99,12 @@ export async function sendSMS(to: string, message: string) {
             body.outboundSMSMessageRequest.senderName = senderName;
         }
 
-        // [DEBUG] Log exact request for diagnosis
-        console.log("[SMS DEBUG] URL:", requestUrl);
-        console.log("[SMS DEBUG] Body:", JSON.stringify(body, null, 2));
+        const debugRequest = {
+            url: requestUrl,
+            senderAddress: formattedFrom,
+            recipientAddress: formattedTo,
+            bodyJson: JSON.stringify(body),
+        };
 
         const smsResponse = await fetch(requestUrl, {
             method: "POST",
@@ -109,8 +116,7 @@ export async function sendSMS(to: string, message: string) {
         });
 
         const rawResponseText = await smsResponse.text();
-        console.log("[SMS DEBUG] HTTP Status:", smsResponse.status);
-        console.log("[SMS DEBUG] Full Response:", rawResponseText);
+        const debugResponse = { status: smsResponse.status, body: rawResponseText };
 
         if (!smsResponse.ok) {
             let errorMessage = "Erreur API Orange";
@@ -122,20 +128,24 @@ export async function sendSMS(to: string, message: string) {
             } catch {
                 errorMessage = `Erreur HTTP ${smsResponse.status}`;
             }
-            console.error("❌ Échec envoi SMS Orange:", rawResponseText);
-            throw new Error(errorMessage);
+            return {
+                success: false as const,
+                error: errorMessage,
+                messageId: null,
+                simulated: false as const,
+                debug: { request: debugRequest, response: debugResponse }
+            };
         }
 
         const smsData = JSON.parse(rawResponseText);
         const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
         const messageId = resourceUrl.split('/').pop() || "sent";
 
-        console.log(`✅ SMS envoyé avec succès ! ID: ${messageId}`);
-
         return {
             success: true as const,
             messageId,
-            simulated: false as const
+            simulated: false as const,
+            debug: { request: debugRequest, response: debugResponse }
         };
     } catch (error: any) {
         console.error("🚨 Erreur Service SMS:", error.message);

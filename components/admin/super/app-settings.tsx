@@ -66,15 +66,20 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
 
     const handleTestSMS = async () => {
         if (!testPhone) return toast.error("Entrez un numéro de téléphone");
-        
+
         setTestLoading(true);
         try {
             const res = await sendTestSMS(testPhone, "Bonjour, rappel de votre rendez-vous Gynaeasy.");
+            // Show debug info in console so it's visible in browser devtools
+            if ((res as any).debug) {
+                console.info("[SMS DEBUG]", JSON.stringify((res as any).debug, null, 2));
+            }
             if (res.success) {
-                toast.success(res.message);
-                fetchStats(); // Update stats after sending
+                toast.success(res.message + (((res as any).debug as any)?.mode === "SIMULATION" ? " ⚠️ Clés manquantes sur Vercel" : ""));
+                fetchStats();
             } else {
-                toast.error(res.message);
+                const debugInfo = (res as any).debug ? `\nURL: ${(res as any).debug.request?.url}\nRéponse: ${(res as any).debug.response?.body}` : "";
+                toast.error(res.message + debugInfo);
             }
         } catch (error) {
             toast.error("Erreur lors du test");

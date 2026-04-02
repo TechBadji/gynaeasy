@@ -87,16 +87,22 @@ export async function sendTestSMS(to: string, message: string) {
     try {
         const res = await sendSMS(to, message);
         if (res.success) {
-            return { 
-                success: true, 
-                message: `SMS de test envoyé avec succès ! ${res.simulated ? "(MODE SIMULATION)" : "(MODE RÉEL ORANGE)"}`,
-                messageId: (res as any).messageId
+            const mode = res.simulated ? "MODE SIMULATION" : "MODE RÉEL ORANGE";
+            return {
+                success: true,
+                message: `SMS de test envoyé avec succès ! (${mode})`,
+                messageId: res.messageId,
+                debug: (res as any).debug ?? null,
             };
         } else {
-            return { success: false, message: (res as any).error || "L'envoi a échoué." };
+            return {
+                success: false,
+                message: (res as any).error || "L'envoi a échoué.",
+                debug: (res as any).debug ?? null,
+            };
         }
     } catch (error: any) {
-        return { success: false, message: error.message };
+        return { success: false, message: error.message, debug: null };
     }
 }
 
