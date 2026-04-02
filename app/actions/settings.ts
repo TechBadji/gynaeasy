@@ -1,6 +1,6 @@
 "use server";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -78,10 +78,12 @@ export async function updateSettings(data: {
     }
 
     // Raw SQL Fallback
-    const keys = Object.keys(data).filter(k => (data as any)[k] !== undefined);
+    const ALLOWED_KEYS = new Set<string>(['clinicName', 'address', 'phone', 'email', 'currency']);
+    const keys = Object.keys(data).filter(k => ALLOWED_KEYS.has(k) && (data as any)[k] !== undefined);
     if (keys.length > 0) {
-        const setClause = keys.map(k => `"${k}" = '${(data as any)[k]}'`).join(', ');
-        await p.$executeRawUnsafe(`UPDATE "AppSettings" SET ${setClause}, "updatedAt" = NOW() WHERE id = 'singleton'`);
+        const setParts = keys.map(k => Prisma.sql`${Prisma.raw('"' + k + '"')} = ${(data as any)[k]}`);
+        const setClause = Prisma.join(setParts, ', ');
+        await p.$executeRaw(Prisma.sql`UPDATE "AppSettings" SET ${setClause}, "updatedAt" = NOW() WHERE id = 'singleton'`);
     }
 
     revalidatePath("/admin");

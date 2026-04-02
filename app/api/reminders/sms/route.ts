@@ -2,8 +2,15 @@ import { NextResponse } from 'next/server';
 import { sendSMS } from '@/lib/sms';
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+        return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
     try {
         const { to, dateHeure, patientNom } = await req.json();
 

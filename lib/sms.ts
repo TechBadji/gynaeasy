@@ -1,4 +1,29 @@
 /**
+ * Normalise un numéro de téléphone sénégalais en format E.164 sans préfixe.
+ * Gère : +221XXXXXXXXX, 00221XXXXXXXXX, 221XXXXXXXXX, 77XXXXXXX, 0XXXXXXXXX
+ * Retourne : "221XXXXXXXXX"
+ */
+function normalizePhoneNumber(phone: string): string {
+    // Supprimer espaces, tirets, parenthèses
+    let cleaned = phone.replace(/[\s\-().]/g, '');
+
+    // Supprimer le + ou 00 au début
+    cleaned = cleaned.replace(/^\+/, '').replace(/^00/, '');
+
+    // Format local avec 0 initial (ex: 0771234567 → 771234567)
+    if (!cleaned.startsWith('221') && cleaned.startsWith('0')) {
+        cleaned = cleaned.slice(1);
+    }
+
+    // Ajouter le code pays Sénégal si absent
+    if (!cleaned.startsWith('221')) {
+        cleaned = `221${cleaned}`;
+    }
+
+    return cleaned; // "221XXXXXXXXX"
+}
+
+/**
  * Service d'envoi de SMS via Orange Sénégal API
  * Supporte le mode Simulation si les clés ne sont pas configurées
  */
@@ -44,28 +69,29 @@ export async function sendSMS(to: string, message: string) {
         const accessToken = tokenData.access_token;
 
         // 2. Préparer les numéros (Norme E.164 tel:+221...)
-        const cleanTo = to.replace(/^\+|^00/, '');
-        const cleanFrom = senderNumber.replace(/^\+|^00/, '');
-        
-        const finalTo = `+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
-        const isShortCode = cleanFrom.length < 8;
-        const finalFrom = isShortCode ? cleanFrom : `+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
+        const cleanTo = normalizePhoneNumber(to);
+        const cleanFrom = normalizePhoneNumber(senderNumber);
 
-        const formattedTo = `tel:+${cleanTo.startsWith('221') ? cleanTo : `221${cleanTo}`}`;
-        const formattedFrom = isShortCode ? `tel:${cleanFrom}` : `tel:+${cleanFrom.startsWith('221') ? cleanFrom : `221${cleanFrom}`}`;
-        
-        // URL Orange Message : l'expéditeur doit être encodé (tel%3A%2B221...)
+        const rawSender = senderNumber.replace(/[\s\-().+]/g, '').replace(/^00/, '');
+        const isShortCode = rawSender.length < 8;
+
+        const formattedTo = `tel:+${cleanTo}`;
+        // Short code : pas de "tel:" ni de "+" — juste les chiffres bruts (ex: 326742)
+        // Numéro long : format E.164 complet avec préfixe tel:+221...
+        const formattedFrom = isShortCode ? rawSender : `tel:+${cleanFrom}`;
+
+        // URL Orange Message : l'expéditeur doit être encodé
         const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
 
         const body: any = {
             outboundSMSMessageRequest: {
-                address: [formattedTo], // Utilisation d'un tableau car requis par certaines versions SN
+                address: formattedTo, // Doit être une string, pas un tableau (Orange OneAPI SN)
                 senderAddress: formattedFrom,
                 outboundSMSTextMessage: { message }
             }
         };
 
-        // Si un nom d'expéditeur est configuré et validé par Orange
+        // senderName uniquement si validé par Orange SN (sinon retirer la variable env)
         if (senderName) {
             body.outboundSMSMessageRequest.senderName = senderName;
         }

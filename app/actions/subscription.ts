@@ -139,8 +139,6 @@ export async function syncSubscriptionPlans() {
 export async function requestPlanUpgrade(newPlan: string) {
     try {
         const session = await getServerSession(authOptions);
-        console.log("DEBUG UPGRADE:", { user: session?.user, newPlan });
-        
         if (!session?.user) return { success: false, message: "Non authentifié" };
         const userId = (session.user as any).id;
 

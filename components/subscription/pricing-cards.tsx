@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { requestPlanUpgrade } from "@/app/actions/subscription";
 import toast from "react-hot-toast";
 import { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 
 const PLAN_ICONS: Record<string, any> = {
@@ -20,9 +21,9 @@ const PLAN_ICONS: Record<string, any> = {
 
 export default function PricingCards({ currentPlan }: { currentPlan?: string }) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleUpgrade = (planId: string) => {
-    console.log("DEBUG handleUpgrade:", { planId, currentPlan });
     if (planId.toUpperCase() === currentPlan?.toUpperCase()) {
       toast.error("Vous utilisez déjà ce plan");
       return;
@@ -31,15 +32,13 @@ export default function PricingCards({ currentPlan }: { currentPlan?: string }) 
     startTransition(async () => {
       try {
         const res = await requestPlanUpgrade(planId);
-        console.log("DEBUG UPGRADE RES:", res);
         if (res.success) {
           toast.success(res.message);
-          setTimeout(() => window.location.reload(), 1500); // Reload after toast
+          router.refresh();
         } else {
           toast.error(res.message);
         }
       } catch (error) {
-        console.error("DEBUG UPGRADE ERR:", error);
         toast.error("Erreur technique lors du changement de plan");
       }
     });

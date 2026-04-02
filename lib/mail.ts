@@ -100,6 +100,34 @@ export const sendBookingNotificationEmail = async (email: string, patientName: s
     }
 };
 
+export const sendAccessRequestNotificationEmail = async (
+    treatingDoctorEmail: string,
+    treatingDoctorName: string,
+    requestingDoctorName: string,
+    patientName: string
+) => {
+    if (!resend) return;
+    try {
+        await resend.emails.send({
+            from: `Gynaeasy <${FROM_EMAIL}>`,
+            to: treatingDoctorEmail,
+            subject: `Demande d'accès dossier patient - Gynaeasy`,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+                    <h1 style="color: #4f46e5;">Demande d'accès au dossier</h1>
+                    <p>Bonjour Dr. ${treatingDoctorName},</p>
+                    <p>Le <b>Dr. ${requestingDoctorName}</b> demande l'accès au dossier de votre patiente <b>${patientName}</b>.</p>
+                    <p>Connectez-vous à Gynaeasy pour approuver ou refuser cette demande.</p>
+                    <a href="${domain}/patients" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Voir la demande</a>
+                    <p style="margin-top: 24px; color: #64748b; font-size: 14px;">Si vous n'êtes pas concerné(e), ignorez cet email.</p>
+                </div>
+            `
+        });
+    } catch (error) {
+        console.error("Resend error (Access Request):", error);
+    }
+};
+
 export const sendCancellationNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
     if (!resend) return;
     try {

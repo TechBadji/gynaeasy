@@ -1,9 +1,18 @@
 import crypto from 'crypto';
 
-// The encryption key should ideally be rotated and securely stored in environment variables.
-// It must be exactly 32 bytes (64 hex characters) for AES-256
+// The encryption key must be stored in the ENCRYPTION_KEY environment variable.
+// It must be exactly 32 bytes (64 hex characters) for AES-256.
+// Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 const ALGORITHM = 'aes-256-gcm';
-const SECRET_KEY = process.env.ENCRYPTION_KEY || crypto.randomBytes(32).toString('hex');
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
+if (!ENCRYPTION_KEY || ENCRYPTION_KEY.length !== 64) {
+    throw new Error(
+        "ENCRYPTION_KEY environment variable is missing or invalid. " +
+        "It must be exactly 64 hex characters (32 bytes). " +
+        "Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('hex'))\""
+    );
+}
+const SECRET_KEY = ENCRYPTION_KEY;
 
 /**
  * Encrypt sensitive data like Social Security Numbers for compliance.

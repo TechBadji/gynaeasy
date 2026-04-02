@@ -59,8 +59,6 @@ export const authOptions: NextAuthOptions = {
                     user.password
                 );
 
-                console.log("DEBUG PASS:", { isPasswordValid });
-
                 if (!isPasswordValid) {
                     // Log failed login attempt
                     await logAudit({

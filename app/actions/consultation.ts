@@ -4,14 +4,22 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+
+const DonneesMedicalesSchema = z.record(z.string(), z.unknown());
 
 export async function updateConsultationMedicalData(
     consultationId: string,
-    donneesMedicales: any
+    donneesMedicales: unknown
 ) {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
         return { success: false, message: "Non autorisé" };
+    }
+
+    const parsed = DonneesMedicalesSchema.safeParse(donneesMedicales);
+    if (!parsed.success) {
+        return { success: false, message: "Données médicales invalides" };
     }
 
     try {
@@ -27,7 +35,7 @@ export async function updateConsultationMedicalData(
         await prisma.consultation.update({
             where: { id: consultationId },
             data: {
-                donneesMedicales
+                donneesMedicales: parsed.data
             }
         });
 

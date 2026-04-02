@@ -135,12 +135,7 @@ export async function getOrangeSMSStats() {
         });
         const contractsData = contractsResponse.ok ? await contractsResponse.json() : null;
         
-        // Log pour debug structure (visible dans Vercel logs)
-        if (contractsData) {
-            console.log("Orange Contracts Raw Response:", JSON.stringify(contractsData));
-        }
-
-        return { 
+        return {
             success: true, 
             usage: statsData,
             contracts: contractsData 

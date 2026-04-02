@@ -122,7 +122,6 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
         const toastId = toast.loading("Génération du PDF...");
 
         try {
-            console.log("Invoice data for PDF:", invoice);
             const { consultation } = invoice;
             if (!consultation) throw new Error("Données de consultation manquantes");
             
@@ -256,7 +255,6 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
             const dateStr = format(new Date(), "ddMMyyyy");
             const fileName = `Facture_${cleanNom}_${cleanPrenom}_${dateStr}.pdf`;
 
-            console.log("Génération PDF:", fileName);
             pdf.save(fileName);
             toast.success("Facture téléchargée !", { id: toastId });
         } catch (err) {

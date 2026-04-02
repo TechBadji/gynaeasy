@@ -19,17 +19,18 @@ export async function updateUserDetails(data: {
         const session = await getServerSession(authOptions);
         if (!session?.user?.email) return { success: false, error: "Non autorisé" };
 
-        // Bypass Prisma Client validation with Raw SQL if internal schema is not synced
-        const keys = Object.keys(data).filter(k => (data as any)[k] !== undefined);
-        if (keys.length > 0) {
-            const setClauses = keys.map(k => {
-                const val = (data as any)[k];
-                if (typeof val === 'boolean') return `"${k}" = ${val}`;
-                return `"${k}" = '${val.replace(/'/g, "''")}'`; // Basic escape
+        const ALLOWED_KEYS = new Set<string>(['name', 'clinicName', 'specialite', 'isEmergencyAvailable']);
+        const updateData: Record<string, unknown> = {};
+        for (const k of Object.keys(data)) {
+            if (ALLOWED_KEYS.has(k) && (data as any)[k] !== undefined) {
+                updateData[k] = (data as any)[k];
+            }
+        }
+        if (Object.keys(updateData).length > 0) {
+            await (prisma.user as any).update({
+                where: { email: session.user.email },
+                data: updateData,
             });
-            await prisma.$executeRawUnsafe(
-                `UPDATE "User" SET ${setClauses.join(', ')}, "updatedAt" = NOW() WHERE email = '${session.user.email}'`
-            );
         }
 
         const updated = await (prisma.user as any).findUnique({

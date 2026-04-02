@@ -51,13 +51,21 @@ export async function registerDoctor(data: {
             }
         });
 
+        let emailSent = true;
         try {
             await sendVerificationEmail(data.email, data.name, verificationToken);
         } catch (mailError) {
-            console.error("Email sending failure (ignored):", mailError);
+            console.error("Email sending failure:", mailError);
+            emailSent = false;
         }
 
-        return { success: true };
+        return {
+            success: true,
+            emailSent,
+            message: emailSent
+                ? "Compte créé. Vérifiez votre email pour confirmer votre inscription."
+                : "Compte créé, mais l'email de vérification n'a pas pu être envoyé. Contactez l'administration.",
+        };
     } catch (error: any) {
         console.error("Registration critical error:", error);
         return { success: false, error: "Une erreur technique est survenue. Veuillez réessayer." };

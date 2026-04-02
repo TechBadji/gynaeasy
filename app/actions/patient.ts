@@ -6,6 +6,7 @@ import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { sendSMS } from "@/lib/sms";
+import { sendAccessRequestNotificationEmail } from "@/lib/mail";
 
 // Schéma de validation Zod pour la création d'un patient
 const PatientSchema = z.object({
@@ -163,14 +164,18 @@ export async function requestAccess(patientId: string) {
             }
         });
 
-        // NOTIFICATION EMAIL ou SYSTEME au médecin traitant
-        // TODO: Implémenter la notification système car 'telephone' n'est pas sur User
-        /*
-        if (patient.treatingDoctor.email) {
-            const message = `Gynaeasy: Le Dr ${(session.user as any).name} demande l'accès au dossier...`;
-            // sendEmail(patient.treatingDoctor.email, message);
+        // Notification email au médecin traitant
+        if (patient.treatingDoctor?.email) {
+            const patientName = `${patient.prenom} ${patient.nom}`;
+            const requestingDoctorName = (session?.user as any)?.name ?? "Un médecin";
+            const treatingDoctorName = patient.treatingDoctor.name ?? "Docteur";
+            sendAccessRequestNotificationEmail(
+                patient.treatingDoctor.email,
+                treatingDoctorName,
+                requestingDoctorName,
+                patientName
+            ).catch(err => console.error("Access request email error:", err));
         }
-        */
 
         revalidatePath(`/patients/${patientId}`);
         return { success: true, requestId: request.id };
