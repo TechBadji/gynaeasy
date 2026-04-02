@@ -35,7 +35,7 @@ export async function updateConsultationMedicalData(
         await prisma.consultation.update({
             where: { id: consultationId },
             data: {
-                donneesMedicales: parsed.data
+                donneesMedicales: parsed.data as any
             }
         });
 
