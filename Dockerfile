@@ -10,6 +10,12 @@ WORKDIR /app
 RUN apk add --no-cache openssl
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Dummy env vars to prevent DB connections during build
+ENV DATABASE_URL="postgresql://build:build@localhost:5432/build" \
+    NEXTAUTH_URL="http://localhost:3000" \
+    NEXTAUTH_SECRET="build-time-placeholder-secret-32chars" \
+    ENCRYPTION_KEY="0000000000000000000000000000000000000000000000000000000000000000" \
+    NEXT_PUBLIC_APP_URL="http://localhost:3000"
 RUN npx prisma generate && NODE_OPTIONS='--max-old-space-size=4096' npx next build
 
 FROM node:20-alpine AS runner
