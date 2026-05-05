@@ -8,7 +8,7 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx prisma generate && NODE_OPTIONS='--max-old-space-size=4096' next build
+RUN npx prisma generate && NODE_OPTIONS='--max-old-space-size=4096' npx next build
 
 FROM node:20-alpine AS runner
 WORKDIR /app
