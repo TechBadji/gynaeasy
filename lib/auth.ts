@@ -22,6 +22,7 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "email" },
                 password: { label: "Mot de passe", type: "password" },
                 twoFactorCode: { label: "Code 2FA (si activé)", type: "text" },
+                rememberMe: { label: "Se souvenir de moi", type: "text" },
             },
             async authorize(credentials, req) {
                 if (!credentials?.email || !credentials?.password) {
@@ -102,8 +103,9 @@ export const authOptions: NextAuthOptions = {
                     id: user.id,
                     email: user.email,
                     name: user.name,
-                    role: user.role, // Custom role added to JWT
+                    role: user.role,
                     mustChangePassword: user.mustChangePassword,
+                    rememberMe: credentials.rememberMe === "true",
                 };
             },
         }),
@@ -114,6 +116,10 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.role = (user as any).role;
                 token.mustChangePassword = (user as any).mustChangePassword;
+                if (!(user as any).rememberMe) {
+                    // Session expires in 8 hours if "remember me" is not checked
+                    token.exp = Math.floor(Date.now() / 1000) + 8 * 60 * 60;
+                }
             }
             // Update token if session is updated (useful after password change)
             if (trigger === "update" && session?.mustChangePassword === false) {

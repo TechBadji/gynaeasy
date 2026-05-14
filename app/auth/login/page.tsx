@@ -16,6 +16,7 @@ function LoginForm() {
     const [error, setError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [rememberMe, setRememberMe] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,6 +27,7 @@ function LoginForm() {
             const result = await signIn("credentials", {
                 email,
                 password,
+                rememberMe: String(rememberMe),
                 redirect: false,
                 callbackUrl,
             });
@@ -110,6 +112,8 @@ function LoginForm() {
                             id="remember-me"
                             name="remember-me"
                             type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
                             className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-slate-300 rounded"
                         />
                         <label
