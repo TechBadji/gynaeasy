@@ -32,6 +32,10 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-gynaeasy}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gynaeasy}
       POSTGRES_DB: ${POSTGRES_DB:-gynaeasy}
+      ORANGE_SMS_CLIENT_ID: ${ORANGE_SMS_CLIENT_ID:-}
+      ORANGE_SMS_CLIENT_SECRET: ${ORANGE_SMS_CLIENT_SECRET:-}
+      ORANGE_SMS_SENDER_NUMBER: ${ORANGE_SMS_SENDER_NUMBER:-}
+      ORANGE_SMS_SENDER_NAME: ${ORANGE_SMS_SENDER_NAME:-}
     depends_on:
       postgres:
         condition: service_healthy
