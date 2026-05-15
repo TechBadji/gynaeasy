@@ -4,6 +4,7 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Activity, Eye, EyeOff } from "lucide-react";
+import Link from "next/link";
 
 // Composant interne qui utilise useSearchParams — doit être dans <Suspense>
 function LoginForm() {
@@ -122,6 +123,11 @@ function LoginForm() {
                         >
                             Se souvenir de moi
                         </label>
+                    </div>
+                    <div className="text-sm">
+                        <Link href="/auth/forgot-password" className="font-medium text-pink-600 hover:text-pink-500">
+                            Mot de passe oublié ?
+                        </Link>
                     </div>
                 </div>
 

@@ -24,6 +24,8 @@ model User {
   clinicName           String?
   status               AccountStatus     @default(ACTIVE)
   verificationToken    String?           @unique
+  resetPasswordToken   String?           @unique
+  resetPasswordExpires DateTime?
   mustChangePassword   Boolean           @default(false)
   planId               String?
   subscriptionStatus   StatutAbonnement?

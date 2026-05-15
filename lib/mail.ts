@@ -95,6 +95,24 @@ export const sendAccessRequestNotificationEmail = async (
     `);
 };
 
+export const sendResetPasswordEmail = async (email: string, name: string, token: string) => {
+    const resetLink = `${domain}/auth/reset-password?token=${token}`;
+    if (!process.env.SMTP_USER) {
+        console.warn("⚠️ SMTP_USER manquant. Email reset non envoyé.");
+        console.log(`🔗 Lien reset pour ${name} (${email}) : ${resetLink}`);
+        return;
+    }
+    await sendMail(email, 'Réinitialisation de votre mot de passe - Gynaeasy', `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+            <h1 style="color: #ec4899;">Réinitialisation du mot de passe</h1>
+            <p>Bonjour Dr. ${name},</p>
+            <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous. Ce lien est valable <b>1 heure</b>.</p>
+            <a href="${resetLink}" style="display: inline-block; background-color: #ec4899; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Réinitialiser mon mot de passe</a>
+            <p style="margin-top: 24px; color: #64748b; font-size: 14px;">Si vous n'avez pas fait cette demande, ignorez cet email. Votre mot de passe restera inchangé.</p>
+        </div>
+    `);
+};
+
 export const sendCancellationNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
     await sendMail(email, 'Annulation de votre rendez-vous - Gynaeasy', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #ef4444; border-radius: 12px; padding: 24px;">
