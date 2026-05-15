@@ -108,7 +108,11 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
 }
 
 export async function getPatients() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
+    const userId = (session.user as any).id;
     return prisma.patient.findMany({
+        where: { userId },
         select: { id: true, nom: true, prenom: true, civilite: true },
         orderBy: { nom: "asc" },
     });
@@ -117,6 +121,7 @@ export async function getPatients() {
 export async function cancelRdv(id: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, message: "Non autorisé" };
+    const sessionUserId = (session.user as any).id;
 
     try {
         const appointment = await prisma.consultation.findUnique({
@@ -125,6 +130,7 @@ export async function cancelRdv(id: string) {
         });
 
         if (!appointment) return { success: false, message: "Rendez-vous introuvable" };
+        if (appointment.userId !== sessionUserId) return { success: false, message: "Non autorisé" };
 
         // Deletion (or mark as cancelled if field exists)
         await prisma.consultation.delete({ where: { id } });

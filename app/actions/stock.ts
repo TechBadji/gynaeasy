@@ -2,11 +2,15 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * Récupère tous les articles en stock
  */
 export async function getStockItems() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
     return await prisma.stockItem.findMany({
         orderBy: { nom: "asc" }
     });
@@ -22,6 +26,8 @@ export async function updateStockItem(id: string | null, data: {
     seuilAlerte: number;
     categorie?: string;
 }) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, error: "Non autorisé" };
     if (id) {
         await prisma.stockItem.update({
             where: { id },
@@ -40,6 +46,8 @@ export async function updateStockItem(id: string | null, data: {
  * Consomme une unité d'un article (utilisé par le module imagerie par ex)
  */
 export async function consumeStockItem(nom: string, quantity: number = 1) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non autorisé" };
     const item = await prisma.stockItem.findFirst({
         where: { nom: { contains: nom, mode: 'insensitive' } }
     });
@@ -60,6 +68,8 @@ export async function consumeStockItem(nom: string, quantity: number = 1) {
  * Supprime un article du stock
  */
 export async function deleteStockItem(id: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, error: "Non autorisé" };
     await prisma.stockItem.delete({
         where: { id }
     });

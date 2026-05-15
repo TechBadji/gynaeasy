@@ -37,10 +37,15 @@ export async function getNotifications() {
  */
 export async function markAsRead(id: string) {
     try {
-        await prisma.notification.update({
-            where: { id },
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return { success: false };
+        const userId = (session.user as any).id;
+
+        const result = await prisma.notification.updateMany({
+            where: { id, userId },
             data: { read: true }
         });
+        if (result.count === 0) return { success: false };
         revalidatePath('/');
         return { success: true };
     } catch (error) {

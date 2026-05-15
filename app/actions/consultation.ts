@@ -16,6 +16,7 @@ export async function updateConsultationMedicalData(
     if (!session?.user) {
         return { success: false, message: "Non autorisé" };
     }
+    const sessionUserId = (session.user as any).id;
 
     const parsed = DonneesMedicalesSchema.safeParse(donneesMedicales);
     if (!parsed.success) {
@@ -25,11 +26,11 @@ export async function updateConsultationMedicalData(
     try {
         const consultation = await prisma.consultation.findUnique({
             where: { id: consultationId },
-            select: { patientId: true }
+            select: { patientId: true, userId: true }
         });
 
-        if (!consultation) {
-            return { success: false, message: "Consultation introuvable" };
+        if (!consultation || consultation.userId !== sessionUserId) {
+            return { success: false, message: "Consultation introuvable ou non autorisé" };
         }
 
         await prisma.consultation.update({

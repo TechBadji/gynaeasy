@@ -142,62 +142,35 @@ export async function requestPlanUpgrade(newPlan: string) {
         if (!session?.user) return { success: false, message: "Non authentifié" };
         const userId = (session.user as any).id;
 
-        const currentSub = await prisma.abonnement.findFirst({ 
+        const currentSub = await prisma.abonnement.findFirst({
             where: { userId },
             orderBy: { createdAt: 'desc' }
         });
 
         const planEnum = newPlan.toUpperCase() as PlanAbonnement;
-        
-        if (currentSub) {
-            if (currentSub.plan === planEnum) {
-                return { success: false, message: "Vous utilisez déjà ce plan" };
-            }
 
-            // 1. Mettre à jour l'abonnement existant
-            await prisma.abonnement.update({
-                where: { id: currentSub.id },
-                data: {
-                    plan: planEnum,
-                    statut: "ACTIF",
-                    notesPromo: `Upgrade depuis ${currentSub.plan} - ${new Date().toLocaleDateString()}`
-                }
-            });
-        } else {
-            // 1. Créer un nouvel abonnement s'il n'existe pas
-            await prisma.abonnement.create({
-                data: {
-                    userId,
-                    plan: planEnum,
-                    statut: "ACTIF",
-                    dateDebut: new Date(),
-                    dateFin: new Date(new Date().setMonth(new Date().getMonth() + 1)),
-                    notesPromo: `Premier abonnement - ${new Date().toLocaleDateString()}`
-                }
-            });
+        if (currentSub?.plan === planEnum) {
+            return { success: false, message: "Vous utilisez déjà ce plan" };
         }
 
-        // 2. Créer une notification pour l'administrateur
+        // Notifier l'admin — l'upgrade nécessite une validation manuelle
         const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
         if (admin) {
             await prisma.notification.create({
                 data: {
                     userId: admin.id,
-                    titre: "Upgrade d'abonnement",
-                    message: `Le Dr. ${session.user.name} a migré vers le plan ${planEnum}.`,
-                    type: "SUCCESS",
+                    titre: "Demande d'upgrade d'abonnement",
+                    message: `Le Dr. ${session.user.name} demande à migrer vers le plan ${planEnum}. Validez manuellement dans l'espace abonnements.`,
+                    type: "WARNING",
                     link: `/admin?tab=abonnements`
                 }
             });
         }
 
-        // 3. Créer une facture en attente pour la différence (Optionnel selon business model)
-        // Ici on simplifie en notifiant juste le succès
-        
-        return { success: true, message: `Votre plan a été mis à jour vers ${newPlan} !` };
+        return { success: true, message: "Votre demande a été transmise. L'équipe vous contactera sous peu pour finaliser l'upgrade." };
     } catch (error) {
         console.error("Upgrade Error:", error);
-        return { success: false, message: "Erreur lors du changement de plan" };
+        return { success: false, message: "Erreur lors de la demande de changement de plan" };
     }
 }
 

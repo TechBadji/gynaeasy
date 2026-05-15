@@ -5,6 +5,8 @@ import { AccountStatus, Role } from "@prisma/client";
 import { sendVerificationEmail, sendCredentialsEmail } from "@/lib/mail";
 import crypto from "crypto";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * Generates a 6-character alphanumeric password
@@ -90,7 +92,7 @@ export async function verifyDoctorEmail(token: string): Promise<{ success: boole
 
         if (!settings.requireApproval) {
             // APPROBATION AUTOMATIQUE
-            const res = await approveRegistration(user.id);
+            const res = await _approveRegistrationInternal(user.id);
             if (!res.success) return { success: false, error: res.error };
             
             return { success: true, message: "Email vérifié et compte activé avec succès !" };
@@ -112,7 +114,7 @@ export async function verifyDoctorEmail(token: string): Promise<{ success: boole
     }
 }
 
-export async function approveRegistration(userId: string) {
+async function _approveRegistrationInternal(userId: string) {
     try {
         const user = await prisma.user.findUnique({ where: { id: userId } });
         
@@ -156,6 +158,14 @@ export async function approveRegistration(userId: string) {
     } catch (error: any) {
         return { success: false, error: error.message };
     }
+}
+
+export async function approveRegistration(userId: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "ADMIN") {
+        return { success: false, error: "Non autorisé" };
+    }
+    return _approveRegistrationInternal(userId);
 }
 
 export async function getPendingRegistrations() {

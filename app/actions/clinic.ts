@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 /**
  * Récupère les paramètres du cabinet
@@ -37,6 +39,8 @@ export async function updateClinicSettings(data: {
     email?: string;
     slogan?: string;
 }) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, error: "Non autorisé" };
     const settings = await prisma.clinicSettings.upsert({
         where: { id: "singleton" },
         update: data,

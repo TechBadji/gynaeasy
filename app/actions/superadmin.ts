@@ -151,7 +151,11 @@ export async function createUserAdmin(data: {
     try {
         await checkSuperAdmin();
 
-        const hashedPassword = await bcrypt.hash(data.password || "Gynaeasy2026!", 10);
+        const pwd = data.password?.trim();
+        if (!pwd || pwd.length < 8) {
+            return { success: false, error: "Mot de passe requis (8 caractères minimum)" };
+        }
+        const hashedPassword = await bcrypt.hash(pwd, 10);
 
         // Modules par défaut selon le rôle
         const defaultModules = data.role === "SECRETAIRE"

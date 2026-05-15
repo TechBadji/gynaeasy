@@ -48,7 +48,7 @@ export async function updateUserDetails(data: {
  * Change le mot de passe de l'utilisateur
  */
 export async function updatePassword(data: {
-    currentPassword?: string;
+    currentPassword: string;
     newPassword: string;
 }) {
     try {
@@ -61,11 +61,8 @@ export async function updatePassword(data: {
 
         if (!user || !user.password) return { success: false, error: "Utilisateur non trouvé" };
 
-        // Si currentPassword est fourni, on vérifie (sécurité optionnelle selon le flow mais conseillée)
-        if (data.currentPassword) {
-            const isMatch = await bcrypt.compare(data.currentPassword, user.password);
-            if (!isMatch) return { success: false, error: "Ancien mot de passe incorrect" };
-        }
+        const isMatch = await bcrypt.compare(data.currentPassword, user.password);
+        if (!isMatch) return { success: false, error: "Ancien mot de passe incorrect" };
 
         const hashedPassword = await bcrypt.hash(data.newPassword, 10);
 
@@ -85,6 +82,10 @@ export async function updatePassword(data: {
 
 export async function updateUserAvatar(userId: string, imageData: string) {
     try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return { success: false, error: "Non autorisé" };
+        if ((session.user as any).id !== userId) return { success: false, error: "Non autorisé" };
+
         await prisma.user.update({
             where: { id: userId },
             data: { image: imageData }
