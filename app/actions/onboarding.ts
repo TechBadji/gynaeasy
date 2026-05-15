@@ -110,7 +110,8 @@ export async function verifyDoctorEmail(token: string): Promise<{ success: boole
             return { success: true, message: "Email vérifié ! Votre compte est en attente d'approbation par l'administration." };
         }
     } catch (error: any) {
-        return { success: false, error: error.message };
+        console.error("[verifyDoctorEmail]:", error);
+        return { success: false, error: "Une erreur est survenue lors de la vérification." };
     }
 }
 
@@ -156,7 +157,8 @@ async function _approveRegistrationInternal(userId: string) {
         revalidatePath("/admin");
         return { success: true };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        console.error("[approveRegistration]:", error);
+        return { success: false, error: "Une erreur est survenue lors de l'approbation." };
     }
 }
 

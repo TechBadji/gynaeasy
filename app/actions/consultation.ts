@@ -44,8 +44,8 @@ export async function updateConsultationMedicalData(
 
         return { success: true, message: "Dossier médical mis à jour" };
     } catch (error: any) {
-        console.error("Error updating medical data:", error);
-        return { success: false, message: error.message || "Erreur lors de la sauvegarde" };
+        console.error("[updateConsultationMedicalData]:", error);
+        return { success: false, message: "Erreur lors de la sauvegarde" };
     }
 }
 
@@ -78,7 +78,7 @@ export async function createEmptyConsultation(patientId: string) {
 
         return { success: true, consultationId: consultation.id };
     } catch (error: any) {
-        console.error("Error creating empty consultation:", error);
-        return { success: false, message: error.message || "Erreur lors de la création" };
+        console.error("[createEmptyConsultation]:", error);
+        return { success: false, message: "Erreur lors de la création" };
     }
 }

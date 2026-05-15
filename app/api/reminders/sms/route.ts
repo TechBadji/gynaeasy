@@ -4,11 +4,17 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session?.user) {
         return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    const userId = (session.user as any).id;
+    if (!checkRateLimit(`sms:${userId}`, 20, 60 * 1000)) {
+        return NextResponse.json({ error: "Trop de requêtes, réessayez dans une minute" }, { status: 429 });
     }
 
     try {

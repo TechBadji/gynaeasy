@@ -4,8 +4,14 @@ import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { sendResetPasswordEmail } from "@/lib/mail";
+import { headers } from "next/headers";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function requestPasswordReset(email: string) {
+    const ip = (await headers()).get("x-forwarded-for")?.split(",")[0].trim() ?? "unknown";
+    // Silent fail on rate limit — prevents brute-force enumeration of rate limit status
+    if (!checkRateLimit(`reset:${ip}`, 5, 60 * 60 * 1000)) return { success: true };
+
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
 
     // Always return success to avoid email enumeration

@@ -101,8 +101,8 @@ export async function createOnlineAppointment(patientId: string, doctorId: strin
 
         return { success: true, appointment };
     } catch (error: any) {
-        console.error("Booking error:", error);
-        return { success: false, message: error.message };
+        console.error("[createOnlineAppointment]:", error);
+        return { success: false, message: "Une erreur est survenue lors de la réservation" };
     }
 }
 

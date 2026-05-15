@@ -40,7 +40,8 @@ export async function updateUserDetails(data: {
         revalidatePath("/parametres");
         return { success: true, user: JSON.parse(JSON.stringify(updated)) };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        console.error("[updateUserDetails]:", error);
+        return { success: false, error: "Une erreur est survenue" };
     }
 }
 
@@ -76,7 +77,8 @@ export async function updatePassword(data: {
 
         return { success: true, message: "Mot de passe mis à jour avec succès" };
     } catch (error: any) {
-        return { success: false, error: error.message };
+        console.error("[updatePassword]:", error);
+        return { success: false, error: "Une erreur est survenue" };
     }
 }
 

@@ -169,6 +169,7 @@ export async function cancelRdv(id: string) {
 
         return { success: true, message: "Rendez-vous annulé et patient notifié" };
     } catch (error: any) {
-        return { success: false, message: error.message };
+        console.error("[cancelRdv]:", error);
+        return { success: false, message: "Une erreur est survenue lors de l'annulation" };
     }
 }
