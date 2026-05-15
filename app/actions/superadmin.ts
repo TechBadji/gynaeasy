@@ -118,9 +118,11 @@ async function getConsultationsByMonth() {
 // ============================================
 // GESTION DES UTILISATEURS
 // ============================================
-export async function getAllUsers() {
+export async function getAllUsers(skip = 0) {
     await checkSuperAdmin();
     const users = await prisma.user.findMany({
+        take: 100,
+        skip,
         select: {
             id: true,
             name: true,
@@ -276,6 +278,7 @@ export async function deleteUserAdmin(userId: string) {
 export async function getAllAbonnements() {
     await checkSuperAdmin();
     return await prisma.abonnement.findMany({
+        take: 200,
         include: {
             user: { select: { name: true, email: true, role: true } },
         },
@@ -453,22 +456,17 @@ export async function getAuditLogs(limit = 50) {
 // ============================================
 
 export async function getActiveDoctors() {
-    const { PrismaClient } = await import("@prisma/client");
-    const p = new PrismaClient();
     try {
-        // Raw SQL fallback for persistent Prisma Client validation errors after schema sync
         const doctors: any[] = await prisma.$queryRaw`
-            SELECT * FROM "User" 
-            WHERE role = 'MEDECIN' 
-              AND status = 'ACTIVE' 
+            SELECT * FROM "User"
+            WHERE role = 'MEDECIN'
+              AND status = 'ACTIVE'
             ORDER BY name ASC
         `;
         return doctors;
     } catch (err) {
-        console.error("getActiveDoctors Raw Error:", err);
+        console.error("getActiveDoctors Error:", err);
         return [];
-    } finally {
-        await p.$disconnect();
     }
 }
 

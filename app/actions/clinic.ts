@@ -41,6 +41,8 @@ export async function updateClinicSettings(data: {
 }) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, error: "Non autorisé" };
+    const role = (session.user as any).role;
+    if (role !== "ADMIN" && role !== "MEDECIN") return { success: false, error: "Non autorisé" };
     const settings = await prisma.clinicSettings.upsert({
         where: { id: "singleton" },
         update: data,

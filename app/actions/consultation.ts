@@ -59,6 +59,11 @@ export async function createEmptyConsultation(patientId: string) {
         const user = await prisma.user.findUnique({ where: { email: session.user.email } });
         if (!user) return { success: false, message: "Utilisateur introuvable" };
 
+        const patient = await prisma.patient.findUnique({ where: { id: patientId }, select: { userId: true } });
+        if (!patient || patient.userId !== user.id) {
+            return { success: false, message: "Non autorisé" };
+        }
+
         const consultation = await prisma.consultation.create({
             data: {
                 patientId,

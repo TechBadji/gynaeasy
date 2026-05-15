@@ -26,7 +26,16 @@ export async function createReglement(data: {
     reference?: string;
 }) {
     const session = await getServerSession(authOptions);
-    if (!session) throw new Error("Non authentifié");
+    if (!session?.user) return { success: false, error: "Non authentifié" };
+    const userId = (session.user as any).id;
+
+    const consultation = await prisma.consultation.findUnique({
+        where: { id: data.consultationId },
+        select: { userId: true }
+    });
+    if (!consultation || consultation.userId !== userId) {
+        return { success: false, error: "Non autorisé" };
+    }
 
     const reglement = await prisma.reglement.create({
         data: {
@@ -67,7 +76,14 @@ export async function createReglement(data: {
  * Récupère les factures récentes (règlements)
  */
 export async function getRecentInvoices() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
+    const userId = (session.user as any).id;
+
     return await prisma.reglement.findMany({
+        where: {
+            consultation: { userId }
+        },
         include: {
             consultation: {
                 include: {

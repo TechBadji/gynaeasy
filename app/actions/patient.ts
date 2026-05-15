@@ -217,11 +217,13 @@ export async function handleAccessRequest(requestId: string, approve: boolean) {
 export async function searchPatients(query: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return [];
+    const userId = (session.user as any).id;
 
     if (!query || query.length < 2) return [];
 
     return await prisma.patient.findMany({
         where: {
+            userId,
             OR: [
                 { nom: { contains: query, mode: "insensitive" } },
                 { prenom: { contains: query, mode: "insensitive" } },

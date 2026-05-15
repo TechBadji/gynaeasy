@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+const VALID_TYPES = ["CONSULTATION", "ECHOGRAPHIE", "URGENCE", "SUIVI_GROSSESSE", "TELECONSULTATION"] as const;
+
 export async function validatePatientPhone(phone: string) {
     const patient = await prisma.patient.findFirst({
         where: { telephone: phone },
@@ -34,11 +36,28 @@ export async function validatePatientCode(code: string) {
 
 export async function createOnlineAppointment(patientId: string, doctorId: string, dateHeure: string, type: string) {
     try {
+        if (!VALID_TYPES.includes(type as any)) {
+            return { success: false, message: "Type de rendez-vous invalide" };
+        }
+
+        const dt = new Date(dateHeure);
+        if (isNaN(dt.getTime()) || dt <= new Date()) {
+            return { success: false, message: "Date invalide ou dans le passé" };
+        }
+
+        const doctor = await prisma.user.findUnique({
+            where: { id: doctorId },
+            select: { role: true, status: true }
+        });
+        if (!doctor || doctor.role !== "MEDECIN" || doctor.status !== "ACTIVE") {
+            return { success: false, message: "Médecin introuvable ou inactif" };
+        }
+
         const appointment = await prisma.consultation.create({
             data: {
                 patientId,
                 userId: doctorId,
-                dateHeure: new Date(dateHeure),
+                dateHeure: dt,
                 type: type as any,
                 source: "ONLINE",
             },
