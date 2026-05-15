@@ -74,7 +74,6 @@ export async function createOnlineAppointment(patientId: string, doctorId: strin
         const { format } = await import("date-fns");
         const { fr } = await import("date-fns/locale");
 
-        const dt = new Date(dateHeure);
         const dateStr = format(dt, "dd/MM/yyyy", { locale: fr });
         const timeStr = format(dt, "HH:mm", { locale: fr });
 
