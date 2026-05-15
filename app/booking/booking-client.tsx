@@ -72,7 +72,7 @@ export default function BookingClient({ doctors }: { doctors: Doctor[] }) {
         if (res.success) {
             setStep(4);
         } else {
-            toast.error(res.message);
+            toast.error(res.message ?? "Une erreur est survenue");
         }
     };
 
