@@ -18,9 +18,7 @@ export default function ChangePasswordForm() {
     });
 
     const validatePassword = (pwd: string) => {
-        const alphanumeric = /^[a-zA-Z0-9]+$/;
-        if (pwd.length < 6 || pwd.length > 11) return "Le mot de passe doit contenir entre 6 et 11 caractères.";
-        if (!alphanumeric.test(pwd)) return "Seuls les caractères alphanumériques sont autorisés.";
+        if (pwd.length < 8) return "Le mot de passe doit contenir au moins 8 caractères.";
         return null;
     };
 
@@ -71,7 +69,7 @@ export default function ChangePasswordForm() {
                             value={formData.newPassword}
                             onChange={(e) => setFormData(prev => ({ ...prev, newPassword: e.target.value }))}
                             className="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-12 pr-12 py-4 text-sm focus:outline-none focus:border-violet-500 focus:ring-4 focus:ring-violet-500/10 transition-all"
-                            placeholder="6 à 11 caractères alphanumériques"
+                            placeholder="8 caractères minimum"
                         />
                         <button
                             type="button"
@@ -105,23 +103,23 @@ export default function ChangePasswordForm() {
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
                 <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Règles de sécurité :</p>
                 <div className="flex items-center gap-2 text-xs">
-                    {formData.newPassword.length >= 6 && formData.newPassword.length <= 11 ? (
+                    {formData.newPassword.length >= 8 ? (
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     ) : (
                         <AlertCircle className="h-3.5 w-3.5 text-slate-300" />
                     )}
-                    <span className={formData.newPassword.length >= 6 && formData.newPassword.length <= 11 ? "text-emerald-700 font-bold" : "text-slate-500"}>
-                        Entre 6 et 11 caractères
+                    <span className={formData.newPassword.length >= 8 ? "text-emerald-700 font-bold" : "text-slate-500"}>
+                        8 caractères minimum
                     </span>
                 </div>
                 <div className="flex items-center gap-2 text-xs">
-                    {/^[a-zA-Z0-9]*$/.test(formData.newPassword) && formData.newPassword !== "" ? (
+                    {formData.newPassword === formData.confirmPassword && formData.confirmPassword !== "" ? (
                         <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                     ) : (
                         <AlertCircle className="h-3.5 w-3.5 text-slate-300" />
                     )}
-                    <span className={/^[a-zA-Z0-9]*$/.test(formData.newPassword) && formData.newPassword !== "" ? "text-emerald-700 font-bold" : "text-slate-500"}>
-                        Alphanumérique uniquement (A-Z, 0-9)
+                    <span className={formData.newPassword === formData.confirmPassword && formData.confirmPassword !== "" ? "text-emerald-700 font-bold" : "text-slate-500"}>
+                        Les deux mots de passe correspondent
                     </span>
                 </div>
             </div>

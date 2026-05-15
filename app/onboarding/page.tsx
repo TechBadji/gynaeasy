@@ -2,7 +2,7 @@
 
 import { useState, useTransition, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { registerDoctor } from "@/app/actions/onboarding";
+import { registerDoctor, resendVerificationEmail } from "@/app/actions/onboarding";
 import {
     Activity,
     User,
@@ -30,6 +30,7 @@ function OnboardingForm() {
     
     const [isPending, startTransition] = useTransition();
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [resendSent, setResendSent] = useState(false);
 
     const [formData, setFormData] = useState({
         name: "",
@@ -72,10 +73,25 @@ function OnboardingForm() {
                             Une fois vérifiée, votre dossier sera transmis à notre équipe administrative pour activation.
                         </p>
                     </div>
-                    <div className="pt-4">
-                        <Link href="/" className="inline-flex items-center gap-2 text-violet-400 font-bold hover:text-violet-300 transition-colors">
-                            <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
-                        </Link>
+                    <div className="pt-4 space-y-3">
+                        {resendSent ? (
+                            <p className="text-emerald-400 text-sm font-medium">Email renvoyé !</p>
+                        ) : (
+                            <button
+                                onClick={async () => {
+                                    await resendVerificationEmail(formData.email);
+                                    setResendSent(true);
+                                }}
+                                className="text-slate-400 text-sm hover:text-violet-400 transition-colors underline underline-offset-4"
+                            >
+                                Vous n&apos;avez pas reçu l&apos;email ? Renvoyer
+                            </button>
+                        )}
+                        <div>
+                            <Link href="/" className="inline-flex items-center gap-2 text-violet-400 font-bold hover:text-violet-300 transition-colors">
+                                <ArrowLeft className="h-4 w-4" /> Retour à l&apos;accueil
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>

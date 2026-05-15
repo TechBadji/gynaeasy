@@ -113,6 +113,21 @@ export const sendResetPasswordEmail = async (email: string, name: string, token:
     `);
 };
 
+export const sendAdminApprovalNotificationEmail = async (adminEmail: string, doctorName: string, doctorEmail: string) => {
+    const adminLink = `${domain}/admin?tab=inscriptions`;
+    await sendMail(adminEmail, `Nouvelle inscription en attente — Gynaeasy`, `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
+            <h1 style="color: #4f46e5;">Nouvelle inscription à approuver</h1>
+            <p>Une nouvelle demande est en attente de votre validation :</p>
+            <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;">
+                <p style="margin: 0; font-weight: bold;">Dr. ${doctorName}</p>
+                <p style="margin: 4px 0 0 0; color: #64748b;">${doctorEmail}</p>
+            </div>
+            <a href="${adminLink}" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Approuver l'inscription</a>
+        </div>
+    `);
+};
+
 export const sendCancellationNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
     await sendMail(email, 'Annulation de votre rendez-vous - Gynaeasy', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #ef4444; border-radius: 12px; padding: 24px;">

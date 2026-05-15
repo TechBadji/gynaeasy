@@ -6,6 +6,7 @@ import { LayoutDashboard, Users, Calendar, Settings, FileText, Activity, Shield,
 import UserProfileNav from "@/components/protected/user-profile-nav";
 import { prisma } from "@/lib/prisma";
 import SidebarNav from "@/components/protected/sidebar-nav";
+import TwoFABanner from "@/components/protected/twofa-banner";
 
 export default async function ProtectedLayout({
     children,
@@ -21,7 +22,7 @@ export default async function ProtectedLayout({
     const userId = (session.user as any).id;
     const user = await prisma.user.findUnique({
         where: { id: userId },
-        select: { enabledModules: true, role: true, image: true, name: true, email: true }
+        select: { enabledModules: true, role: true, image: true, name: true, email: true, twoFactorEnabled: true }
     });
 
     const isImagingEnabled = (user as any)?.enabledModules?.includes("IMAGERIE");
@@ -48,6 +49,7 @@ export default async function ProtectedLayout({
 
             {/* Main Content */}
             <main className="flex-1 flex flex-col">
+                {!user?.twoFactorEnabled && <TwoFABanner />}
                 <header className="h-16 bg-white border-b flex items-center justify-between px-6 z-10 relative">
                     <div className="flex items-center md:hidden">
                         <Activity className="h-6 w-6 text-pink-600 mr-2" />

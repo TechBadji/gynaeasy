@@ -16,3 +16,4 @@ out/
 # Vercel
 .vercel
 .env*.local
+deploy.sh

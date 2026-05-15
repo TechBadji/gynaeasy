@@ -91,8 +91,8 @@ export async function setInitialPassword(newPassword: string) {
         const session = await getServerSession(authOptions);
         if (!session?.user?.email) return { success: false, error: "Non autorisé" };
 
-        if (!newPassword || newPassword.length < 6) {
-            return { success: false, error: "Mot de passe trop court (6 caractères minimum)" };
+        if (!newPassword || newPassword.length < 8) {
+            return { success: false, error: "Mot de passe trop court (8 caractères minimum)" };
         }
 
         const user = await (prisma.user as any).findUnique({
