@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updatePassword } from "@/app/actions/user";
+import { setInitialPassword } from "@/app/actions/user";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -40,7 +40,7 @@ export default function ChangePasswordForm() {
 
         startTransition(async () => {
             try {
-                const res = await updatePassword({ newPassword: formData.newPassword });
+                const res = await setInitialPassword(formData.newPassword);
                 if (res.success) {
                     toast.success("Mot de passe mis à jour !");
                     // Update session to reflect mustChangePassword = false

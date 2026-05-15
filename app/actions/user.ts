@@ -82,6 +82,40 @@ export async function updatePassword(data: {
     }
 }
 
+/**
+ * Définit le mot de passe lors de la première connexion (mustChangePassword = true).
+ * N'exige pas l'ancien mot de passe — l'utilisateur est déjà authentifié avec son mot de passe temporaire.
+ */
+export async function setInitialPassword(newPassword: string) {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user?.email) return { success: false, error: "Non autorisé" };
+
+        if (!newPassword || newPassword.length < 6) {
+            return { success: false, error: "Mot de passe trop court (6 caractères minimum)" };
+        }
+
+        const user = await (prisma.user as any).findUnique({
+            where: { email: session.user.email },
+            select: { id: true, mustChangePassword: true }
+        });
+
+        if (!user) return { success: false, error: "Utilisateur non trouvé" };
+        if (!user.mustChangePassword) return { success: false, error: "Action non autorisée" };
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        await (prisma.user as any).update({
+            where: { id: user.id },
+            data: { password: hashedPassword, mustChangePassword: false }
+        });
+
+        return { success: true };
+    } catch (error: any) {
+        console.error("[setInitialPassword]:", error);
+        return { success: false, error: "Une erreur est survenue" };
+    }
+}
+
 export async function updateUserAvatar(userId: string, imageData: string) {
     try {
         const session = await getServerSession(authOptions);
