@@ -4,11 +4,10 @@ const resend = process.env.RESEND_API_KEY
     ? new Resend(process.env.RESEND_API_KEY)
     : null;
 
-const domain = process.env.NEXT_PUBLIC_APP_URL 
-    ? process.env.NEXT_PUBLIC_APP_URL 
-    : process.env.VERCEL_URL 
-        ? `https://${process.env.VERCEL_URL}` 
-        : 'http://localhost:3000';
+// APP_URL is server-only (no NEXT_PUBLIC_ prefix) so it reads at runtime, not baked at build time
+const domain = process.env.APP_URL
+    || process.env.NEXTAUTH_URL
+    || 'http://localhost:3000';
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
 
 export const sendVerificationEmail = async (email: string, name: string, token: string) => {
