@@ -3,9 +3,9 @@ const store = new Map<string, { count: number; resetAt: number }>();
 // Purge entries that have expired to prevent unbounded memory growth
 setInterval(() => {
     const now = Date.now();
-    for (const [key, entry] of store.entries()) {
+    store.forEach((entry, key) => {
         if (now > entry.resetAt) store.delete(key);
-    }
+    });
 }, 10 * 60 * 1000);
 
 /**
