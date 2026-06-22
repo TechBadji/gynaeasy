@@ -17,6 +17,11 @@ export default withAuth(
             return NextResponse.redirect(new URL("/change-password", req.url));
         }
 
+        // Force la configuration 2FA si exigée par l'admin
+        if (token?.twoFactorSetupRequired && token?.role !== "ADMIN" && path !== "/setup-2fa") {
+            return NextResponse.redirect(new URL("/setup-2fa", req.url));
+        }
+
         return NextResponse.next();
     },
     {
@@ -29,5 +34,5 @@ export default withAuth(
 
 export const config = {
     // Protéger toutes les routes sauf l'authentification, l'onboarding, le booking public et les assets
-    matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|manifest.json|robots.txt|auth|onboarding|booking|p|$).*)"],
+    matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico|manifest.json|robots.txt|auth|onboarding|booking|offline|p|$).*)"],
 };

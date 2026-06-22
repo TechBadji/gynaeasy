@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { updateUserRoleAdmin, toggleUserModule, createUserAdmin, setUserStatusAdmin, deleteUserAdmin } from "@/app/actions/superadmin";
-import { Users, Search, ChevronDown, CheckCircle2, AlertCircle, Shield, Zap, Plus, X, Lock, Mail, UserPlus, Ban, UserCheck, Trash2 } from "lucide-react";
+import { updateUserRoleAdmin, toggleUserModule, createUserAdmin, setUserStatusAdmin, deleteUserAdmin, setUser2FARequired } from "@/app/actions/superadmin";
+import { Users, Search, ChevronDown, CheckCircle2, AlertCircle, Shield, ShieldCheck, ShieldOff, Zap, Plus, X, Lock, Mail, UserPlus, Ban, UserCheck, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 
 const ROLE_COLORS: Record<string, string> = {
@@ -91,6 +91,22 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
         });
     };
 
+    const handleToggle2FARequired = (userId: string, currentRequired: boolean) => {
+        startTransition(async () => {
+            try {
+                const res = await setUser2FARequired(userId, !currentRequired);
+                if (res.success) {
+                    setLocalUsers(prev => prev.map(u => u.id === userId ? { ...u, twoFactorRequired: !currentRequired } : u));
+                    toast.success(`2FA ${!currentRequired ? "exigée" : "non exigée"} pour cet utilisateur`);
+                } else {
+                    toast.error(res.error || "Erreur");
+                }
+            } catch {
+                toast.error("Erreur serveur");
+            }
+        });
+    };
+
     const handleDelete = (userId: string, userName: string) => {
         if (!confirm(`Êtes-vous sûr de vouloir supprimer définitivement le compte de ${userName} ? Cette action est irréversible.`)) return;
 
@@ -140,6 +156,7 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultations</th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Abonnement</th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Modules Actifs</th>
+                                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">2FA</th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Inscrit le</th>
                                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Actions</th>
                             </tr>
@@ -210,6 +227,27 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                                 })}
                                             </div>
                                         </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex flex-col gap-1">
+                                                {user.twoFactorEnabled ? (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-2 py-0.5">
+                                                        <ShieldCheck className="h-3 w-3" /> Activée
+                                                    </span>
+                                                ) : (
+                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-500 bg-slate-700/50 border border-white/5 rounded-full px-2 py-0.5">
+                                                        <ShieldOff className="h-3 w-3" /> Inactive
+                                                    </span>
+                                                )}
+                                                <button
+                                                    onClick={() => handleToggle2FARequired(user.id, user.twoFactorRequired)}
+                                                    title={user.twoFactorRequired ? "Ne plus exiger la 2FA" : "Exiger la 2FA"}
+                                                    className={`inline-flex items-center gap-1 text-[9px] font-bold rounded-full px-2 py-0.5 border transition-all ${user.twoFactorRequired ? "bg-amber-500/20 border-amber-500/30 text-amber-400 hover:bg-amber-500/30" : "bg-white/5 border-white/10 text-slate-500 hover:bg-white/10"}`}
+                                                >
+                                                    <Shield className="h-2.5 w-2.5" />
+                                                    {user.twoFactorRequired ? "Exigée" : "Exiger"}
+                                                </button>
+                                            </div>
+                                        </td>
                                         <td className="px-4 py-3 text-slate-400 text-xs">
                                             {new Date(user.createdAt).toLocaleDateString("fr-FR")}
                                         </td>
@@ -259,7 +297,7 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                 );
                             }) : (
                                 <tr>
-                                    <td colSpan={7} className="px-4 py-12 text-center text-slate-500">
+                                    <td colSpan={9} className="px-4 py-12 text-center text-slate-500">
                                         Aucun utilisateur trouvé
                                     </td>
                                 </tr>

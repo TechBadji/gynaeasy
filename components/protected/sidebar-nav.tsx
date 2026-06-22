@@ -14,6 +14,7 @@ import {
     CreditCard,
     HelpCircle,
     MessageCircle,
+    MessageSquare,
     Book,
     Lock
 } from "lucide-react";
@@ -38,14 +39,14 @@ export default function SidebarNav({ role, isImagingEnabled, isAdmin }: SidebarN
     const linkClass = (path: string) => {
         const active = isActive(path);
         return `flex items-center px-3 py-2 text-sm font-medium rounded-md transition-all ${active
-            ? "text-pink-600 bg-pink-50 shadow-sm border border-pink-100"
+            ? "text-violet-700 bg-violet-50 shadow-sm border border-violet-100"
             : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 border border-transparent"
             }`;
     };
 
     const iconClass = (path: string, defaultColor: string) => {
         const active = isActive(path);
-        return `h-5 w-5 mr-3 ${active ? "text-pink-600" : defaultColor}`;
+        return `h-5 w-5 mr-3 ${active ? "text-violet-700" : defaultColor}`;
     };
 
     return (
@@ -82,6 +83,11 @@ export default function SidebarNav({ role, isImagingEnabled, isAdmin }: SidebarN
             <Link href="/inventaire" className={linkClass("/inventaire")}>
                 <Package className={iconClass("/inventaire", "text-slate-400")} />
                 Stocks & Inventaire
+            </Link>
+
+            <Link href="/sms" className={linkClass("/sms")}>
+                <MessageSquare className={iconClass("/sms", "text-slate-400")} />
+                Communications SMS
             </Link>
 
             {role !== "SECRETAIRE" && (

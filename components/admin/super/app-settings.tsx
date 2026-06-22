@@ -4,9 +4,9 @@ import { useState, useTransition, useEffect } from "react";
 import { updateAppSettings } from "@/app/actions/superadmin";
 import { sendTestSMS, getOrangeSMSStats } from "@/app/actions/reminders";
 import { 
-    Settings, Save, Globe, Phone, Mail, MapPin, 
-    DollarSign, CheckCircle2, MessageSquare, Send, 
-    Loader2, BarChart3, RefreshCw, AlertCircle, ShieldCheck, UserCheck 
+    Settings, Save, Globe, Phone, Mail, MapPin,
+    DollarSign, CheckCircle2, MessageSquare, Send,
+    Loader2, BarChart3, RefreshCw, AlertCircle, ShieldCheck, UserCheck, Shield
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -14,12 +14,13 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
     const [isPending, startTransition] = useTransition();
     const [saved, setSaved] = useState(false);
     const [form, setForm] = useState({
-        clinicName: settings?.clinicName || "Gynaeasy",
-        address: settings?.address || "",
-        phone: settings?.phone || "",
+        clinicName: settings?.clinicName || settings?.nom || "Gynaeasy",
+        address: settings?.address || settings?.adresse || "",
+        phone: settings?.phone || settings?.telephone || "",
         email: settings?.email || "",
         currency: settings?.currency || "FCFA",
         requireApproval: settings?.requireApproval ?? false,
+        require2FAForAll: settings?.require2FAForAll ?? false,
     });
 
     // SMS States
@@ -211,6 +212,24 @@ export default function SuperAdminSettings({ settings, onlySMS = false }: { sett
                                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${form.requireApproval ? "bg-violet-600" : "bg-slate-700"}`}
                                     >
                                         <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.requireApproval ? "translate-x-6" : "translate-x-1"}`} />
+                                    </button>
+                                </div>
+
+                                <div className="flex items-center justify-between p-4 bg-white/3 rounded-xl border border-white/5 mt-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="h-10 w-10 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-400">
+                                            <Shield className="h-5 w-5" />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold text-white">Exiger la 2FA pour tous</p>
+                                            <p className="text-[10px] text-slate-500 mt-0.5 leading-tight">Force la configuration 2FA à la prochaine connexion de chaque utilisateur</p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        onClick={() => handleChange("require2FAForAll", !form.require2FAForAll)}
+                                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ${form.require2FAForAll ? "bg-pink-600" : "bg-slate-700"}`}
+                                    >
+                                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${form.require2FAForAll ? "translate-x-6" : "translate-x-1"}`} />
                                     </button>
                                 </div>
                             </div>

@@ -3,15 +3,25 @@
 ## Stack technique
 - **Next.js 14** App Router + Server Actions (`"use server"`)
 - **Prisma ORM** + PostgreSQL (Supabase)
-- **NextAuth.js** session auth
+- **NextAuth.js** session auth (JWT strategy)
 - **Orange Developer API** (OneAPI SMS) pour Sénégal
 - **Vercel** pour le déploiement
 - **AES-256-GCM** (`lib/encryption.ts`) pour données sensibles
+- **react-big-calendar** pour l'agenda
+- **Zustand** pour les drafts consultation (localStorage)
 
 ## Utilisateur
 - GitHub: `techbadji` — plan **Pro**
 - Projet Vercel lié: `gynaeasy`
 - Langue de travail: **français** (réponses en français ou anglais selon la question)
+
+---
+
+## Thème couleur
+
+Le thème principal est **violet** (`violet-600` / `#7c3aed`).  
+Le rose (`pink-600`) ne doit plus apparaître dans l'UI applicative.  
+Exceptions acceptées : gradient décoratif `from-violet-600 to-pink-600` sur le bouton Super Admin uniquement.
 
 ---
 
@@ -22,7 +32,7 @@
 |---|---|
 | `ORANGE_SMS_CLIENT_ID` | Client ID Orange Developer |
 | `ORANGE_SMS_CLIENT_SECRET` | Client Secret Orange Developer |
-| `ORANGE_SMS_SENDER_NUMBER` | Expéditeur (ex: `+221326742` short code ou `+221XXXXXXXXX`) |
+| `ORANGE_SMS_SENDER_NUMBER` | Expéditeur (ex: `+221XXXXXXXXX` long number ou `326742` short code) |
 | `ORANGE_SMS_SENDER_NAME` | Optionnel — nom affiché si validé par Orange |
 
 ### Format des requêtes (OneAPI)
@@ -53,7 +63,7 @@ Les credentials actuels sont en **mode sandbox Orange** (`backend.dck.cloud.oran
 **Action requise par le client** :
 1. Aller sur [https://developer.orange.com](https://developer.orange.com)
 2. Mon App → SMS Messaging API → **Demander l'accès production**
-3. Mettre à jour `ORANGE_SMS_CLIENT_ID` et `ORANGE_SMS_CLIENT_SECRET` sur Vercel avec les credentials production
+3. Mettre à jour `ORANGE_SMS_CLIENT_ID` et `ORANGE_SMS_CLIENT_SECRET` sur Vercel
 4. **Aucun changement de code nécessaire**
 
 ### Stats SMS (Super Admin)
@@ -61,11 +71,30 @@ Les credentials actuels sont en **mode sandbox Orange** (`backend.dck.cloud.oran
 - Action : `app/actions/reminders.ts` → `getOrangeSMSStats()`
 - L'API Orange retourne les contrats comme **tableau direct** `[{...}]` (pas imbriqué)
 - `availableUnits` = somme des contrats ACTIVE
-- Exemple réponse : `[{ id, type: "SELFSERVICE", country: "SEN", availableUnits: 100, status: "ACTIVE", expirationDate: "2026-05-02T23:59:59.000Z" }]`
 
 ---
 
-## Fixes de sécurité appliqués (session précédente)
+## Architecture rappels SMS & Communications
+
+- `lib/sms.ts` — service bas niveau (auth token Orange + envoi)
+- `lib/whatsapp.ts` — service WhatsApp Business API (simulation si non configuré)
+- `app/actions/reminders.ts` — rappels RDV, broadcast SMS/WhatsApp, stats Orange
+- `app/(protected)/sms/page.tsx` — page Communications SMS (médecin + secrétaire)
+- `components/sms/sms-broadcast.tsx` — composant principal SMS (rappels + broadcast)
+- `app/api/reminders/cron/route.ts` — endpoint cron sécurisé par `CRON_SECRET`
+- `components/admin/super/app-settings.tsx` — test SMS + solde (Super Admin)
+
+---
+
+## Ownership patients — règle critique
+
+Le lien médecin ↔ patient passe par **`Patient.treatingDoctorId`** (pas `Patient.userId`).  
+Toujours filtrer par `treatingDoctorId: userId` pour les requêtes patient d'un médecin.  
+`Patient.userId` est un champ secondaire (créateur initial), ne pas l'utiliser pour le filtrage métier.
+
+---
+
+## Fixes de sécurité appliqués
 
 | Fichier | Fix |
 |---|---|
@@ -78,25 +107,43 @@ Les credentials actuels sont en **mode sandbox Orange** (`backend.dck.cloud.oran
 | `app/actions/onboarding.ts` | Erreurs email remontées au lieu d'être silencieuses |
 | `lib/auth.ts` | Suppression `console.log("DEBUG PASS:", ...)` |
 | `app/actions/subscription.ts` | Suppression `console.log("DEBUG UPGRADE:", ...)` |
-| `components/billing/billing-dashboard.tsx` | Suppression console.log debug |
-| `components/subscription/pricing-cards.tsx` | `window.location.reload()` → `router.refresh()` |
+| `app/actions/reminders.ts` | Filtre `treatingDoctorId` (corrige leak inter-médecins) |
+| `middleware.ts` | Route `/offline` exclue du guard d'auth (PWA fallback) |
 
 ---
 
-## Architecture rappels SMS
-- `lib/sms.ts` — service bas niveau (auth token + envoi)
-- `app/actions/reminders.ts` — actions serveur (rappels quotidiens, test SMS, stats)
-- `components/admin/super/app-settings.tsx` — UI Super Admin (test + solde)
-- `app/api/reminders/sms/route.ts` — endpoint API (cron ou appel externe)
-
 ## Schéma Prisma notable
-- `Consultation` a un champ `smsReminded: Boolean` pour éviter les doublons
-- `Consultation` a un champ `donneesMedicales: Json` (données médicales libres)
-- Patients ont `telephone` nullable
+
+- `Consultation.smsReminded: Boolean` — évite les doublons de rappel SMS
+- `Consultation.donneesMedicales: Json` — données médicales libres (constantes, écho, etc.)
+- `Patient.treatingDoctorId` — médecin traitant principal (relation "TreatingDoctor")
+- `Patient.telephone` — nullable (requis pour SMS)
+- `Promotion` + `PromoUsage` — codes promo avec tracking par utilisateur
+- `Advertisement` — campagnes pub partenaires (clicks + impressions trackés)
+- `PlanConfig` — config tarifaire éditable par le Super Admin (prixMensuel + prixAnnuel)
 
 ---
 
 ## Déploiement Vercel
+
+### Variables d'environnement obligatoires
+
+| Variable | Description |
+| --- | --- |
+| `DATABASE_URL` | URL PostgreSQL avec `?sslmode=require` |
+| `ENCRYPTION_KEY` | 64 chars hex — crash au démarrage si invalide |
+| `NEXTAUTH_URL` | URL publique de l'app (ex: `https://gynaeasy.vercel.app`) |
+| `NEXTAUTH_SECRET` | Secret JWT (min 32 chars) |
+| `NEXT_PUBLIC_APP_URL` | Même valeur que NEXTAUTH_URL |
+
+### Variables optionnelles mais importantes
+
+| Variable | Description |
+| --- | --- |
+| `ORANGE_SMS_CLIENT_ID/SECRET` | SMS réels (sandbox OK sans) |
+| `SMTP_HOST/USER/PASS` | Emails réels (simulation logs si absent) |
+| `CRON_SECRET` | Sécurisation endpoint `/api/reminders/cron` |
+| `WHATSAPP_API_TOKEN` | WhatsApp Business (simulation si absent) |
+
 - Branche `main` → déploiement automatique
-- Variables d'environnement à configurer : `ORANGE_SMS_*`, `ENCRYPTION_KEY` (64 hex chars), `DATABASE_URL`, `NEXTAUTH_*`
-- `ENCRYPTION_KEY` invalide = crash au démarrage (voulu — fail fast)
+- `output: 'standalone'` dans `next.config.js` (compatible Docker/Vercel)

@@ -1,11 +1,15 @@
-import { getUserSubscription, getActiveAdvertisements } from "@/app/actions/subscription";
+import { getUserSubscription, getActiveAdvertisements, getPublicPlanConfigs } from "@/app/actions/subscription";
 import SubscriptionView from "@/components/subscription/subscription-view";
 import PricingCards from "@/components/subscription/pricing-cards";
-import { CreditCard, Shield, AlertTriangle } from "lucide-react";
+import { CreditCard, AlertTriangle } from "lucide-react";
 
 export default async function AbonnementPage() {
-    const sub = await getUserSubscription();
-    const activeAds = await getActiveAdvertisements();
+    const [sub, activeAds, planConfigs] = await Promise.all([
+        getUserSubscription(),
+        getActiveAdvertisements(),
+        getPublicPlanConfigs(),
+    ]);
+
     const activeAd = activeAds.length > 0 ? activeAds[0] : null;
 
     return (
@@ -25,7 +29,7 @@ export default async function AbonnementPage() {
                     <SubscriptionView subscription={sub} activeAd={activeAd} />
                     <div className="mt-16 pt-8 border-t border-slate-100">
                         <h2 className="text-xl font-bold text-slate-800 text-center mb-8">Mettre à niveau mon abonnement</h2>
-                        <PricingCards currentPlan={sub.plan} />
+                        <PricingCards currentPlan={sub.plan} planConfigs={planConfigs} />
                     </div>
                 </>
             ) : (
@@ -36,10 +40,12 @@ export default async function AbonnementPage() {
                         </div>
                         <div>
                             <h2 className="text-xl font-bold text-slate-800">Aucun abonnement actif</h2>
-                            <p className="text-slate-500 max-w-sm mt-1">Choisissez un plan ci-dessous pour débloquer toutes les fonctionnalités de Gynaeasy.</p>
+                            <p className="text-slate-500 max-w-sm mt-1">
+                                Choisissez un plan ci-dessous pour débloquer toutes les fonctionnalités de Gynaeasy.
+                            </p>
                         </div>
                     </div>
-                    <PricingCards />
+                    <PricingCards planConfigs={planConfigs} />
                 </div>
             )}
         </div>

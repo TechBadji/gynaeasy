@@ -2,6 +2,9 @@
 
 import { prisma } from "@/lib/prisma";
 import { sendSMS } from "@/lib/sms";
+import { sendWhatsApp } from "@/lib/whatsapp";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { format } from "date-fns";
 
 export async function getRemindersCount(date: Date) {
@@ -10,12 +13,12 @@ export async function getRemindersCount(date: Date) {
     const end = new Date(date);
     end.setHours(23, 59, 59, 999);
 
-    const count = await (prisma.consultation as any).count({
+    const count = await prisma.consultation.count({
         where: {
             dateHeure: { gte: start, lte: end },
             smsReminded: false,
-            patient: { telephone: { not: null } }
-        }
+            patient: { telephone: { not: null } },
+        },
     });
 
     return count;
@@ -28,21 +31,16 @@ export async function sendDailyReminders(date: Date) {
         const end = new Date(date);
         end.setHours(23, 59, 59, 999);
 
-        const appointments = await (prisma.consultation as any).findMany({
+        const appointments = await prisma.consultation.findMany({
             where: {
                 dateHeure: { gte: start, lte: end },
                 smsReminded: false,
-                patient: { 
-                    telephone: { 
-                        not: null,
-                        notIn: [""]
-                    } 
-                }
+                patient: { telephone: { not: null, notIn: [""] } },
             },
             include: {
                 patient: { select: { nom: true, prenom: true, telephone: true, civilite: true } },
-                user: { select: { name: true } }
-            }
+                user:    { select: { name: true } },
+            },
         });
 
         if (appointments.length === 0) {
@@ -61,9 +59,9 @@ export async function sendDailyReminders(date: Date) {
             const res = await sendSMS(appt.patient.telephone!, message);
             
             if (res.success) {
-                await (prisma.consultation as any).update({
+                await prisma.consultation.update({
                     where: { id: appt.id },
-                    data: { smsReminded: true }
+                    data:  { smsReminded: true },
                 });
                 sent++;
             } else {
@@ -81,6 +79,147 @@ export async function sendDailyReminders(date: Date) {
         console.error("Reminder Action Error:", error);
         return { success: false, message: "Erreur lors de l'envoi des rappels." };
     }
+}
+
+export async function getPatientsBroadcastList() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
+
+    const userId = (session.user as any).id;
+    const role = (session.user as any).role;
+
+    if (!["MEDECIN", "SECRETAIRE", "ADMIN"].includes(role)) return [];
+
+    return await prisma.patient.findMany({
+        where: {
+            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            telephone: { not: null, notIn: [""] },
+        },
+        select: {
+            id: true,
+            nom: true,
+            prenom: true,
+            telephone: true,
+            civilite: true,
+        },
+        orderBy: { nom: "asc" },
+    });
+}
+
+export async function broadcastSMS(patientIds: string[], message: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non authentifié" };
+
+    const userId = (session.user as any).id;
+    const role = (session.user as any).role;
+
+    if (!["MEDECIN", "SECRETAIRE", "ADMIN"].includes(role)) {
+        return { success: false, message: "Accès refusé" };
+    }
+
+    const msg = message?.trim();
+    if (!msg || msg.length > 480) {
+        return { success: false, message: "Message invalide (1–480 caractères)" };
+    }
+
+    if (!Array.isArray(patientIds) || patientIds.length === 0 || patientIds.length > 500) {
+        return { success: false, message: "Sélection invalide" };
+    }
+
+    // Ownership: MEDECIN limited to own patients, SECRETAIRE/ADMIN see all
+    const patients = await prisma.patient.findMany({
+        where: {
+            id: { in: patientIds },
+            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            telephone: { not: null, notIn: [""] },
+        },
+        select: { id: true, nom: true, telephone: true },
+    });
+
+    if (!patients.length) {
+        return { success: false, message: "Aucun patient éligible trouvé" };
+    }
+
+    let sent = 0;
+    let errors = 0;
+
+    for (const patient of patients) {
+        const res = await sendSMS(patient.telephone!, msg);
+        if (res.success) sent++;
+        else errors++;
+    }
+
+    return {
+        success: true,
+        sent,
+        errors,
+        message: `${sent} SMS envoyé${sent > 1 ? "s" : ""}.${errors > 0 ? ` ${errors} échec(s).` : ""}`,
+    };
+}
+
+export async function broadcastMessage(
+    patientIds: string[],
+    message: string,
+    channels: ("sms" | "whatsapp")[],
+) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non authentifié" };
+
+    const userId = (session.user as any).id;
+    const role = (session.user as any).role;
+
+    if (!["MEDECIN", "SECRETAIRE", "ADMIN"].includes(role)) {
+        return { success: false, message: "Accès refusé" };
+    }
+
+    const msg = message?.trim();
+    if (!msg || msg.length > 480) {
+        return { success: false, message: "Message invalide (1–480 caractères)" };
+    }
+
+    if (!Array.isArray(patientIds) || patientIds.length === 0 || patientIds.length > 500) {
+        return { success: false, message: "Sélection invalide" };
+    }
+
+    if (!channels.length) return { success: false, message: "Aucun canal sélectionné" };
+
+    const patients = await prisma.patient.findMany({
+        where: {
+            id: { in: patientIds },
+            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            telephone: { not: null, notIn: [""] },
+        },
+        select: { id: true, nom: true, telephone: true },
+    });
+
+    if (!patients.length) return { success: false, message: "Aucun patient éligible trouvé" };
+
+    let smsSent = 0, smsErrors = 0, waSent = 0, waErrors = 0;
+
+    for (const patient of patients) {
+        const tel = patient.telephone!;
+        if (channels.includes("sms")) {
+            const r = await sendSMS(tel, msg);
+            if (r.success) smsSent++; else smsErrors++;
+        }
+        if (channels.includes("whatsapp")) {
+            const r = await sendWhatsApp(tel, msg);
+            if (r.success) waSent++; else waErrors++;
+        }
+    }
+
+    const parts: string[] = [];
+    if (channels.includes("sms")) parts.push(`SMS : ${smsSent} envoyé${smsSent > 1 ? "s" : ""}${smsErrors > 0 ? ` (${smsErrors} échec${smsErrors > 1 ? "s" : ""})` : ""}`);
+    if (channels.includes("whatsapp")) parts.push(`WhatsApp : ${waSent} envoyé${waSent > 1 ? "s" : ""}${waErrors > 0 ? ` (${waErrors} échec${waErrors > 1 ? "s" : ""})` : ""}`);
+
+    return {
+        success: true,
+        smsSent,
+        smsErrors,
+        waSent,
+        waErrors,
+        message: parts.join(" — "),
+    };
 }
 
 export async function sendTestSMS(to: string, message: string) {

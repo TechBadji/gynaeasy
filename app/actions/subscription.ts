@@ -174,26 +174,133 @@ export async function requestPlanUpgrade(newPlan: string) {
     }
 }
 
-export async function getActiveAdvertisements() {
+export async function getPublicPlanConfigs() {
     try {
+        const configs = await prisma.planConfig.findMany({ orderBy: { updatedAt: "desc" } });
+        if (configs.length === 0) {
+            return SUBSCRIPTION_PLANS.map(p => ({
+                plan: p.id.toUpperCase(),
+                prixMensuel: p.price,
+                prixAnnuel: null as number | null,
+                description: p.description,
+                features: p.features as { text: string; included: boolean }[],
+                isPromotional: p.isPopular,
+            }));
+        }
+        return JSON.parse(JSON.stringify(configs)) as {
+            plan: string;
+            prixMensuel: number;
+            prixAnnuel: number | null;
+            description: string | null;
+            features: { text: string; included: boolean }[] | null;
+            isPromotional: boolean;
+        }[];
+    } catch {
+        return SUBSCRIPTION_PLANS.map(p => ({
+            plan: p.id.toUpperCase(),
+            prixMensuel: p.price,
+            prixAnnuel: null as number | null,
+            description: p.description,
+            features: p.features as { text: string; included: boolean }[],
+            isPromotional: p.isPopular,
+        }));
+    }
+}
+
+export async function validatePromoCode(code: string, plan?: string) {
+    try {
+        const promo = await prisma.promotion.findUnique({ where: { code: code.toUpperCase().trim() } });
+        if (!promo) return { valid: false, message: "Code introuvable" };
+        if (!promo.active) return { valid: false, message: "Ce code n'est plus actif" };
+        if (promo.validUntil && new Date(promo.validUntil) < new Date()) {
+            return { valid: false, message: "Ce code a expiré" };
+        }
+        if (promo.usageLimit && promo.usageCount >= promo.usageLimit) {
+            return { valid: false, message: "Ce code a atteint sa limite d'utilisation" };
+        }
+        if (plan && promo.applicableTo.length > 0 && !promo.applicableTo.includes(plan.toUpperCase())) {
+            return { valid: false, message: `Ce code n'est pas valable pour le plan ${plan}` };
+        }
+        return {
+            valid: true,
+            promo: {
+                id: promo.id,
+                code: promo.code,
+                type: promo.type,
+                valeur: promo.valeur,
+                description: promo.description,
+            }
+        };
+    } catch {
+        return { valid: false, message: "Erreur de validation" };
+    }
+}
+
+export async function applyPromoCode(code: string, plan: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non authentifié" };
+    const userId = (session.user as any).id;
+
+    const promo = await prisma.promotion.findUnique({ where: { code: code.toUpperCase().trim() } });
+    if (!promo || !promo.active) return { success: false, message: "Code invalide" };
+    if (promo.validUntil && new Date(promo.validUntil) < new Date()) {
+        return { success: false, message: "Code expiré" };
+    }
+    if (promo.usageLimit && promo.usageCount >= promo.usageLimit) {
+        return { success: false, message: "Limite atteinte" };
+    }
+
+    if (promo.usagePerUser) {
+        const userUsage = await prisma.promoUsage.count({ where: { promoId: promo.id, userId } });
+        if (userUsage >= promo.usagePerUser) {
+            return { success: false, message: "Vous avez déjà utilisé ce code" };
+        }
+    }
+
+    await prisma.$transaction([
+        prisma.promoUsage.create({ data: { promoId: promo.id, userId, plan: plan.toUpperCase() } }),
+        prisma.promotion.update({ where: { id: promo.id }, data: { usageCount: { increment: 1 } } }),
+    ]);
+
+    return {
+        success: true,
+        promo: { id: promo.id, code: promo.code, type: promo.type, valeur: promo.valeur },
+    };
+}
+
+export async function getActiveAdvertisements(userPlan?: string) {
+    try {
+        const session = await getServerSession(authOptions);
+        const plan = userPlan ?? (session ? await prisma.abonnement.findFirst({
+            where: { userId: (session.user as any).id },
+            select: { plan: true },
+            orderBy: { createdAt: "desc" },
+        }).then(s => s?.plan ?? null) : null);
+
         const now = new Date();
         const ads = await prisma.advertisement.findMany({
             where: {
                 statut: "ACTIF",
                 dateDebut: { lte: now },
-                dateFin: { gte: now }
+                dateFin: { gte: now },
             },
-            take: 1, // Only show one active ad at a time (can be randomized later)
             orderBy: { createdAt: "desc" }
         });
-        
-        return ads.map(ad => ({
-            ...ad,
-            dateDebut: ad.dateDebut.toISOString(),
-            dateFin: ad.dateFin.toISOString(),
-            createdAt: ad.createdAt.toISOString(),
-            updatedAt: ad.updatedAt.toISOString(),
-        }));
+
+        const eligible = ads.filter(ad =>
+            ad.formatCible.length === 0 || (plan && ad.formatCible.includes(plan))
+        );
+
+        const selected = eligible.length > 0 ? eligible[Math.floor(Math.random() * eligible.length)] : null;
+        if (!selected) return [];
+
+        return [{
+            ...selected,
+            dateDebut: selected.dateDebut.toISOString(),
+            dateFin: selected.dateFin.toISOString(),
+            createdAt: selected.createdAt.toISOString(),
+            updatedAt: selected.updatedAt.toISOString(),
+        }];
     } catch (error) {
         console.error("Ads Error:", error);
         return [];

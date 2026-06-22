@@ -5,19 +5,31 @@ import { prisma } from "@/lib/prisma";
 import { getClinicSettings } from "@/app/actions/clinic";
 import ClinicSettingsForm from "@/components/settings/clinic-settings-form";
 import PasswordChangeForm from "@/components/settings/password-change-form";
-import { Settings } from "lucide-react";
+import TwoFactorForm from "@/components/settings/two-factor-form";
+import { Settings, Lock, Building2 } from "lucide-react";
 
-export default async function ParametresPage() {
+interface PageProps {
+    searchParams: { tab?: string; required?: string };
+}
+
+export default async function ParametresPage({ searchParams }: PageProps) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) redirect("/api/auth/signin");
 
-    // Bypass Prisma Validation with Raw SQL for the new field
+    const tab = searchParams.tab === "securite" ? "securite" : "cabinet";
+    const isRequired = searchParams.required === "true";
+
     const [settings, userRows] = await Promise.all([
         getClinicSettings(),
-        prisma.$queryRaw`SELECT id, name, "clinicName", specialite, "isEmergencyAvailable" FROM "User" WHERE email = ${session.user.email} LIMIT 1`
+        prisma.$queryRaw`SELECT id, name, "clinicName", specialite, "isEmergencyAvailable", "twoFactorEnabled", "twoFactorRequired" FROM "User" WHERE email = ${session.user.email} LIMIT 1`
     ]);
 
     const user = (userRows as any[])[0];
+
+    const tabs = [
+        { id: "cabinet", label: "Cabinet & Profil", icon: Building2, href: "/parametres?tab=cabinet" },
+        { id: "securite", label: "Sécurité", icon: Lock, href: "/parametres?tab=securite" },
+    ];
 
     return (
         <div className="space-y-6 pb-20">
@@ -26,22 +38,60 @@ export default async function ParametresPage() {
                     <Settings className="h-6 w-6 text-indigo-600" />
                     Paramètres du Cabinet
                 </h1>
-                <p className="text-slate-500 text-sm">Configurez l'identité visuelle de votre cabinet et sécurisez votre accès.</p>
+                <p className="text-slate-500 text-sm">Configurez l'identité de votre cabinet et sécurisez votre accès.</p>
             </div>
 
-            <div className="pt-4 grid grid-cols-1 gap-12">
-                <ClinicSettingsForm 
-                    initialSettings={settings} 
-                    userSettings={{ 
-                        id: user?.id || "", 
-                        clinicName: user?.clinicName || "",
-                        name: user?.name || "",
-                        specialite: user?.specialite || "",
-                        isEmergencyAvailable: user?.isEmergencyAvailable || false
-                    }} 
-                />
-                
-                <PasswordChangeForm />
+            {/* Onglets */}
+            <div className="border-b border-slate-200">
+                <nav className="flex gap-1 -mb-px">
+                    {tabs.map((t) => {
+                        const Icon = t.icon;
+                        const isActive = tab === t.id;
+                        return (
+                            <a
+                                key={t.id}
+                                href={t.href}
+                                className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                                    isActive
+                                        ? "border-indigo-600 text-indigo-600"
+                                        : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
+                                }`}
+                            >
+                                <Icon className="h-4 w-4" />
+                                {t.label}
+                            </a>
+                        );
+                    })}
+                </nav>
+            </div>
+
+            {/* Contenu */}
+            <div className="pt-2 grid grid-cols-1 gap-12">
+                {tab === "cabinet" && (
+                    <>
+                        <ClinicSettingsForm
+                            initialSettings={settings}
+                            userSettings={{
+                                id: user?.id || "",
+                                clinicName: user?.clinicName || "",
+                                name: user?.name || "",
+                                specialite: user?.specialite || "",
+                                isEmergencyAvailable: user?.isEmergencyAvailable || false
+                            }}
+                        />
+                        <PasswordChangeForm />
+                    </>
+                )}
+
+                {tab === "securite" && (
+                    <div className="space-y-8 max-w-2xl">
+                        <TwoFactorForm
+                            initialEnabled={user?.twoFactorEnabled ?? false}
+                            required={isRequired || user?.twoFactorRequired}
+                        />
+                        <PasswordChangeForm />
+                    </div>
+                )}
             </div>
         </div>
     );

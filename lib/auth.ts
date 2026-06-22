@@ -40,6 +40,7 @@ export const authOptions: NextAuthOptions = {
                         role: true,
                         twoFactorEnabled: true,
                         twoFactorSecret: true,
+                        twoFactorRequired: true,
                         mustChangePassword: true,
                     }
                 });
@@ -92,6 +93,22 @@ export const authOptions: NextAuthOptions = {
                     }
                 }
 
+                // Check if 2FA setup is required but not yet enabled
+                let twoFactorSetupRequired = false;
+                if (!user.twoFactorEnabled) {
+                    if (user.twoFactorRequired) {
+                        twoFactorSetupRequired = true;
+                    } else {
+                        const globalSettings = await prisma.clinicSettings.findUnique({
+                            where: { id: "singleton" },
+                            select: { require2FAForAll: true },
+                        });
+                        if (globalSettings?.require2FAForAll) {
+                            twoFactorSetupRequired = true;
+                        }
+                    }
+                }
+
                 // Log successful login
                 await logAudit({
                     userId: user.id,
@@ -105,6 +122,7 @@ export const authOptions: NextAuthOptions = {
                     name: user.name,
                     role: user.role,
                     mustChangePassword: user.mustChangePassword,
+                    twoFactorSetupRequired,
                     rememberMe: credentials.rememberMe === "true",
                 };
             },
@@ -116,14 +134,16 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.role = (user as any).role;
                 token.mustChangePassword = (user as any).mustChangePassword;
+                token.twoFactorSetupRequired = (user as any).twoFactorSetupRequired;
                 if (!(user as any).rememberMe) {
                     // Session expires in 8 hours if "remember me" is not checked
                     token.exp = Math.floor(Date.now() / 1000) + 8 * 60 * 60;
                 }
             }
-            // Update token if session is updated (useful after password change)
-            if (trigger === "update" && session?.mustChangePassword === false) {
-                token.mustChangePassword = false;
+            // Update token when mustChangePassword or twoFactorSetupRequired changes
+            if (trigger === "update") {
+                if (session?.mustChangePassword === false) token.mustChangePassword = false;
+                if (session?.twoFactorSetupRequired === false) token.twoFactorSetupRequired = false;
             }
             return token;
         },
@@ -132,6 +152,7 @@ export const authOptions: NextAuthOptions = {
                 (session.user as any).id = token.id as string;
                 (session.user as any).role = token.role as string;
                 (session.user as any).mustChangePassword = token.mustChangePassword as boolean;
+                (session.user as any).twoFactorSetupRequired = token.twoFactorSetupRequired as boolean;
             }
             return session;
         },

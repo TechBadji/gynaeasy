@@ -128,7 +128,10 @@ export async function getAllUsers(skip = 0) {
             name: true,
             email: true,
             role: true,
+            status: true,
             enabledModules: true,
+            twoFactorEnabled: true,
+            twoFactorRequired: true,
             createdAt: true,
             _count: {
                 select: { patients: true, consultations: true },
@@ -142,6 +145,20 @@ export async function getAllUsers(skip = 0) {
         orderBy: { createdAt: "desc" },
     });
     return JSON.parse(JSON.stringify(users));
+}
+
+export async function setUser2FARequired(userId: string, required: boolean) {
+    try {
+        await checkSuperAdmin();
+        await prisma.user.update({
+            where: { id: userId },
+            data: { twoFactorRequired: required },
+        });
+        revalidatePath("/admin");
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: "Erreur lors de la mise à jour" };
+    }
 }
 
 export async function createUserAdmin(data: {
@@ -328,6 +345,7 @@ export async function getPlanConfigs() {
 
 export async function updatePlanConfig(plan: "SOLO" | "PRO" | "CLINIQUE", data: {
     prixMensuel: number;
+    prixAnnuel?: number | null;
     description?: string;
     features?: any;
     isPromotional?: boolean;
@@ -339,7 +357,27 @@ export async function updatePlanConfig(plan: "SOLO" | "PRO" | "CLINIQUE", data: 
         create: { plan, ...data }
     });
     revalidatePath("/admin");
+    revalidatePath("/abonnement");
     return JSON.parse(JSON.stringify(config));
+}
+
+export async function getPlanStats() {
+    await checkSuperAdmin();
+    const plans = ["SOLO", "PRO", "CLINIQUE"] as const;
+    const results = await Promise.all(
+        plans.map(async (plan) => {
+            const [activeCount, configs] = await Promise.all([
+                prisma.abonnement.count({ where: { plan, statut: "ACTIF" } }),
+                prisma.planConfig.findUnique({ where: { plan }, select: { prixMensuel: true } }),
+            ]);
+            return {
+                plan,
+                activeSubscribers: activeCount,
+                monthlyRevenue: activeCount * (configs?.prixMensuel ?? 0),
+            };
+        })
+    );
+    return results;
 }
 
 // ============================================
@@ -348,7 +386,8 @@ export async function updatePlanConfig(plan: "SOLO" | "PRO" | "CLINIQUE", data: 
 export async function getPromotions() {
     await checkSuperAdmin();
     const promotions = await prisma.promotion.findMany({
-        orderBy: { createdAt: "desc" }
+        orderBy: { createdAt: "desc" },
+        include: { _count: { select: { usages: true } } },
     });
     return JSON.parse(JSON.stringify(promotions));
 }
@@ -360,19 +399,32 @@ export async function createPromotion(data: {
     valeur: number;
     validUntil?: Date | null;
     usageLimit?: number | null;
+    usagePerUser?: number | null;
+    applicableTo?: string[];
 }) {
     await checkSuperAdmin();
-    const promo = await prisma.promotion.create({ data });
+    const { applicableTo = [], ...rest } = data;
+    const promo = await prisma.promotion.create({
+        data: { ...rest, applicableTo },
+    });
     revalidatePath("/admin");
     return JSON.parse(JSON.stringify(promo));
 }
 
-export async function updatePromotion(id: string, active: boolean) {
+export async function updatePromotion(
+    id: string,
+    data: {
+        active?: boolean;
+        description?: string;
+        valeur?: number;
+        validUntil?: Date | null;
+        usageLimit?: number | null;
+        usagePerUser?: number | null;
+        applicableTo?: string[];
+    }
+) {
     await checkSuperAdmin();
-    const promo = await prisma.promotion.update({
-        where: { id },
-        data: { active }
-    });
+    const promo = await prisma.promotion.update({ where: { id }, data });
     revalidatePath("/admin");
     return JSON.parse(JSON.stringify(promo));
 }
@@ -419,6 +471,7 @@ export async function updateAppSettings(data: {
     email?: string;
     currency?: string;
     requireApproval?: boolean;
+    require2FAForAll?: boolean;
 }) {
     await checkSuperAdmin();
     const updateData: any = {};
@@ -427,6 +480,7 @@ export async function updateAppSettings(data: {
     if (data.phone !== undefined) updateData.telephone = data.phone;
     if (data.email !== undefined) updateData.email = data.email;
     if (data.requireApproval !== undefined) updateData.requireApproval = data.requireApproval;
+    if (data.require2FAForAll !== undefined) updateData.require2FAForAll = data.require2FAForAll;
 
     // Note: currency is not in schema but we keep it in UI for now, ignored in DB update
 
@@ -490,24 +544,19 @@ export async function createAdvertisement(data: {
     description?: string;
     imageUrl?: string;
     lienClick?: string;
+    couleur?: string;
+    formatCible?: string[];
     dateDebut: Date;
     dateFin: Date;
     prixParJour: number;
 }) {
     await checkSuperAdmin();
-    
-    // Calculer le prix total (nombre de jours * prix par jour)
     const diffTime = Math.abs(new Date(data.dateFin).getTime() - new Date(data.dateDebut).getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 pour inclure le jour même
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
     const prixTotal = diffDays * data.prixParJour;
-
+    const { formatCible = [], ...rest } = data;
     const ad = await prisma.advertisement.create({
-        data: {
-            ...data,
-            dateDebut: new Date(data.dateDebut),
-            dateFin: new Date(data.dateFin),
-            prixTotal
-        }
+        data: { ...rest, formatCible, dateDebut: new Date(data.dateDebut), dateFin: new Date(data.dateFin), prixTotal },
     });
     revalidatePath("/admin/super");
     revalidatePath("/abonnement");
@@ -516,16 +565,13 @@ export async function createAdvertisement(data: {
 
 export async function updateAdvertisement(id: string, data: any) {
     await checkSuperAdmin();
-    
     if (data.dateDebut && data.dateFin && data.prixParJour) {
         const diffTime = Math.abs(new Date(data.dateFin).getTime() - new Date(data.dateDebut).getTime());
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
         data.prixTotal = diffDays * data.prixParJour;
     }
-
     if (data.dateDebut) data.dateDebut = new Date(data.dateDebut);
     if (data.dateFin) data.dateFin = new Date(data.dateFin);
-
     const ad = await prisma.advertisement.update({ where: { id }, data });
     revalidatePath("/admin/super");
     revalidatePath("/abonnement");
@@ -538,4 +584,22 @@ export async function deleteAdvertisement(id: string) {
     revalidatePath("/admin/super");
     revalidatePath("/abonnement");
     return { success: true };
+}
+
+export async function trackAdImpression(id: string) {
+    try {
+        await prisma.advertisement.update({
+            where: { id },
+            data: { impressionCount: { increment: 1 } },
+        });
+    } catch { /* silencieux — ne pas casser l'UI */ }
+}
+
+export async function trackAdClick(id: string) {
+    try {
+        await prisma.advertisement.update({
+            where: { id },
+            data: { clickCount: { increment: 1 } },
+        });
+    } catch { /* silencieux */ }
 }

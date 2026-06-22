@@ -4,7 +4,9 @@ import { CheckCircle2, Shield, Clock, Info, Star } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
 import SubscriptionInvoices from "./subscription-invoices";
+import { trackAdImpression, trackAdClick } from "@/app/actions/superadmin";
 
 const STATUS_MAP: Record<string, { label: string; color: string; bg: string }> = {
     ACTIF: { label: "Actif", color: "text-emerald-600", bg: "bg-emerald-50" },
@@ -23,6 +25,14 @@ export default function SubscriptionView({ subscription, activeAd }: { subscript
     const plan = PLAN_MAP[subscription.plan] || PLAN_MAP.SOLO;
     const status = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
     const PlanIcon = plan.icon;
+    const impressionTracked = useRef(false);
+
+    useEffect(() => {
+        if (activeAd?.id && !impressionTracked.current) {
+            impressionTracked.current = true;
+            trackAdImpression(activeAd.id);
+        }
+    }, [activeAd?.id]);
 
     // Calcul du prix final avec réduction
     const basePrice = subscription.config?.prixMensuel || 0;
@@ -87,9 +97,16 @@ export default function SubscriptionView({ subscription, activeAd }: { subscript
 
                 {/* Advertisement or Upsell Card */}
                 {activeAd ? (
-                    <a href={activeAd.lienClick || "#"} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-br from-violet-600 to-indigo-700 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4 group cursor-pointer block hover:scale-[1.02] transition-transform">
+                    <a
+                        href={activeAd.lienClick || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => trackAdClick(activeAd.id)}
+                        className={`bg-gradient-to-br ${activeAd.couleur || "from-violet-600 to-indigo-700"} rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-indigo-100 flex flex-col items-center text-center space-y-4 group cursor-pointer block hover:scale-[1.02] transition-transform`}
+                    >
                         {activeAd.imageUrl && (
                             <div className="absolute inset-0 opacity-20 mix-blend-overlay">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
                                 <img src={activeAd.imageUrl} alt="" className="w-full h-full object-cover" />
                             </div>
                         )}
@@ -100,12 +117,12 @@ export default function SubscriptionView({ subscription, activeAd }: { subscript
                         )}
                         <div className="relative z-10 space-y-2">
                             <span className="bg-white/20 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md">
-                                Partenaire: {activeAd.partenaire}
+                                Partenaire : {activeAd.partenaire}
                             </span>
                             <h3 className="text-xl font-bold mt-2">{activeAd.titre}</h3>
-                            <p className="text-indigo-100 text-sm max-w-sm">{activeAd.description}</p>
+                            <p className="text-white/80 text-sm max-w-sm">{activeAd.description}</p>
                             <div className="pt-2">
-                                <span className="inline-block bg-white text-indigo-600 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg group-hover:bg-slate-50 transition-colors">
+                                <span className="inline-block bg-white/90 text-slate-800 px-8 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg group-hover:bg-white transition-colors">
                                     Découvrir l&apos;offre
                                 </span>
                             </div>
