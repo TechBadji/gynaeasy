@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getUserSubscription, getActiveAdvertisements, getPublicPlanConfigs } from "@/app/actions/subscription";
 import SubscriptionView from "@/components/subscription/subscription-view";
 import PricingCards from "@/components/subscription/pricing-cards";
