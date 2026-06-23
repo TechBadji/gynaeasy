@@ -91,7 +91,7 @@ export default function TwoFactorForm({ initialEnabled, required = false, onEnab
                 <div>
                     <h3 className="text-sm font-semibold text-slate-900">Double authentification (2FA)</h3>
                     <p className="text-xs text-slate-500">
-                        {enabled ? "Votre compte est protégé par une application d'authentification." : "Ajoutez une couche de sécurité supplémentaire à votre compte."}
+                        {enabled ? "Votre compte est protégé par une application d'authentification (Google Authenticator recommandé)." : "Ajoutez une couche de sécurité supplémentaire à votre compte."}
                     </p>
                 </div>
                 <div className="ml-auto">
