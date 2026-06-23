@@ -4,15 +4,15 @@
 - **Next.js 14** App Router + Server Actions (`"use server"`)
 - **Prisma ORM** + PostgreSQL (Supabase)
 - **NextAuth.js** session auth (JWT strategy)
-- **Orange Developer API** (OneAPI SMS) pour Sénégal
-- **Vercel** pour le déploiement
+- **Africa's Talking API** (SMS Sénégal — tous opérateurs)
+- **Coolify** self-hosted sur Hetzner (162.55.162.230) — app UUID `gi7hqgqn9mbaauvn33nv5uf5`
 - **AES-256-GCM** (`lib/encryption.ts`) pour données sensibles
 - **react-big-calendar** pour l'agenda
 - **Zustand** pour les drafts consultation (localStorage)
 
 ## Utilisateur
 - GitHub: `techbadji` — plan **Pro**
-- Projet Vercel lié: `gynaeasy`
+- Compte Africa's Talking : `digitalmatis8@gmail.com`
 - Langue de travail: **français** (réponses en français ou anglais selon la question)
 
 ---
@@ -21,68 +21,75 @@
 
 Le thème principal est **violet** (`violet-600` / `#7c3aed`).  
 Le rose (`pink-600`) ne doit plus apparaître dans l'UI applicative.  
-Exceptions acceptées : gradient décoratif `from-violet-600 to-pink-600` sur le bouton Super Admin uniquement.
+Exceptions acceptées : gradient décoratif `from-violet-600 to-pink-600` sur le bouton Super Admin uniquement.  
+`indigo` ne doit pas non plus apparaître dans l'UI — toujours remplacer par `violet`.
 
 ---
 
-## Orange SMS API
+## Africa's Talking SMS API
 
-### Configuration actuelle (`.env` / Vercel)
+### Variables d'environnement (Coolify)
 | Variable | Description |
 |---|---|
-| `ORANGE_SMS_CLIENT_ID` | Client ID Orange Developer |
-| `ORANGE_SMS_CLIENT_SECRET` | Client Secret Orange Developer |
-| `ORANGE_SMS_SENDER_NUMBER` | Expéditeur (ex: `+221XXXXXXXXX` long number ou `326742` short code) |
-| `ORANGE_SMS_SENDER_NAME` | Optionnel — nom affiché si validé par Orange |
+| `AT_API_KEY` | Clé API — Settings → API Key dans le dashboard AT |
+| `AT_USERNAME` | Nom du compte AT (`sandbox` en dev, nom réel en prod) |
+| `AT_SENDER_ID` | Optionnel — Sender ID validé par AT (ex: `GynEasy`) |
 
-### Format des requêtes (OneAPI)
+### Format de la requête
 ```
-POST https://api.orange.com/smsmessaging/v1/outbound/tel%3A%2B{sender}/requests
-Authorization: Bearer {access_token}
-Content-Type: application/json
+POST https://api.africastalking.com/version1/messaging
+Headers:
+  apiKey: {AT_API_KEY}
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
 
+Body (x-www-form-urlencoded):
+  username={AT_USERNAME}&to=+221XXXXXXXXX&message=...&from={AT_SENDER_ID}
+```
+
+### Réponse
+```json
 {
-  "outboundSMSMessageRequest": {
-    "address": "tel:+221XXXXXXXXX",        // string, pas tableau
-    "senderAddress": "tel:+221XXXXXXXXX",  // long number
-    // OU "tel:326742" pour short code (sans + ni indicatif pays)
-    "outboundSMSTextMessage": { "message": "..." }
+  "SMSMessageData": {
+    "Message": "Sent to 1/1 Total Cost: XOF 30",
+    "Recipients": [{
+      "statusCode": 101,
+      "number": "+221XXXXXXXXX",
+      "status": "Success",
+      "messageId": "ATXid_...",
+      "messageParts": 1
+    }]
   }
 }
 ```
 
-### Problèmes résolus
-- `address` doit être une **string**, pas un tableau `[]` — Orange renvoie 201 mais n'envoie rien si c'est un tableau
-- Short code : format `tel:326742` (avec `tel:`, sans `+`, sans indicatif pays)
-- Long number : format `tel:+221XXXXXXXXX`
-- Normalisation numéros : `lib/sms.ts` → `normalizePhoneNumber()` gère `+221`, `00221`, `0XX`, local
+### Codes de statut AT
+- `100` Processed / `101` Sent / `102` Queued → succès
+- `405` Solde insuffisant → recharger le compte AT
+- `406` Compte sandbox → enregistrer le numéro de test dans le dashboard AT
 
-### Problème restant (non-code)
-Les credentials actuels sont en **mode sandbox Orange** (`backend.dck.cloud.orange`). L'API accepte les requêtes (201 OK, unités consommées) mais **ne délivre pas les SMS** sur un vrai téléphone.
-
-**Action requise par le client** :
-1. Aller sur [https://developer.orange.com](https://developer.orange.com)
-2. Mon App → SMS Messaging API → **Demander l'accès production**
-3. Mettre à jour `ORANGE_SMS_CLIENT_ID` et `ORANGE_SMS_CLIENT_SECRET` sur Vercel
+### Mode sandbox → production
+1. Dashboard AT → Settings → changer `username` de `sandbox` au nom du compte
+2. Mettre à jour `AT_USERNAME` sur Coolify
+3. Valider un Sender ID si souhaité (délai ~3 jours)
 4. **Aucun changement de code nécessaire**
 
-### Stats SMS (Super Admin)
-- Dashboard : `components/admin/super/app-settings.tsx`
-- Action : `app/actions/reminders.ts` → `getOrangeSMSStats()`
-- L'API Orange retourne les contrats comme **tableau direct** `[{...}]` (pas imbriqué)
-- `availableUnits` = somme des contrats ACTIVE
+### Numérotation
+- `normalizePhoneNumber()` dans `lib/sms.ts` gère `+221`, `00221`, `0XX`, local
+- Africa's Talking exige le format E.164 avec `+` : `+221XXXXXXXXX`
+- Couvre **tous les opérateurs** : Orange, Free, Expresso
 
 ---
 
 ## Architecture rappels SMS & Communications
 
-- `lib/sms.ts` — service bas niveau (auth token Orange + envoi)
+- `lib/sms.ts` — service bas niveau Africa's Talking (simulation auto si clés absentes)
 - `lib/whatsapp.ts` — service WhatsApp Business API (simulation si non configuré)
-- `app/actions/reminders.ts` — rappels RDV, broadcast SMS/WhatsApp, stats Orange
+- `app/actions/reminders.ts` — rappels RDV, broadcast SMS/WhatsApp, liste rappels par date
 - `app/(protected)/sms/page.tsx` — page Communications SMS (médecin + secrétaire)
-- `components/sms/sms-broadcast.tsx` — composant principal SMS (rappels + broadcast)
+- `components/sms/sms-broadcast.tsx` — rappels + broadcast + templates + envoi direct 1:1
 - `app/api/reminders/cron/route.ts` — endpoint cron sécurisé par `CRON_SECRET`
-- `components/admin/super/app-settings.tsx` — test SMS + solde (Super Admin)
+- `components/admin/super/app-settings.tsx` — test SMS (Super Admin)
 
 ---
 
@@ -106,7 +113,7 @@ Toujours filtrer par `treatingDoctorId: userId` pour les requêtes patient d'un 
 | `app/actions/consultation.ts` | Validation Zod (`z.record(z.string(), z.unknown())`) |
 | `app/actions/onboarding.ts` | Erreurs email remontées au lieu d'être silencieuses |
 | `lib/auth.ts` | Suppression `console.log("DEBUG PASS:", ...)` |
-| `app/actions/subscription.ts` | Suppression `console.log("DEBUG UPGRADE:", ...)` |
+| `app/actions/subscription.ts` | Suppression `console.log("DEBUG UPGRADE:", ...")` |
 | `app/actions/reminders.ts` | Filtre `treatingDoctorId` (corrige leak inter-médecins) |
 | `middleware.ts` | Route `/offline` exclue du guard d'auth (PWA fallback) |
 
@@ -124,7 +131,7 @@ Toujours filtrer par `treatingDoctorId: userId` pour les requêtes patient d'un 
 
 ---
 
-## Déploiement Vercel
+## Déploiement Coolify
 
 ### Variables d'environnement obligatoires
 
@@ -132,7 +139,7 @@ Toujours filtrer par `treatingDoctorId: userId` pour les requêtes patient d'un 
 | --- | --- |
 | `DATABASE_URL` | URL PostgreSQL avec `?sslmode=require` |
 | `ENCRYPTION_KEY` | 64 chars hex — crash au démarrage si invalide |
-| `NEXTAUTH_URL` | URL publique de l'app (ex: `https://gynaeasy.vercel.app`) |
+| `NEXTAUTH_URL` | URL publique (ex: `https://gynaeasy.digitalmatis.com`) |
 | `NEXTAUTH_SECRET` | Secret JWT (min 32 chars) |
 | `NEXT_PUBLIC_APP_URL` | Même valeur que NEXTAUTH_URL |
 
@@ -140,10 +147,12 @@ Toujours filtrer par `treatingDoctorId: userId` pour les requêtes patient d'un 
 
 | Variable | Description |
 | --- | --- |
-| `ORANGE_SMS_CLIENT_ID/SECRET` | SMS réels (sandbox OK sans) |
+| `AT_API_KEY` | SMS réels Africa's Talking (simulation si absent) |
+| `AT_USERNAME` | Nom du compte AT (`sandbox` par défaut) |
+| `AT_SENDER_ID` | Sender ID validé AT (optionnel) |
 | `SMTP_HOST/USER/PASS` | Emails réels (simulation logs si absent) |
 | `CRON_SECRET` | Sécurisation endpoint `/api/reminders/cron` |
 | `WHATSAPP_API_TOKEN` | WhatsApp Business (simulation si absent) |
 
-- Branche `main` → déploiement automatique
-- `output: 'standalone'` dans `next.config.js` (compatible Docker/Vercel)
+- Branche `main` → déploiement automatique sur Coolify
+- App UUID Coolify : `gi7hqgqn9mbaauvn33nv5uf5`

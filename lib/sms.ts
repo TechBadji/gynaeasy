@@ -1,154 +1,109 @@
 /**
- * Normalise un numéro de téléphone sénégalais en format E.164 sans préfixe.
- * Gère : +221XXXXXXXXX, 00221XXXXXXXXX, 221XXXXXXXXX, 77XXXXXXX, 0XXXXXXXXX
- * Retourne : "221XXXXXXXXX"
+ * Normalise un numéro sénégalais en format E.164 : +221XXXXXXXXX
+ * Gère : +221..., 00221..., 221..., 77XXXXXXX, 0XXXXXXXXX
  */
 function normalizePhoneNumber(phone: string): string {
-    // Supprimer espaces, tirets, parenthèses
-    let cleaned = phone.replace(/[\s\-().]/g, '');
-
-    // Supprimer le + ou 00 au début
-    cleaned = cleaned.replace(/^\+/, '').replace(/^00/, '');
-
-    // Format local avec 0 initial (ex: 0771234567 → 771234567)
-    if (!cleaned.startsWith('221') && cleaned.startsWith('0')) {
-        cleaned = cleaned.slice(1);
-    }
-
-    // Ajouter le code pays Sénégal si absent
-    if (!cleaned.startsWith('221')) {
-        cleaned = `221${cleaned}`;
-    }
-
-    return cleaned; // "221XXXXXXXXX"
+    let n = phone.replace(/[\s\-().]/g, "").replace(/^\+/, "").replace(/^00/, "");
+    if (!n.startsWith("221") && n.startsWith("0")) n = n.slice(1);
+    if (!n.startsWith("221")) n = `221${n}`;
+    return `+${n}`; // Africa's Talking exige le "+" en E.164
 }
 
 /**
- * Service d'envoi de SMS via Orange Sénégal API
- * Supporte le mode Simulation si les clés ne sont pas configurées
+ * Envoie un SMS via Africa's Talking (Sénégal — tous opérateurs)
+ * Passe automatiquement en mode simulation si les clés ne sont pas configurées.
  */
 export async function sendSMS(to: string, message: string) {
-    const clientId = process.env.ORANGE_SMS_CLIENT_ID;
-    const clientSecret = process.env.ORANGE_SMS_CLIENT_SECRET;
-    const senderNumber = process.env.ORANGE_SMS_SENDER_NUMBER; // Format: +221XXXXXXXXX
-    const senderName = process.env.ORANGE_SMS_SENDER_NAME; // Optionnel
-    
-    // Mode Simulation par défaut si pas de clés
-    if (!clientId || !clientSecret || !senderNumber) {
-        const missing = [
-            !clientId && "ORANGE_SMS_CLIENT_ID",
-            !clientSecret && "ORANGE_SMS_CLIENT_SECRET",
-            !senderNumber && "ORANGE_SMS_SENDER_NUMBER",
-        ].filter(Boolean).join(", ");
+    const apiKey   = process.env.AT_API_KEY;
+    const username = process.env.AT_USERNAME;
+    const senderId = process.env.AT_SENDER_ID; // Optionnel — doit être validé par AT
+
+    // ── Mode simulation ──────────────────────────────────────────────────────
+    if (!apiKey || !username) {
+        const missing = [!apiKey && "AT_API_KEY", !username && "AT_USERNAME"]
+            .filter(Boolean).join(", ");
+        console.log(`[SMS SIMULATION] → ${to} : "${message.slice(0, 60)}…" (${missing})`);
         return {
-            success: true as const,
-            messageId: `sim_${Math.random().toString(36).substring(2, 9)}`,
+            success: true  as const,
+            messageId: `sim_${Math.random().toString(36).slice(2, 9)}`,
             simulated: true as const,
-            debug: { mode: "SIMULATION", reason: `Variables manquantes: ${missing}` }
+            debug: { mode: "SIMULATION", reason: `Variables manquantes : ${missing}` },
         };
     }
 
+    // ── Envoi réel Africa's Talking ──────────────────────────────────────────
     try {
-        console.log(`🚀 Tentative d'envoi SMS Réel (Orange SN) vers ${to}...`);
+        const normalizedTo = normalizePhoneNumber(to);
 
-        // 1. Obtenir le token d'accès
-        const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-        const tokenResponse = await fetch("https://api.orange.com/oauth/v3/token", {
+        const params = new URLSearchParams({ username, to: normalizedTo, message });
+        if (senderId) params.set("from", senderId);
+
+        const response = await fetch("https://api.africastalking.com/version1/messaging", {
             method: "POST",
             headers: {
-                "Authorization": `Basic ${authHeader}`,
-                "Content-Type": "application/x-www-form-urlencoded"
+                apiKey,
+                "Content-Type": "application/x-www-form-urlencoded",
+                Accept: "application/json",
             },
-            body: "grant_type=client_credentials"
+            body: params.toString(),
         });
 
-        if (!tokenResponse.ok) {
-            const errBody = await tokenResponse.text();
-            console.error("❌ Erreur Auth Orange SMS:", { status: tokenResponse.status, body: errBody });
-            throw new Error(`Échec Authentification Orange (${tokenResponse.status})`);
-        }
+        const data = await response.json();
 
-        const tokenData = await tokenResponse.json();
-        const accessToken = tokenData.access_token;
-
-        // 2. Préparer les numéros (Norme E.164 tel:+221...)
-        const cleanTo = normalizePhoneNumber(to);
-        const cleanFrom = normalizePhoneNumber(senderNumber);
-
-        const rawSender = senderNumber.replace(/[\s\-().+]/g, '').replace(/^00/, '');
-        const isShortCode = rawSender.length < 8;
-
-        const formattedTo = `tel:+${cleanTo}`;
-        // Short code : tel:326742 (pas de +, pas de code pays)
-        // Numéro long : tel:+221XXXXXXXXX
-        const formattedFrom = isShortCode ? `tel:${rawSender}` : `tel:+${cleanFrom}`;
-
-        // URL Orange Message : l'expéditeur doit être encodé
-        const requestUrl = `https://api.orange.com/smsmessaging/v1/outbound/${encodeURIComponent(formattedFrom)}/requests`;
-
-        const body: any = {
-            outboundSMSMessageRequest: {
-                address: formattedTo, // Doit être une string, pas un tableau (Orange OneAPI SN)
-                senderAddress: formattedFrom,
-                outboundSMSTextMessage: { message }
-            }
-        };
-
-        // senderName uniquement si validé par Orange SN (sinon retirer la variable env)
-        if (senderName) {
-            body.outboundSMSMessageRequest.senderName = senderName;
-        }
-
-        const debugRequest = {
-            url: requestUrl,
-            senderAddress: formattedFrom,
-            recipientAddress: formattedTo,
-            bodyJson: JSON.stringify(body),
-        };
-
-        const smsResponse = await fetch(requestUrl, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${accessToken}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-
-        const rawResponseText = await smsResponse.text();
-        const debugResponse = { status: smsResponse.status, body: rawResponseText };
-
-        if (!smsResponse.ok) {
-            let errorMessage = "Erreur API Orange";
-            try {
-                const errorJson = JSON.parse(rawResponseText);
-                errorMessage = errorJson.requestError?.serviceException?.variables?.[0]
-                            || errorJson.requestError?.policyException?.variables?.[0]
-                            || `Erreur ${smsResponse.status}`;
-            } catch {
-                errorMessage = `Erreur HTTP ${smsResponse.status}`;
-            }
+        if (!response.ok) {
             return {
                 success: false as const,
-                error: errorMessage,
+                error: data?.SMSMessageData?.Message ?? `Erreur HTTP ${response.status}`,
                 messageId: null,
                 simulated: false as const,
-                debug: { request: debugRequest, response: debugResponse }
+                debug: { status: response.status, body: data },
             };
         }
 
-        const smsData = JSON.parse(rawResponseText);
-        const resourceUrl = smsData.outboundSMSMessageRequest?.resourceReference?.resourceURL || "";
-        const messageId = resourceUrl.split('/').pop() || "sent";
+        const recipient = data?.SMSMessageData?.Recipients?.[0];
+
+        // Codes succès : 100 Processed, 101 Sent, 102 Queued
+        if (recipient && [100, 101, 102].includes(recipient.statusCode)) {
+            return {
+                success: true  as const,
+                messageId: recipient.messageId as string,
+                simulated: false as const,
+                debug: { status: response.status, body: data },
+            };
+        }
+
+        // Codes d'erreur AT documentés
+        const AT_ERRORS: Record<number, string> = {
+            401: "Message bloqué (RiskHold)",
+            402: "Sender ID non validé",
+            403: "Numéro invalide",
+            404: "Type de numéro non supporté",
+            405: "Solde insuffisant — rechargez le compte Africa's Talking",
+            406: "Compte en mode sandbox — numéro non enregistré comme test",
+            407: "Routage impossible vers cet opérateur",
+            500: "Erreur interne Africa's Talking",
+            501: "Erreur passerelle opérateur",
+            502: "Message rejeté par la passerelle",
+        };
+
+        const errorMsg = recipient
+            ? (AT_ERRORS[recipient.statusCode] ?? `Erreur AT code ${recipient.statusCode}`)
+            : "Réponse inattendue de l'API Africa's Talking";
 
         return {
-            success: true as const,
-            messageId,
+            success: false as const,
+            error: errorMsg,
+            messageId: null,
             simulated: false as const,
-            debug: { request: debugRequest, response: debugResponse }
+            debug: { status: response.status, body: data, recipient },
         };
     } catch (error: any) {
-        console.error("🚨 Erreur Service SMS:", error.message);
-        return { success: false, error: error.message, messageId: null, simulated: false };
+        console.error("[SMS] Erreur Africa's Talking :", error.message);
+        return {
+            success: false as const,
+            error: error.message,
+            messageId: null,
+            simulated: false as const,
+        };
     }
 }
