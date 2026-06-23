@@ -47,8 +47,13 @@ export async function createImagingExam(data: {
             description: data.notes || "",
             metadata: {},
         },
+        include: {
+            patient: {
+                select: { id: true, nom: true, prenom: true, codePatient: true, civilite: true },
+            },
+        },
     });
 
     revalidatePath("/imagerie");
-    return { success: true, documentId: doc.id };
+    return { success: true, document: doc };
 }

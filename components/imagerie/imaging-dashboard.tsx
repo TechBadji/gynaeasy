@@ -13,7 +13,6 @@ import { saveImagingReport, createImagingExam } from "@/app/actions/imaging";
 import { consumeStockItem } from "@/app/actions/stock";
 import ImagingPrintTemplate from "./print-report";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 const EXAM_TYPES = [
     { value: "Écho Obstétricale T1", label: "Écho Obstétricale — 1er Trimestre" },
@@ -107,7 +106,6 @@ export default function ImagingDashboard({
     clinicSettings?: any;
 }) {
     const { data: session } = useSession();
-    const router = useRouter();
     const [scans, setScans] = useState<Scan[]>(initialScans);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedScan, setSelectedScan] = useState<Scan | null>(initialScans[0] || null);
@@ -171,12 +169,14 @@ export default function ImagingDashboard({
                     notes: examNotes,
                 });
                 if (res.success) {
-                    toast.success("Examen créé");
+                    const newScan = res.document as Scan;
+                    setScans(prev => [newScan, ...prev]);
+                    setSelectedScan(newScan);
                     setShowNewExam(false);
                     setSelectedPatient(null);
                     setPatientSearch("");
                     setExamNotes("");
-                    router.refresh();
+                    toast.success("Examen créé — vous pouvez rédiger le compte-rendu");
                 }
             } catch (e: any) {
                 toast.error(e.message);
