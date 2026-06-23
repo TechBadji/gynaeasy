@@ -24,7 +24,8 @@ export default async function DashboardPage() {
     const userId = (session.user as any).id;
     const role = (session.user as any).role;
     const userName = session.user?.name ?? "";
-    const firstName = userName.split(" ").find((w: string) => w.length > 1) ?? (role === "SECRETAIRE" ? "Secrétaire" : "Docteur");
+    const PREFIXES = new Set(["dr", "dr.", "pr", "pr.", "m.", "mme", "mlle"]);
+    const firstName = userName.split(" ").find((w: string) => w.length > 1 && !PREFIXES.has(w.toLowerCase())) ?? (role === "SECRETAIRE" ? "Secrétaire" : "Docteur");
 
     const now = new Date();
     const hour = now.getHours();
