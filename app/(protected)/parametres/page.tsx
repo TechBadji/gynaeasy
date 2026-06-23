@@ -9,15 +9,16 @@ import TwoFactorForm from "@/components/settings/two-factor-form";
 import { Settings, Lock, Building2 } from "lucide-react";
 
 interface PageProps {
-    searchParams: { tab?: string; required?: string };
+    searchParams: Promise<{ tab?: string; required?: string }>;
 }
 
 export default async function ParametresPage({ searchParams }: PageProps) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) redirect("/api/auth/signin");
 
-    const tab = searchParams.tab === "securite" ? "securite" : "cabinet";
-    const isRequired = searchParams.required === "true";
+    const { tab: tabParam, required: requiredParam } = await searchParams;
+    const tab = tabParam === "securite" ? "securite" : "cabinet";
+    const isRequired = requiredParam === "true";
 
     const [settings, user] = await Promise.all([
         getClinicSettings(),
