@@ -4,15 +4,16 @@ import { useState, useRef, useEffect, useTransition } from "react";
 import {
     Search, Plus, FileImage, History, Activity, User,
     Calendar, ArrowRight, Printer, ClipboardList,
-    AlertCircle, CheckCircle2, Clock, X, Loader2, Stethoscope,
+    AlertCircle, CheckCircle2, Clock, X, Loader2, Stethoscope, Upload,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import toast from "react-hot-toast";
-import { saveImagingReport, createImagingExam } from "@/app/actions/imaging";
+import { saveImagingReport, createImagingExam, saveImagingCliche } from "@/app/actions/imaging";
 import { consumeStockItem } from "@/app/actions/stock";
 import ImagingPrintTemplate from "./print-report";
 import { useSession } from "next-auth/react";
+import { useUploadThing } from "@/lib/uploadthing";
 
 const EXAM_TYPES = [
     { value: "Écho Obstétricale T1", label: "Écho Obstétricale — 1er Trimestre" },
@@ -120,6 +121,34 @@ export default function ImagingDashboard({
     const [isPending, startTransition] = useTransition();
     const patientInputRef = useRef<HTMLInputElement>(null);
     const patientDropRef = useRef<HTMLDivElement>(null);
+
+    // Upload cliché
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const { startUpload } = useUploadThing("imagingUploader", {
+        onUploadError: (e) => { toast.error(e.message); setUploading(false); },
+    });
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!selectedScan || !e.target.files?.[0]) return;
+        const file = e.target.files[0];
+        setUploading(true);
+        try {
+            const res = await startUpload([file]);
+            if (res?.[0]?.url) {
+                await saveImagingCliche(selectedScan.id, res[0].url);
+                const url = res[0].url;
+                setScans(prev => prev.map(s => s.id === selectedScan.id ? { ...s, url } : s));
+                setSelectedScan(prev => prev ? { ...prev, url } : null);
+                toast.success("Cliché importé avec succès");
+            }
+        } catch (e: any) {
+            toast.error(e.message || "Erreur lors de l'upload");
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
 
     // Compte-rendu
     const [isReporting, setIsReporting] = useState(false);
@@ -362,23 +391,51 @@ export default function ImagingDashboard({
                                 </div>
                             </div>
 
-                            {/* Image ou placeholder */}
+                            {/* Image ou zone d'import */}
                             <div className="flex-1 flex items-center justify-center p-8 bg-black relative min-h-[300px]">
                                 {selectedScan.url ? (
-                                    <img
-                                        src={selectedScan.url}
-                                        alt={selectedScan.nom}
-                                        className="max-h-full max-w-full rounded-lg object-contain"
-                                    />
+                                    <>
+                                        <img
+                                            src={selectedScan.url}
+                                            alt={selectedScan.nom}
+                                            className="max-h-full max-w-full rounded-lg object-contain"
+                                        />
+                                        <button
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={uploading}
+                                            className="absolute top-4 right-4 flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-[11px] font-semibold px-3 py-1.5 rounded-lg border border-white/20 transition-colors"
+                                        >
+                                            {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+                                            Remplacer
+                                        </button>
+                                    </>
                                 ) : (
-                                    <div className="flex flex-col items-center gap-4 text-slate-500">
-                                        <FileImage className="h-16 w-16 opacity-20" />
-                                        <div className="text-center">
-                                            <p className="text-sm font-medium text-slate-400">Aucun cliché importé</p>
-                                            <p className="text-xs text-slate-600 mt-1">Rédigez le compte-rendu directement</p>
+                                    <button
+                                        onClick={() => fileInputRef.current?.click()}
+                                        disabled={uploading}
+                                        className="flex flex-col items-center gap-4 text-slate-400 hover:text-white group transition-colors cursor-pointer"
+                                    >
+                                        <div className="h-20 w-20 rounded-2xl border-2 border-dashed border-slate-600 group-hover:border-violet-400 flex items-center justify-center transition-colors">
+                                            {uploading
+                                                ? <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+                                                : <Upload className="h-8 w-8 group-hover:text-violet-400 transition-colors" />
+                                            }
                                         </div>
-                                    </div>
+                                        <div className="text-center">
+                                            <p className="text-sm font-semibold group-hover:text-white transition-colors">
+                                                {uploading ? "Import en cours..." : "Importer un cliché"}
+                                            </p>
+                                            <p className="text-xs text-slate-600 mt-1">JPEG, PNG, WebP — max 16 Mo</p>
+                                        </div>
+                                    </button>
                                 )}
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    className="hidden"
+                                    onChange={handleFileChange}
+                                />
                             </div>
 
                             {/* Footer */}

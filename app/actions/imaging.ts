@@ -20,6 +20,21 @@ export async function saveImagingReport(documentId: string, description: string,
     return { success: true, document: updated };
 }
 
+export async function saveImagingCliche(documentId: string, url: string) {
+    const session = await getServerSession(authOptions);
+    if (!session || (session.user as any).role !== "MEDECIN") {
+        throw new Error("Non autorisé");
+    }
+
+    await prisma.document.update({
+        where: { id: documentId },
+        data: { url },
+    });
+
+    revalidatePath("/imagerie");
+    return { success: true };
+}
+
 export async function createImagingExam(data: {
     patientId: string;
     nom: string;
