@@ -11,33 +11,31 @@ export default async function ImagingPage() {
 
     const userId = (session.user as any).id;
 
-    // Récupérer les données en parallèle
-    const [user, recentScans, clinicSettings] = await Promise.all([
+    const [user, scans, patients, clinicSettings] = await Promise.all([
         prisma.user.findUnique({
             where: { id: userId },
-            select: { enabledModules: true }
+            select: { enabledModules: true },
         }),
         prisma.document.findMany({
             where: {
-                type: "ECHOGRAPHIE"
+                type: "ECHOGRAPHIE",
+                patient: { treatingDoctorId: userId },
             },
             include: {
                 patient: {
-                    select: {
-                        nom: true,
-                        prenom: true,
-                        codePatient: true
-                    }
-                }
+                    select: { id: true, nom: true, prenom: true, codePatient: true, civilite: true },
+                },
             },
-            orderBy: {
-                createdAt: "desc"
-            }
+            orderBy: { createdAt: "desc" },
         }),
-        getClinicSettings()
+        prisma.patient.findMany({
+            where: { treatingDoctorId: userId },
+            select: { id: true, nom: true, prenom: true, codePatient: true, civilite: true },
+            orderBy: { nom: "asc" },
+        }),
+        getClinicSettings(),
     ]);
 
-    // Sécurité : Vérifier si le module est activé
     if (!user?.enabledModules.includes("IMAGERIE")) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
@@ -55,5 +53,11 @@ export default async function ImagingPage() {
         );
     }
 
-    return <ImagingDashboard initialScans={recentScans} clinicSettings={clinicSettings} />;
+    return (
+        <ImagingDashboard
+            initialScans={scans}
+            patients={patients}
+            clinicSettings={clinicSettings}
+        />
+    );
 }

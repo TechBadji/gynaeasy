@@ -23,7 +23,7 @@ export default function ImagingPrintTemplate({ scan, reportText, reportMeta, doc
                         <Activity className="h-8 w-8 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-2xl font-black uppercase tracking-tighter text-indigo-600">{clinicInfo?.nom || "Gynaeasy"}</h1>
+                        <h1 className="text-2xl font-black uppercase tracking-tighter text-violet-600">{clinicInfo?.nom || "Gynaeasy"}</h1>
                         <p className="text-xs font-bold text-slate-500 uppercase tracking-widest">{clinicInfo?.slogan || "Clinique de Gynécologie & Obstétrique"}</p>
                     </div>
                 </div>
@@ -52,7 +52,7 @@ export default function ImagingPrintTemplate({ scan, reportText, reportMeta, doc
                 </div>
                 <div className="text-right">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Type d'examen</p>
-                    <p className="text-lg font-bold uppercase text-indigo-900">{scan.nom}</p>
+                    <p className="text-lg font-bold uppercase text-violet-900">{scan.nom}</p>
                 </div>
             </div>
 
