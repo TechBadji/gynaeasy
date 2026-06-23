@@ -19,12 +19,21 @@ export default async function ParametresPage({ searchParams }: PageProps) {
     const tab = searchParams.tab === "securite" ? "securite" : "cabinet";
     const isRequired = searchParams.required === "true";
 
-    const [settings, userRows] = await Promise.all([
+    const [settings, user] = await Promise.all([
         getClinicSettings(),
-        prisma.$queryRaw`SELECT id, name, "clinicName", specialite, "isEmergencyAvailable", "twoFactorEnabled", "twoFactorRequired" FROM "User" WHERE email = ${session.user.email} LIMIT 1`
+        (prisma.user as any).findUnique({
+            where: { email: session.user.email },
+            select: {
+                id: true,
+                name: true,
+                clinicName: true,
+                specialite: true,
+                isEmergencyAvailable: true,
+                twoFactorEnabled: true,
+                twoFactorRequired: true,
+            },
+        }),
     ]);
-
-    const user = (userRows as any[])[0];
 
     const tabs = [
         { id: "cabinet", label: "Cabinet & Profil", icon: Building2, href: "/parametres?tab=cabinet" },
