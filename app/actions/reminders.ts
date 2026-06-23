@@ -90,7 +90,7 @@ export async function getPatientsBroadcastList() {
 
     if (!["MEDECIN", "SECRETAIRE", "ADMIN"].includes(role)) return [];
 
-    return await prisma.patient.findMany({
+    const patients = await prisma.patient.findMany({
         where: {
             ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
             telephone: { not: null, notIn: [""] },
@@ -101,8 +101,54 @@ export async function getPatientsBroadcastList() {
             prenom: true,
             telephone: true,
             civilite: true,
+            consultations: {
+                where: { dateHeure: { gte: new Date() } },
+                orderBy: { dateHeure: "asc" },
+                take: 1,
+                select: { dateHeure: true },
+            },
         },
         orderBy: { nom: "asc" },
+    });
+
+    return patients.map(p => ({
+        id: p.id,
+        nom: p.nom,
+        prenom: p.prenom,
+        telephone: p.telephone,
+        civilite: p.civilite,
+        prochainRdv: p.consultations[0]?.dateHeure ?? null,
+    }));
+}
+
+export async function getRemindersForDate(date: Date) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return [];
+
+    const userId = (session.user as any).id;
+    const role = (session.user as any).role;
+
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    return await prisma.consultation.findMany({
+        where: {
+            dateHeure: { gte: start, lte: end },
+            smsReminded: false,
+            patient: {
+                telephone: { not: null, notIn: [""] },
+                ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            },
+        },
+        select: {
+            id: true,
+            dateHeure: true,
+            motif: true,
+            patient: { select: { nom: true, prenom: true, civilite: true, telephone: true } },
+        },
+        orderBy: { dateHeure: "asc" },
     });
 }
 
