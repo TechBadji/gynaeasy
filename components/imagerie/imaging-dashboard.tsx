@@ -9,11 +9,10 @@ import {
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import toast from "react-hot-toast";
-import { saveImagingReport, createImagingExam, saveImagingCliche } from "@/app/actions/imaging";
+import { saveImagingReport, createImagingExam, getScanUrl } from "@/app/actions/imaging";
 import { consumeStockItem } from "@/app/actions/stock";
 import ImagingPrintTemplate from "./print-report";
 import { useSession } from "next-auth/react";
-import { useUploadThing } from "@/lib/uploadthing";
 
 const EXAM_TYPES = [
     { value: "Écho Obstétricale T1", label: "Écho Obstétricale — 1er Trimestre" },
@@ -94,7 +93,7 @@ const TEMPLATES: Record<string, { label: string; fields: { id: string; label: st
 
 type Patient = { id: string; nom: string; prenom: string; codePatient: string; civilite: string };
 type Scan = {
-    id: string; nom: string; url: string;
+    id: string; nom: string; url?: string;
     description: string | null; metadata: any; createdAt: Date;
     patient: Patient;
 };
@@ -124,26 +123,52 @@ export default function ImagingDashboard({
 
     // Upload cliché
     const [uploading, setUploading] = useState(false);
+    const [loadingUrl, setLoadingUrl] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const { startUpload } = useUploadThing("imagingUploader", {
-        onUploadError: (e) => { toast.error(e.message); setUploading(false); },
-    });
+
+    const loadScanUrl = async (scan: Scan) => {
+        if (scan.url) return; // déjà chargée
+        setLoadingUrl(true);
+        try {
+            const url = await getScanUrl(scan.id);
+            if (url) {
+                setScans(prev => prev.map(s => s.id === scan.id ? { ...s, url } : s));
+                setSelectedScan(prev => prev?.id === scan.id ? { ...prev, url } : prev);
+            }
+        } finally {
+            setLoadingUrl(false);
+        }
+    };
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!selectedScan || !e.target.files?.[0]) return;
         const file = e.target.files[0];
+
+        if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+            toast.error("Format non supporté (JPEG, PNG, WebP)");
+            return;
+        }
+        if (file.size > 8 * 1024 * 1024) {
+            toast.error("Fichier trop volumineux (max 8 Mo)");
+            return;
+        }
+
         setUploading(true);
         try {
-            const res = await startUpload([file]);
-            if (res?.[0]?.url) {
-                await saveImagingCliche(selectedScan.id, res[0].url);
-                const url = res[0].url;
-                setScans(prev => prev.map(s => s.id === selectedScan.id ? { ...s, url } : s));
-                setSelectedScan(prev => prev ? { ...prev, url } : null);
-                toast.success("Cliché importé avec succès");
-            }
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("documentId", selectedScan.id);
+
+            const res = await fetch("/api/upload/imaging", { method: "POST", body: formData });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.error || "Erreur upload");
+
+            setScans(prev => prev.map(s => s.id === selectedScan.id ? { ...s, url: data.url } : s));
+            setSelectedScan(prev => prev ? { ...prev, url: data.url } : null);
+            toast.success("Cliché importé avec succès");
         } catch (e: any) {
-            toast.error(e.message || "Erreur lors de l'upload");
+            toast.error(e.message || "Erreur lors de l'import");
         } finally {
             setUploading(false);
             if (fileInputRef.current) fileInputRef.current.value = "";
@@ -306,7 +331,7 @@ export default function ImagingDashboard({
                         {filteredScans.length > 0 ? filteredScans.map(scan => (
                             <button
                                 key={scan.id}
-                                onClick={() => setSelectedScan(scan)}
+                                onClick={() => { setSelectedScan(scan); loadScanUrl(scan); }}
                                 className={`w-full text-left p-4 rounded-xl border transition-all ${
                                     selectedScan?.id === scan.id
                                         ? "bg-violet-50 border-violet-200 ring-1 ring-violet-200"
@@ -393,7 +418,12 @@ export default function ImagingDashboard({
 
                             {/* Image ou zone d'import */}
                             <div className="flex-1 flex items-center justify-center p-8 bg-black relative min-h-[300px]">
-                                {selectedScan.url ? (
+                                {loadingUrl ? (
+                                    <div className="flex flex-col items-center gap-3 text-slate-500">
+                                        <Loader2 className="h-8 w-8 animate-spin text-violet-400" />
+                                        <p className="text-xs">Chargement du cliché...</p>
+                                    </div>
+                                ) : selectedScan.url ? (
                                     <>
                                         <img
                                             src={selectedScan.url}
@@ -425,7 +455,7 @@ export default function ImagingDashboard({
                                             <p className="text-sm font-semibold group-hover:text-white transition-colors">
                                                 {uploading ? "Import en cours..." : "Importer un cliché"}
                                             </p>
-                                            <p className="text-xs text-slate-600 mt-1">JPEG, PNG, WebP — max 16 Mo</p>
+                                            <p className="text-xs text-slate-600 mt-1">JPEG, PNG, WebP — max 8 Mo</p>
                                         </div>
                                     </button>
                                 )}

@@ -21,7 +21,8 @@ export default async function ImagingPage() {
                 type: "ECHOGRAPHIE",
                 patient: { treatingDoctorId: userId },
             },
-            include: {
+            select: {
+                id: true, nom: true, description: true, metadata: true, createdAt: true,
                 patient: {
                     select: { id: true, nom: true, prenom: true, codePatient: true, civilite: true },
                 },

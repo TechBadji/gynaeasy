@@ -20,6 +20,18 @@ export async function saveImagingReport(documentId: string, description: string,
     return { success: true, document: updated };
 }
 
+export async function getScanUrl(documentId: string): Promise<string | null> {
+    const session = await getServerSession(authOptions);
+    if (!session) return null;
+
+    const userId = (session.user as any).id;
+    const doc = await prisma.document.findFirst({
+        where: { id: documentId, patient: { treatingDoctorId: userId } },
+        select: { url: true },
+    });
+    return doc?.url || null;
+}
+
 export async function saveImagingCliche(documentId: string, url: string) {
     const session = await getServerSession(authOptions);
     if (!session || (session.user as any).role !== "MEDECIN") {
