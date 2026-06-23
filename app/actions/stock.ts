@@ -65,6 +65,23 @@ export async function consumeStockItem(nom: string, quantity: number = 1) {
 }
 
 /**
+ * Ajuste rapidement la quantité (+delta ou -delta)
+ */
+export async function adjustStockQuantity(id: string, delta: number) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, error: "Non autorisé" };
+
+    const item = await prisma.stockItem.findUnique({ where: { id }, select: { quantite: true } });
+    if (!item) return { success: false, error: "Article introuvable" };
+
+    const newQty = Math.max(0, item.quantite + delta);
+    await prisma.stockItem.update({ where: { id }, data: { quantite: newQty } });
+
+    revalidatePath("/inventaire");
+    return { success: true, quantite: newQty };
+}
+
+/**
  * Supprime un article du stock
  */
 export async function deleteStockItem(id: string) {
