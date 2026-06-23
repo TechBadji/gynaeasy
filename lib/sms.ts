@@ -48,15 +48,32 @@ export async function sendSMS(to: string, message: string) {
             body: params.toString(),
         });
 
-        const data = await response.json();
+        // AT renvoie du texte brut en cas d'erreur d'auth (ex: "The supplied apiKey is invalid")
+        const rawText = await response.text();
+        let data: any = null;
+        try { data = JSON.parse(rawText); } catch { /* pas du JSON */ }
 
         if (!response.ok) {
+            const errMsg = data?.SMSMessageData?.Message
+                ?? (rawText.length < 200 ? rawText : `Erreur HTTP ${response.status}`);
+            console.error(`[SMS] Africa's Talking HTTP ${response.status}:`, rawText);
             return {
                 success: false as const,
-                error: data?.SMSMessageData?.Message ?? `Erreur HTTP ${response.status}`,
+                error: errMsg,
                 messageId: null,
                 simulated: false as const,
-                debug: { status: response.status, body: data },
+                debug: { status: response.status, body: rawText },
+            };
+        }
+
+        // Réponse OK mais pas du JSON (ne devrait pas arriver)
+        if (!data) {
+            return {
+                success: false as const,
+                error: `Réponse inattendue : ${rawText.slice(0, 100)}`,
+                messageId: null,
+                simulated: false as const,
+                debug: { status: response.status, body: rawText },
             };
         }
 
