@@ -192,7 +192,12 @@ export default function SmsBroadcast({ patients, role, doctorName }: Props) {
         });
 
     const applyTemplate = (tpl: typeof TEMPLATES[number]) => {
-        setMessage(tpl.text.replace("{MEDECIN}", doctorName));
+        const today = format(new Date(), "dd/MM/yyyy");
+        const filled = tpl.text
+            .replace("{MEDECIN}", doctorName)
+            .replace("{DATE}", today)
+            .replace("{TEL}", "");   // Laisser vide — l'utilisateur saisit le numéro du cabinet
+        setMessage(filled);
         setShowTemplates(false);
         setConfirmed(false);
         setResult(null);
@@ -686,7 +691,7 @@ export default function SmsBroadcast({ patients, role, doctorName }: Props) {
 
                         <p className="text-xs text-slate-400 text-center">
                             L'icône verte (WhatsApp) ouvre une conversation directe sans passer par l'API.<br />
-                            L'icône violette envoie un message individuel via l'API Orange SMS.
+                            L'icône violette envoie un message individuel via LaFricaMobile (LAM).
                         </p>
                     </div>
                 </div>
