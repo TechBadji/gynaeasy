@@ -64,17 +64,21 @@ export async function sendSMS(to: string, message: string) {
         let data: any = null;
         try { data = JSON.parse(rawText); } catch { /* réponse texte brut */ }
 
-        // Succès : LAM retourne success true, status "success", code 200,
-        // ou directement un objet avec message_id
-        const ok =
+        // LAM peut répondre en JSON ou en texte brut (ID de message direct)
+        const isJsonSuccess =
             data?.success === true  ||
             data?.status  === "success" ||
             data?.code    === 200   ||
             data?.code    === "200" ||
             (data && "message_id" in data);
 
-        if (ok) {
-            const messageId = data?.message_id ?? data?.msg_id ?? data?.id ?? retId;
+        // Texte brut sans JSON : LAM renvoie juste l'ID (ex: "6a3cf950c7c60")
+        // On considère ça comme un succès si la réponse ressemble à un identifiant
+        const isRawId = data === null && rawText.length > 0 && rawText.length < 100 &&
+            /^[a-f0-9]+$/i.test(rawText.trim());
+
+        if (isJsonSuccess || isRawId) {
+            const messageId = data?.message_id ?? data?.msg_id ?? data?.id ?? rawText.trim();
             console.log(`[SMS LAM] Envoyé à ${to} — id: ${messageId}`);
             return {
                 success:   true as const,
