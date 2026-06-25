@@ -1,36 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Download, CheckCircle2, Loader2, Plus } from "lucide-react";
+import { FileText, Download, CheckCircle2, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { createDemoInvoice } from "@/app/actions/subscription";
 import toast from "react-hot-toast";
 
 export default function SubscriptionInvoices({ factures, onUpdate }: { factures: any[], onUpdate: () => void }) {
     const [loading, setLoading] = useState<string | null>(null);
-    const [demoLoading, setDemoLoading] = useState(false);
 
     const handleDownload = async (facture: any) => {
         setLoading(facture.id);
-        // Simulation d'une attente de génération
         setTimeout(() => {
-            window.print(); // Utilise la mise en page CSS print pour le PDF
+            window.print();
             setLoading(null);
             toast.success("Impression lancée");
-        }, 1000);
-    };
-
-    const handleCreateDemo = async () => {
-        setDemoLoading(true);
-        const res = await createDemoInvoice();
-        if (res.success) {
-            toast.success("Facture de démonstration générée !");
-            onUpdate();
-        } else {
-            toast.error("Échec de création");
-        }
-        setDemoLoading(false);
+        }, 800);
     };
 
     return (
@@ -40,14 +25,6 @@ export default function SubscriptionInvoices({ factures, onUpdate }: { factures:
                     <FileText className="h-4 w-4 text-slate-500" />
                     <h3 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Mes Factures Gynaeasy</h3>
                 </div>
-                <button 
-                    onClick={handleCreateDemo}
-                    disabled={demoLoading}
-                    className="text-[10px] font-bold bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-full hover:bg-slate-50 transition-all flex items-center gap-1.5 shadow-sm"
-                >
-                    {demoLoading ? <Loader2 className="h-3 w-3 animate-spin"/> : <Plus className="h-3 w-3" />}
-                    Simuler une facture
-                </button>
             </div>
 
             <div className="overflow-x-auto">
@@ -85,7 +62,7 @@ export default function SubscriptionInvoices({ factures, onUpdate }: { factures:
                                     <button 
                                         onClick={() => handleDownload(f)}
                                         disabled={loading === f.id}
-                                        className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-700 font-bold text-[10px] uppercase tracking-widest transition-colors disabled:opacity-50"
+                                        className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-700 font-bold text-[10px] uppercase tracking-widest transition-colors disabled:opacity-50"
                                     >
                                         {loading === f.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Download className="h-3.5 w-3.5" />}
                                         PDF
