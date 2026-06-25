@@ -25,7 +25,7 @@ const LAM_API_URL = "https://lamsms.lafricamobile.com/api";
 export async function sendSMS(to: string, message: string) {
     const accountId = process.env.LAM_ACCESS_KEY;
     const password  = process.env.LAM_ACCESS_PASSWORD;
-    const sender    = process.env.LAM_SENDER_ID || "Gynaeasy";
+    const sender    = process.env.LAM_SENDER_ID || "LAM TEST";
 
     // ── Mode simulation ──────────────────────────────────────────────────────
     if (!accountId || !password) {
