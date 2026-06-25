@@ -342,23 +342,20 @@ export default function SmsBroadcast({ patients, role, doctorName }: Props) {
                             </button>
                         </div>
 
-                        {/* Info cron */}
-                        <div className="bg-amber-50 border border-amber-100 rounded-2xl p-6 shadow-sm space-y-4">
+                        {/* Statut automatisation */}
+                        <div className="bg-violet-50 border border-violet-100 rounded-2xl p-6 shadow-sm space-y-3">
                             <div className="flex items-start gap-3">
-                                <Calendar className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                                <Calendar className="h-5 w-5 text-violet-600 mt-0.5 flex-shrink-0" />
                                 <div>
-                                    <h3 className="font-bold text-amber-900 text-sm">Automatiser les rappels</h3>
-                                    <p className="text-xs text-amber-700 mt-1 leading-relaxed">
-                                        Configurez un cron externe (ex: cron-job.org) appelant cet endpoint chaque soir à 20h :
-                                    </p>
-                                    <div className="mt-3 bg-amber-100 rounded-lg p-3 font-mono text-xs text-amber-900 break-all select-all">
-                                        GET /api/reminders/cron<br />
-                                        Authorization: Bearer {"{CRON_SECRET}"}
-                                    </div>
-                                    <p className="text-xs text-amber-600 mt-2">
-                                        Ajoutez <code className="bg-amber-100 px-1 rounded">CRON_SECRET</code> dans Coolify → Variables d'environnement.
+                                    <h3 className="font-bold text-violet-900 text-sm">Rappels automatiques</h3>
+                                    <p className="text-xs text-violet-700 mt-1 leading-relaxed">
+                                        Les rappels SMS sont envoyés automatiquement chaque soir à 20h par la plateforme Gynaeasy pour tous vos patients avec rendez-vous le lendemain.
                                     </p>
                                 </div>
+                            </div>
+                            <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-xl border border-violet-100">
+                                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+                                <span className="text-xs font-semibold text-slate-700">Automatisation active — aucune action requise de votre part</span>
                             </div>
                         </div>
                     </div>

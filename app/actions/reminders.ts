@@ -292,69 +292,31 @@ export async function sendTestSMS(to: string, message: string) {
 }
 
 /**
- * Récupère les statistiques et le solde (contrats) Orange SMS
+ * Statistiques des rappels SMS depuis la base de données (tous clients)
  */
-export async function getOrangeSMSStats() {
-    try {
-        const clientId = process.env.ORANGE_SMS_CLIENT_ID;
-        const clientSecret = process.env.ORANGE_SMS_CLIENT_SECRET;
-        if (!clientId || !clientSecret) return { success: false, error: "Clés non configurées" };
+export async function getReminderStats() {
+    const now   = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1);           // 1er du mois
+    const tom0  = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0,  0,  0);
+    const tom23 = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59);
 
-        // 1. Obtenir le token (v3)
-        const authHeader = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
-        const tokenResponse = await fetch("https://api.orange.com/oauth/v3/token", {
-            method: "POST",
-            headers: {
-                "Authorization": `Basic ${authHeader}`,
-                "Content-Type": "application/x-www-form-urlencoded"
+    const [totalMonth, totalAll, pendingTomorrow] = await Promise.all([
+        prisma.consultation.count({ where: { smsReminded: true, dateHeure: { gte: start } } }),
+        prisma.consultation.count({ where: { smsReminded: true } }),
+        prisma.consultation.count({
+            where: {
+                smsReminded: false,
+                dateHeure: { gte: tom0, lte: tom23 },
+                patient: { telephone: { not: null, notIn: [""] } },
             },
-            body: "grant_type=client_credentials"
-        });
+        }),
+    ]);
 
-        if (!tokenResponse.ok) throw new Error("Impossible d'obtenir le token Orange.");
-        const { access_token } = await tokenResponse.json();
-
-        // 2. Récupérer les stats d'usage
-        const statsResponse = await fetch("https://api.orange.com/sms/admin/v1/statistics", {
-            headers: { "Authorization": `Bearer ${access_token}` }
-        });
-        const statsData = statsResponse.ok ? await statsResponse.json() : null;
-
-        // 3. Récupérer le solde (contracts)
-        const contractsResponse = await fetch("https://api.orange.com/sms/admin/v1/contracts", {
-            headers: { "Authorization": `Bearer ${access_token}` }
-        });
-        const contractsRaw = contractsResponse.ok ? await contractsResponse.json() : null;
-
-        // Orange returns either an array directly or wrapped — normalize it
-        const contractsList: any[] = Array.isArray(contractsRaw)
-            ? contractsRaw
-            : Array.isArray(contractsRaw?.contracts)
-                ? contractsRaw.contracts
-                : Array.isArray(contractsRaw?.partnerContracts?.contracts)
-                    ? contractsRaw.partnerContracts.contracts
-                    : [];
-
-        const activeContracts = contractsList.filter((c: any) => c.status === "ACTIVE");
-        const availableUnits = activeContracts.reduce((acc: number, c: any) => acc + (c.availableUnits || 0), 0);
-        const expirationDate = activeContracts[0]?.expirationDate ?? null;
-        const country = activeContracts[0]?.country ?? null;
-
-        // Normalize usage: try multiple known Orange response shapes
-        const smsSent = statsData?.partnerStatistics?.statistics?.[0]?.serviceStatistics?.[0]?.countryStatistics?.[0]?.usage
-            ?? statsData?.statistics?.[0]?.usage
-            ?? statsData?.usage
-            ?? 0;
-
-        return {
-            success: true,
-            availableUnits,
-            expirationDate,
-            country,
-            smsSent,
-        };
-    } catch (error: any) {
-        console.error("Orange SMS API Error:", error);
-        return { success: false, error: error.message };
-    }
+    return {
+        totalMonth,
+        totalAll,
+        pendingTomorrow,
+        cronConfigured: !!process.env.CRON_SECRET,
+        lamConfigured:  !!(process.env.LAM_ACCESS_KEY && process.env.LAM_ACCESS_PASSWORD),
+    };
 }
