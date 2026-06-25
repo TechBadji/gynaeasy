@@ -272,7 +272,7 @@ export async function sendTestSMS(to: string, message: string) {
     try {
         const res = await sendSMS(to, message);
         if (res.success) {
-            const mode = res.simulated ? "MODE SIMULATION" : "MODE RÉEL ORANGE";
+            const mode = res.simulated ? "MODE SIMULATION" : "MODE RÉEL LAM";
             return {
                 success: true,
                 message: `SMS de test envoyé avec succès ! (${mode})`,
