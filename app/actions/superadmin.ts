@@ -617,27 +617,40 @@ export async function getUpgradeRequests() {
 }
 
 export async function approveUpgrade(demandeId: string, noteAdmin?: string) {
-    const session = await checkSuperAdmin();
+    await checkSuperAdmin();
 
     const demande = await prisma.demandeUpgrade.findUnique({
         where: { id: demandeId },
-        include: { user: { select: { name: true } } },
+        include: { user: { select: { id: true, name: true, email: true, clinicName: true } } },
     });
     if (!demande) throw new Error("Demande introuvable");
     if (demande.statut !== "EN_ATTENTE") throw new Error("Demande déjà traitée");
 
+    // Chercher l'abonnement existant (quel que soit son statut)
+    const existingAb = await prisma.abonnement.findFirst({
+        where: { userId: demande.userId },
+        orderBy: { createdAt: "desc" },
+    });
+
+    let abonnement;
+    if (existingAb) {
+        abonnement = await prisma.abonnement.update({
+            where: { id: existingAb.id },
+            data: { plan: demande.planDemande, statut: "ACTIF" },
+            include: { user: { select: { name: true, email: true, clinicName: true } } },
+        });
+    } else {
+        abonnement = await prisma.abonnement.create({
+            data: { userId: demande.userId, plan: demande.planDemande, statut: "ACTIF" },
+            include: { user: { select: { name: true, email: true, clinicName: true } } },
+        });
+    }
+
     await prisma.$transaction([
-        // Mettre à jour le plan de l'abonnement actif
-        prisma.abonnement.updateMany({
-            where: { userId: demande.userId, statut: "ACTIF" },
-            data: { plan: demande.planDemande },
-        }),
-        // Marquer la demande comme approuvée
         prisma.demandeUpgrade.update({
             where: { id: demandeId },
             data: { statut: "APPROUVE", noteAdmin: noteAdmin || null },
         }),
-        // Notifier le médecin
         prisma.notification.create({
             data: {
                 userId: demande.userId,
@@ -651,7 +664,7 @@ export async function approveUpgrade(demandeId: string, noteAdmin?: string) {
 
     revalidatePath("/admin");
     revalidatePath("/abonnement");
-    return { success: true };
+    return { success: true, abonnement: JSON.parse(JSON.stringify(abonnement)) };
 }
 
 export async function refuseUpgrade(demandeId: string, noteAdmin?: string) {

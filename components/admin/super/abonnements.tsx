@@ -32,7 +32,7 @@ function PlanChip({ plan }: { plan: string }) {
     );
 }
 
-function DemandeCard({ demande, onDone }: { demande: any; onDone: () => void }) {
+function DemandeCard({ demande, onDone }: { demande: any; onDone: (abonnement?: any) => void }) {
     const [isPending, start] = useTransition();
     const [noteAdmin, setNoteAdmin] = useState("");
     const [showNote, setShowNote] = useState(false);
@@ -40,9 +40,9 @@ function DemandeCard({ demande, onDone }: { demande: any; onDone: () => void }) 
 
     const handleApprove = () => start(async () => {
         try {
-            await approveUpgrade(demande.id, noteAdmin || undefined);
+            const res = await approveUpgrade(demande.id, noteAdmin || undefined);
             toast.success(`Plan ${demande.planDemande} activé pour ${demande.user?.name}`);
-            onDone();
+            onDone(res.abonnement);
         } catch (e: any) { toast.error(e.message || "Erreur"); }
     });
 
@@ -230,11 +230,17 @@ export default function SuperAdminAbonnements({
                             <DemandeCard
                                 key={req.id}
                                 demande={req}
-                                onDone={() => {
+                                onDone={(abonnement?: any) => {
                                     setRequests(prev => prev.map(r => r.id === req.id ? { ...r, statut: "TRAITE" } : r));
-                                    setList(prev => prev.map(a =>
-                                        a.userId === req.userId ? { ...a, plan: req.planDemande } : a
-                                    ));
+                                    if (abonnement) {
+                                        setList(prev => {
+                                            const exists = prev.some(a => a.id === abonnement.id);
+                                            if (exists) {
+                                                return prev.map(a => a.id === abonnement.id ? abonnement : a);
+                                            }
+                                            return [abonnement, ...prev];
+                                        });
+                                    }
                                 }}
                             />
                         ))}
