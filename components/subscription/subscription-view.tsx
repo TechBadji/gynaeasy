@@ -3,14 +3,16 @@
 import {
     CheckCircle2, Shield, Clock, Info, Star, Building2,
     AlertTriangle, Phone, Zap, ArrowRight, Hourglass, XCircle,
-    CalendarCheck, Infinity,
+    CalendarCheck, Infinity, Ban, Undo2, Loader2,
 } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import SubscriptionInvoices from "./subscription-invoices";
 import { trackAdImpression, trackAdClick } from "@/app/actions/superadmin";
+import { cancelSubscription, revertCancellation } from "@/app/actions/subscription";
+import toast from "react-hot-toast";
 
 const FALLBACK_PRICES: Record<string, number> = { SOLO: 25000, PRO: 50000, CLINIQUE: 95000 };
 
@@ -40,10 +42,13 @@ export default function SubscriptionView({ subscription, activeAd, upgradeReques
     upgradeRequest?: { planActuel: string; planDemande: string; statut: string; noteAdmin?: string | null; createdAt: string } | null;
 }) {
     const router = useRouter();
-    const plan     = PLAN_MAP[subscription.plan]   || PLAN_MAP.SOLO;
+    const plan     = PLAN_MAP[subscription.plan]    || PLAN_MAP.SOLO;
     const status   = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
     const PlanIcon = plan.icon;
     const impressionTracked = useRef(false);
+    const [isPending, startTransition] = useTransition();
+    const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+    const [cancelled, setCancelled]   = useState(subscription.cancelScheduled ?? false);
 
     useEffect(() => {
         if (activeAd?.id && !impressionTracked.current) {
@@ -51,6 +56,29 @@ export default function SubscriptionView({ subscription, activeAd, upgradeReques
             trackAdImpression(activeAd.id);
         }
     }, [activeAd?.id]);
+
+    const handleCancel = () => startTransition(async () => {
+        const res = await cancelSubscription();
+        if (res.success) {
+            setCancelled(true);
+            setShowCancelConfirm(false);
+            toast.success("Résiliation programmée. Votre accès reste actif jusqu'à la fin de la période.");
+            router.refresh();
+        } else {
+            toast.error(res.message || "Erreur");
+        }
+    });
+
+    const handleRevert = () => startTransition(async () => {
+        const res = await revertCancellation();
+        if (res.success) {
+            setCancelled(false);
+            toast.success("Résiliation annulée. Votre abonnement continue normalement.");
+            router.refresh();
+        } else {
+            toast.error(res.message || "Erreur");
+        }
+    });
 
     // Prix (config DB → fallback statique)
     const basePrice  = subscription.config?.prixMensuel || FALLBACK_PRICES[subscription.plan] || 0;
@@ -121,6 +149,31 @@ export default function SubscriptionView({ subscription, activeAd, upgradeReques
                             </p>
                             {upgradeRequest.noteAdmin && <p className="text-xs text-red-600 mt-0.5 italic">"{upgradeRequest.noteAdmin}"</p>}
                         </div>
+                    </div>
+                )}
+
+                {/* Bandeau résiliation programmée */}
+                {cancelled && isActif && (
+                    <div className="flex items-start justify-between gap-3 p-4 rounded-2xl border bg-orange-50 border-orange-200">
+                        <div className="flex items-start gap-3">
+                            <Ban className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
+                            <div>
+                                <p className="text-sm font-bold text-orange-700">Résiliation programmée</p>
+                                <p className="text-xs text-orange-600 mt-0.5">
+                                    Votre abonnement reste actif jusqu'au{" "}
+                                    <strong>{format(new Date(subscription.dateFin), "d MMMM yyyy", { locale: fr })}</strong>.
+                                    Après cette date, votre accès sera clôturé.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={handleRevert}
+                            disabled={isPending}
+                            className="flex-shrink-0 flex items-center gap-1.5 text-xs font-bold text-orange-700 hover:text-orange-900 bg-white border border-orange-200 hover:border-orange-300 px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+                        >
+                            {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Undo2 className="h-3.5 w-3.5" />}
+                            Annuler
+                        </button>
                     </div>
                 )}
 
@@ -395,6 +448,71 @@ export default function SubscriptionView({ subscription, activeAd, upgradeReques
                         Vos factures sont générées le 1er de chaque mois et disponibles en téléchargement dans l'historique.
                     </p>
                 </div>
+
+                {/* Résiliation */}
+                {isActif && (
+                    <div className="rounded-3xl border border-slate-200 p-5 space-y-3">
+                        <div className="flex items-center gap-2">
+                            <Ban className="h-4 w-4 text-slate-400" />
+                            <h3 className="text-sm font-bold text-slate-600">Résiliation</h3>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed">
+                            Vous pouvez résilier à tout moment. Votre accès reste actif jusqu'à la fin de la période annuelle en cours.
+                        </p>
+
+                        {cancelled ? (
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-xs font-bold text-orange-600 bg-orange-50 px-3 py-2 rounded-xl border border-orange-100">
+                                    <Ban className="h-3.5 w-3.5" />
+                                    Résiliation programmée
+                                </div>
+                                <button
+                                    onClick={handleRevert}
+                                    disabled={isPending}
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white text-slate-600 hover:text-slate-800 text-xs font-bold transition-all disabled:opacity-50"
+                                >
+                                    {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Undo2 className="h-3.5 w-3.5" />}
+                                    Annuler la résiliation
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                {showCancelConfirm ? (
+                                    <div className="space-y-2">
+                                        <p className="text-xs font-bold text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">
+                                            Confirmer la résiliation ? Votre accès restera actif jusqu'au {format(new Date(subscription.dateFin), "d MMM yyyy", { locale: fr })}.
+                                        </p>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={handleCancel}
+                                                disabled={isPending}
+                                                className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-all disabled:opacity-50"
+                                            >
+                                                {isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Ban className="h-3.5 w-3.5" />}
+                                                Confirmer
+                                            </button>
+                                            <button
+                                                onClick={() => setShowCancelConfirm(false)}
+                                                disabled={isPending}
+                                                className="flex-1 py-2 rounded-xl border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-all disabled:opacity-50"
+                                            >
+                                                Retour
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <button
+                                        onClick={() => setShowCancelConfirm(true)}
+                                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 hover:border-red-200 hover:bg-red-50 text-slate-500 hover:text-red-600 text-xs font-bold transition-all"
+                                    >
+                                        <Ban className="h-3.5 w-3.5" />
+                                        Résilier mon abonnement
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -31,35 +31,41 @@ export async function getUserSubscription() {
             where: { plan: subscription.plan }
         });
 
-        // Sérialisation pour éviter les bugs de Date (RSC)
+        // dateFin calculée = dateDebut + 1 an si absente (abonnement annuel)
+        const dateDebut = subscription.dateDebut;
+        const dateFin   = subscription.dateFin
+            ?? new Date(new Date(dateDebut).setFullYear(new Date(dateDebut).getFullYear() + 1));
+
         return {
-            id: subscription.id,
-            plan: subscription.plan,
-            statut: subscription.statut,
-            dateDebut: subscription.dateDebut.toISOString(),
-            dateFin: subscription.dateFin?.toISOString() || null,
-            reductionType: subscription.reductionType,
-            reductionValeur: subscription.reductionValeur,
-            notesPromo: subscription.notesPromo,
-            createdAt: subscription.createdAt.toISOString(),
-            updatedAt: subscription.updatedAt.toISOString(),
+            id:                 subscription.id,
+            plan:               subscription.plan,
+            statut:             subscription.statut,
+            dateDebut:          dateDebut.toISOString(),
+            dateFin:            dateFin.toISOString(),
+            cancelScheduled:    subscription.cancelScheduled,
+            cancelRequestedAt:  subscription.cancelRequestedAt?.toISOString() || null,
+            reductionType:      subscription.reductionType,
+            reductionValeur:    subscription.reductionValeur,
+            notesPromo:         subscription.notesPromo,
+            createdAt:          subscription.createdAt.toISOString(),
+            updatedAt:          subscription.updatedAt.toISOString(),
             config: planConfig ? {
                 prixMensuel: planConfig.prixMensuel,
                 description: planConfig.description,
-                features: planConfig.features as any,
-                updatedAt: planConfig.updatedAt.toISOString(),
+                features:    planConfig.features as any,
+                updatedAt:   planConfig.updatedAt.toISOString(),
             } : null,
             factures: factures.map((f: any) => ({
-                id: f.id,
-                numero: f.numero,
+                id:          f.id,
+                numero:      f.numero,
                 periodeDebut: f.periodeDebut.toISOString(),
-                periodeFin: f.periodeFin.toISOString(),
-                montantHT: f.montantHT,
-                montantTTC: f.montantTTC,
-                statut: f.statut,
-                url: f.url,
-                createdAt: f.createdAt.toISOString()
-            }))
+                periodeFin:  f.periodeFin.toISOString(),
+                montantHT:   f.montantHT,
+                montantTTC:  f.montantTTC,
+                statut:      f.statut,
+                url:         f.url,
+                createdAt:   f.createdAt.toISOString(),
+            })),
         };
     } catch (error) {
         console.error("Subscription Error:", error);
@@ -340,5 +346,70 @@ export async function getActiveAdvertisements(userPlan?: string) {
     } catch (error) {
         console.error("Ads Error:", error);
         return [];
+    }
+}
+
+export async function cancelSubscription() {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return { success: false, message: "Non authentifié" };
+        const userId = (session.user as any).id;
+
+        const sub = await prisma.abonnement.findFirst({
+            where: { userId, statut: "ACTIF" },
+            orderBy: { createdAt: "desc" },
+        });
+        if (!sub) return { success: false, message: "Aucun abonnement actif trouvé" };
+        if (sub.cancelScheduled) return { success: false, message: "Résiliation déjà programmée" };
+
+        // dateFin = soit la vraie, soit dateDebut + 1 an
+        const dateFin = sub.dateFin
+            ?? new Date(new Date(sub.dateDebut).setFullYear(new Date(sub.dateDebut).getFullYear() + 1));
+
+        await prisma.abonnement.update({
+            where: { id: sub.id },
+            data: { cancelScheduled: true, cancelRequestedAt: new Date(), dateFin },
+        });
+
+        // Notifier les admins
+        const admins = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { id: true } });
+        await prisma.notification.createMany({
+            data: admins.map(a => ({
+                userId: a.id,
+                titre:   "Demande de résiliation",
+                message: `Dr. ${session.user.name} a demandé la résiliation de son abonnement ${sub.plan}. Accès jusqu'au ${dateFin.toLocaleDateString("fr-FR")}.`,
+                type:    "WARNING" as const,
+                link:    "/admin?tab=abonnements",
+            })),
+        });
+
+        return { success: true, dateFin: dateFin.toISOString() };
+    } catch (error) {
+        console.error("Cancel Error:", error);
+        return { success: false, message: "Erreur lors de la résiliation" };
+    }
+}
+
+export async function revertCancellation() {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return { success: false, message: "Non authentifié" };
+        const userId = (session.user as any).id;
+
+        const sub = await prisma.abonnement.findFirst({
+            where: { userId, statut: "ACTIF", cancelScheduled: true },
+            orderBy: { createdAt: "desc" },
+        });
+        if (!sub) return { success: false, message: "Aucune résiliation en cours" };
+
+        await prisma.abonnement.update({
+            where: { id: sub.id },
+            data: { cancelScheduled: false, cancelRequestedAt: null },
+        });
+
+        return { success: true };
+    } catch (error) {
+        console.error("Revert Cancel Error:", error);
+        return { success: false, message: "Erreur lors de l'annulation" };
     }
 }

@@ -331,7 +331,7 @@ export default function SuperAdminAbonnements({
                             <tr className="border-b border-white/5">
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Client</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plan</th>
-                                <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Depuis</th>
+                                <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Période</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Prix Final</th>
                                 <th className="text-left px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Statut</th>
                                 <th className="text-right px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Actions</th>
@@ -353,9 +353,21 @@ export default function SuperAdminAbonnements({
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <span className="text-xs text-slate-300">
-                                            {ab.dateDebut ? format(new Date(ab.dateDebut), "dd MMM yyyy", { locale: fr }) : "—"}
-                                        </span>
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-xs text-slate-300">
+                                                {ab.dateDebut ? format(new Date(ab.dateDebut), "dd MMM yyyy", { locale: fr }) : "—"}
+                                            </span>
+                                            {ab.dateFin && (
+                                                <span className="text-[10px] text-slate-500">
+                                                    → {format(new Date(ab.dateFin), "dd MMM yyyy", { locale: fr })}
+                                                </span>
+                                            )}
+                                            {ab.cancelScheduled && (
+                                                <span className="text-[10px] font-bold text-orange-400 flex items-center gap-1 mt-0.5">
+                                                    ⚠ Résiliation prévue
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="text-sm font-bold text-white">

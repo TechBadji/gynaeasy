@@ -294,13 +294,16 @@ export async function deleteUserAdmin(userId: string) {
 // ============================================
 export async function getAllAbonnements() {
     await checkSuperAdmin();
-    return await prisma.abonnement.findMany({
+    const abs = await prisma.abonnement.findMany({
         take: 200,
-        include: {
-            user: { select: { name: true, email: true, role: true } },
-        },
+        include: { user: { select: { name: true, email: true, role: true, clinicName: true } } },
         orderBy: { createdAt: "desc" },
     });
+    // Calculer dateFin si absente (abonnement annuel)
+    return abs.map(ab => ({
+        ...ab,
+        dateFin: ab.dateFin ?? new Date(new Date(ab.dateDebut).setFullYear(new Date(ab.dateDebut).getFullYear() + 1)),
+    }));
 }
 
 export async function updateAbonnement(

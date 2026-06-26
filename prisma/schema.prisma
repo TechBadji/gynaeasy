@@ -219,19 +219,21 @@ model AuditLog {
 }
 
 model Abonnement {
-  id              String           @id @default(cuid())
-  userId          String
-  stripeId        String?          @unique
-  plan            PlanAbonnement
-  statut          StatutAbonnement @default(ACTIF)
-  dateDebut       DateTime         @default(now())
-  dateFin         DateTime?
-  reductionType   ReductionType?
-  reductionValeur Float?
-  notesPromo      String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  String           @id @default(cuid())
+  userId              String
+  stripeId            String?          @unique
+  plan                PlanAbonnement
+  statut              StatutAbonnement @default(ACTIF)
+  dateDebut           DateTime         @default(now())
+  dateFin             DateTime?
+  cancelScheduled     Boolean          @default(false)
+  cancelRequestedAt   DateTime?
+  reductionType       ReductionType?
+  reductionValeur     Float?
+  notesPromo          String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  user                User             @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model FactureHote {
