@@ -10,7 +10,8 @@ import {
     getAuditLogs,
     getPlanConfigs,
     getPromotions,
-    getAdvertisements
+    getAdvertisements,
+    getUpgradeRequests,
 } from "@/app/actions/superadmin";
 import { getPendingRegistrations } from "@/app/actions/onboarding";
 import SuperAdminClient from "./super-admin-client";
@@ -38,10 +39,11 @@ export default async function SuperAdminPage() {
         getPromotions(),
         getPendingRegistrations(),
         getAdvertisements(),
+        getUpgradeRequests(),
     ]);
 
     // Sérialisation forcée pour éviter les erreurs RSC en production
-    const [stats, users, abonnements, actes, settings, auditLogs, planConfigs, promotions, pendingUsers, advertisements] = JSON.parse(JSON.stringify(data));
+    const [stats, users, abonnements, actes, settings, auditLogs, planConfigs, promotions, pendingUsers, advertisements, upgradeRequests] = JSON.parse(JSON.stringify(data));
 
     return (
         <SuperAdminClient
@@ -55,6 +57,7 @@ export default async function SuperAdminPage() {
             promotions={promotions}
             pendingUsers={pendingUsers}
             advertisements={advertisements}
+            upgradeRequests={upgradeRequests}
             adminEmail={session.user?.email || ""}
         />
     );

@@ -603,3 +603,85 @@ export async function trackAdClick(id: string) {
         });
     } catch { /* silencieux */ }
 }
+
+// ============================================
+// DEMANDES D'UPGRADE
+// ============================================
+export async function getUpgradeRequests() {
+    await checkSuperAdmin();
+    const demandes = await prisma.demandeUpgrade.findMany({
+        orderBy: { createdAt: "desc" },
+        include: { user: { select: { id: true, name: true, email: true, clinicName: true } } },
+    });
+    return JSON.parse(JSON.stringify(demandes));
+}
+
+export async function approveUpgrade(demandeId: string, noteAdmin?: string) {
+    const session = await checkSuperAdmin();
+
+    const demande = await prisma.demandeUpgrade.findUnique({
+        where: { id: demandeId },
+        include: { user: { select: { name: true } } },
+    });
+    if (!demande) throw new Error("Demande introuvable");
+    if (demande.statut !== "EN_ATTENTE") throw new Error("Demande déjà traitée");
+
+    await prisma.$transaction([
+        // Mettre à jour le plan de l'abonnement actif
+        prisma.abonnement.updateMany({
+            where: { userId: demande.userId, statut: "ACTIF" },
+            data: { plan: demande.planDemande },
+        }),
+        // Marquer la demande comme approuvée
+        prisma.demandeUpgrade.update({
+            where: { id: demandeId },
+            data: { statut: "APPROUVE", noteAdmin: noteAdmin || null },
+        }),
+        // Notifier le médecin
+        prisma.notification.create({
+            data: {
+                userId: demande.userId,
+                titre: "Upgrade d'abonnement approuvé ✓",
+                message: `Votre passage au plan ${demande.planDemande} a été validé${noteAdmin ? ` : ${noteAdmin}` : "."} Bonne utilisation !`,
+                type: "SUCCESS",
+                link: "/abonnement",
+            },
+        }),
+    ]);
+
+    revalidatePath("/admin");
+    revalidatePath("/abonnement");
+    return { success: true };
+}
+
+export async function refuseUpgrade(demandeId: string, noteAdmin?: string) {
+    await checkSuperAdmin();
+
+    const demande = await prisma.demandeUpgrade.findUnique({
+        where: { id: demandeId },
+    });
+    if (!demande) throw new Error("Demande introuvable");
+    if (demande.statut !== "EN_ATTENTE") throw new Error("Demande déjà traitée");
+
+    await prisma.$transaction([
+        prisma.demandeUpgrade.update({
+            where: { id: demandeId },
+            data: { statut: "REFUSE", noteAdmin: noteAdmin || null },
+        }),
+        prisma.notification.create({
+            data: {
+                userId: demande.userId,
+                titre: "Demande d'upgrade non retenue",
+                message: noteAdmin
+                    ? `Votre demande de passage au plan ${demande.planDemande} n'a pas été retenue : ${noteAdmin}`
+                    : `Votre demande de passage au plan ${demande.planDemande} n'a pas été retenue. Contactez le support pour plus d'informations.`,
+                type: "WARNING",
+                link: "/abonnement",
+            },
+        }),
+    ]);
+
+    revalidatePath("/admin");
+    revalidatePath("/abonnement");
+    return { success: true };
+}

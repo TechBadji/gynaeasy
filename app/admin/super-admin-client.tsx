@@ -45,6 +45,7 @@ interface SuperAdminClientProps {
     promotions: any[];
     pendingUsers: any[];
     advertisements: any[];
+    upgradeRequests: any[];
     adminEmail: string;
 }
 
@@ -59,6 +60,7 @@ export default function SuperAdminClient({
     promotions,
     pendingUsers,
     advertisements,
+    upgradeRequests,
     adminEmail
 }: SuperAdminClientProps) {
     const [activeTab, setActiveTab] = useState("overview");
@@ -165,7 +167,7 @@ export default function SuperAdminClient({
                     {activeTab === "overview" && <SuperAdminOverview stats={stats} />}
                     {activeTab === "validations" && <SuperAdminApprovals pendingUsers={pendingUsers} />}
                     {activeTab === "users" && <SuperAdminUsers users={users} searchQuery={searchQuery} />}
-                    {activeTab === "abonnements" && <SuperAdminAbonnements abonnements={abonnements} users={users} promotions={promotions} />}
+                    {activeTab === "abonnements" && <SuperAdminAbonnements abonnements={abonnements} users={users} promotions={promotions} upgradeRequests={upgradeRequests} />}
                     {activeTab === "pricing" && <SuperAdminPricing planConfigs={planConfigs} />}
                     {activeTab === "promotions" && <SuperAdminPromotions promotions={promotions} />}
                     {activeTab === "publicites" && <SuperAdminAdvertisements advertisements={advertisements} />}

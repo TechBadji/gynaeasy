@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Shield, Clock, Info, Star, Building2, AlertTriangle, Phone, Zap } from "lucide-react";
+import { CheckCircle2, Shield, Clock, Info, Star, Building2, AlertTriangle, Phone, Zap, ArrowRight, Hourglass, XCircle } from "lucide-react";
 import { format, differenceInDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,12 @@ const PLAN_FEATURES: Record<string, string[]> = {
     CLINIQUE: ["Tout Pro inclus", "Multi-médecins & secrétariat", "Tableau de bord Clinique", "Personnalisation avancée", "Support dédié & formation", "SLA garanti"],
 };
 
-export default function SubscriptionView({ subscription, activeAd }: { subscription: any; activeAd?: any }) {
+const PLAN_NAMES: Record<string, string> = { SOLO: "Solo", PRO: "Pro", CLINIQUE: "Clinique" };
+
+export default function SubscriptionView({ subscription, activeAd, upgradeRequest }: {
+    subscription: any; activeAd?: any;
+    upgradeRequest?: { planActuel: string; planDemande: string; statut: string; noteAdmin?: string | null; createdAt: string } | null;
+}) {
     const router = useRouter();
     const plan   = PLAN_MAP[subscription.plan] || PLAN_MAP.SOLO;
     const status = STATUS_MAP[subscription.statut] || STATUS_MAP.ACTIF;
@@ -68,6 +73,53 @@ export default function SubscriptionView({ subscription, activeAd }: { subscript
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* ── Colonne principale ─────────────────────────────────────── */}
             <div className="lg:col-span-2 space-y-6">
+
+                {/* ── Statut demande d'upgrade ───────────────────────────── */}
+                {upgradeRequest && upgradeRequest.statut === "EN_ATTENTE" && (
+                    <div className="flex items-start gap-3 p-4 rounded-2xl border bg-amber-50 border-amber-200">
+                        <Hourglass className="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-bold text-amber-700 flex items-center gap-2">
+                                Demande de passage au plan {PLAN_NAMES[upgradeRequest.planDemande]} en cours de traitement
+                                <span className="flex items-center gap-1 text-[10px] font-black text-amber-500">
+                                    {PLAN_NAMES[upgradeRequest.planActuel]} <ArrowRight className="h-3 w-3" /> {PLAN_NAMES[upgradeRequest.planDemande]}
+                                </span>
+                            </p>
+                            <p className="text-xs text-amber-600 mt-0.5">
+                                Envoyée le {format(new Date(upgradeRequest.createdAt), "d MMM yyyy", { locale: fr })} — vous serez notifié(e) par notification dès validation.
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {upgradeRequest && upgradeRequest.statut === "APPROUVE" && (
+                    <div className="flex items-start gap-3 p-4 rounded-2xl border bg-emerald-50 border-emerald-200">
+                        <CheckCircle2 className="h-5 w-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-bold text-emerald-700">
+                                Votre passage au plan {PLAN_NAMES[upgradeRequest.planDemande]} a été approuvé
+                            </p>
+                            {upgradeRequest.noteAdmin && (
+                                <p className="text-xs text-emerald-600 mt-0.5 italic">"{upgradeRequest.noteAdmin}"</p>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                {upgradeRequest && upgradeRequest.statut === "REFUSE" && (
+                    <div className="flex items-start gap-3 p-4 rounded-2xl border bg-red-50 border-red-200">
+                        <XCircle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                        <div>
+                            <p className="text-sm font-bold text-red-700">
+                                Demande de passage au plan {PLAN_NAMES[upgradeRequest.planDemande]} non retenue
+                            </p>
+                            {upgradeRequest.noteAdmin && (
+                                <p className="text-xs text-red-600 mt-0.5 italic">"{upgradeRequest.noteAdmin}"</p>
+                            )}
+                            <p className="text-xs text-red-500 mt-1">Contactez le support pour en savoir plus.</p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Alerte renouvellement urgent */}
                 {(isUrgent || isWarning) && subscription.statut === "ACTIF" && (

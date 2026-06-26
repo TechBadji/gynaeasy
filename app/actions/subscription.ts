@@ -136,41 +136,77 @@ export async function syncSubscriptionPlans() {
         return { success: false };
     }
 }
-export async function requestPlanUpgrade(newPlan: string) {
+export async function requestPlanUpgrade(newPlan: string, message?: string) {
     try {
         const session = await getServerSession(authOptions);
         if (!session?.user) return { success: false, message: "Non authentifié" };
         const userId = (session.user as any).id;
 
+        const planEnum = newPlan.toUpperCase() as PlanAbonnement;
+
         const currentSub = await prisma.abonnement.findFirst({
             where: { userId },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: "desc" },
         });
-
-        const planEnum = newPlan.toUpperCase() as PlanAbonnement;
 
         if (currentSub?.plan === planEnum) {
             return { success: false, message: "Vous utilisez déjà ce plan" };
         }
 
-        // Notifier l'admin — l'upgrade nécessite une validation manuelle
-        const admin = await prisma.user.findFirst({ where: { role: "ADMIN" } });
-        if (admin) {
-            await prisma.notification.create({
-                data: {
-                    userId: admin.id,
-                    titre: "Demande d'upgrade d'abonnement",
-                    message: `Le Dr. ${session.user.name} demande à migrer vers le plan ${planEnum}. Validez manuellement dans l'espace abonnements.`,
-                    type: "WARNING",
-                    link: `/admin?tab=abonnements`
-                }
-            });
+        // Bloquer les doublons
+        const existing = await prisma.demandeUpgrade.findFirst({
+            where: { userId, statut: "EN_ATTENTE" },
+        });
+        if (existing) {
+            return { success: false, message: "Une demande est déjà en cours de traitement" };
         }
 
-        return { success: true, message: "Votre demande a été transmise. L'équipe vous contactera sous peu pour finaliser l'upgrade." };
+        const planActuel = (currentSub?.plan ?? "SOLO") as PlanAbonnement;
+
+        await prisma.demandeUpgrade.create({
+            data: { userId, planActuel, planDemande: planEnum, message: message?.trim() || null },
+        });
+
+        // Notifier tous les admins
+        const admins = await prisma.user.findMany({ where: { role: "ADMIN" }, select: { id: true } });
+        await prisma.notification.createMany({
+            data: admins.map(a => ({
+                userId: a.id,
+                titre: "Nouvelle demande d'upgrade",
+                message: `Dr. ${session.user.name} souhaite passer du plan ${planActuel} → ${planEnum}.`,
+                type: "WARNING" as const,
+                link: "/admin?tab=abonnements",
+            })),
+        });
+
+        return { success: true, message: "Votre demande a été transmise. Vous serez notifié(e) dès validation." };
     } catch (error) {
         console.error("Upgrade Error:", error);
         return { success: false, message: "Erreur lors de la demande de changement de plan" };
+    }
+}
+
+export async function getMyUpgradeRequest() {
+    try {
+        const session = await getServerSession(authOptions);
+        if (!session?.user) return null;
+        const userId = (session.user as any).id;
+
+        const demande = await prisma.demandeUpgrade.findFirst({
+            where: { userId },
+            orderBy: { createdAt: "desc" },
+        });
+        if (!demande) return null;
+        return {
+            id:          demande.id,
+            planActuel:  demande.planActuel,
+            planDemande: demande.planDemande,
+            statut:      demande.statut,
+            noteAdmin:   demande.noteAdmin,
+            createdAt:   demande.createdAt.toISOString(),
+        };
+    } catch {
+        return null;
     }
 }
 

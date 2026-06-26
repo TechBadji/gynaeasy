@@ -1,15 +1,16 @@
 export const dynamic = "force-dynamic";
 
-import { getUserSubscription, getActiveAdvertisements, getPublicPlanConfigs } from "@/app/actions/subscription";
+import { getUserSubscription, getActiveAdvertisements, getPublicPlanConfigs, getMyUpgradeRequest } from "@/app/actions/subscription";
 import SubscriptionView from "@/components/subscription/subscription-view";
 import PricingCards from "@/components/subscription/pricing-cards";
 import { CreditCard, AlertTriangle } from "lucide-react";
 
 export default async function AbonnementPage() {
-    const [sub, activeAds, planConfigs] = await Promise.all([
+    const [sub, activeAds, planConfigs, upgradeRequest] = await Promise.all([
         getUserSubscription(),
         getActiveAdvertisements(),
         getPublicPlanConfigs(),
+        getMyUpgradeRequest(),
     ]);
 
     const activeAd = activeAds.length > 0 ? activeAds[0] : null;
@@ -28,7 +29,7 @@ export default async function AbonnementPage() {
 
             {sub ? (
                 <>
-                    <SubscriptionView subscription={sub} activeAd={activeAd} />
+                    <SubscriptionView subscription={sub} activeAd={activeAd} upgradeRequest={upgradeRequest} />
                     <div className="mt-16 pt-8 border-t border-slate-100">
                         <h2 className="text-xl font-bold text-slate-800 text-center mb-8">Mettre à niveau mon abonnement</h2>
                         <PricingCards currentPlan={sub.plan} planConfigs={planConfigs} />
