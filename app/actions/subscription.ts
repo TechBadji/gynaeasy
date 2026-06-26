@@ -13,10 +13,10 @@ export async function getUserSubscription() {
 
         const userId = (session.user as any).id;
 
-        const subscription = await prisma.abonnement.findFirst({
-            where: { userId },
-            orderBy: { createdAt: 'desc' }
-        });
+        // Priorité : abonnement ACTIF le plus récent, sinon le plus récent quel que soit le statut
+        const subscription =
+            await prisma.abonnement.findFirst({ where: { userId, statut: "ACTIF" }, orderBy: { createdAt: "desc" } }) ||
+            await prisma.abonnement.findFirst({ where: { userId }, orderBy: { createdAt: "desc" } });
 
         if (!subscription) return null;
 
