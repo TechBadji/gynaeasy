@@ -184,12 +184,14 @@ export default function SuperAdminUsers({ users, searchQuery }: { users: any[]; 
                                         <td className="px-4 py-3">
                                             {user.role === "SECRETAIRE" ? (
                                                 <div className="space-y-1">
-                                                    {user.linkedDoctor ? (
+                                                    {(user.linkedDoctor?.name ?? localUsers.find((u: any) => u.id === user.linkedDoctorId)?.name) ? (
                                                         <div className="flex items-center gap-1.5">
                                                             <div className="h-5 w-5 rounded-full bg-cyan-500/20 flex items-center justify-center text-[9px] font-bold text-cyan-300 flex-shrink-0">
-                                                                {user.linkedDoctor.name?.[0]}
+                                                                {(user.linkedDoctor?.name ?? localUsers.find((u: any) => u.id === user.linkedDoctorId)?.name)?.[0]}
                                                             </div>
-                                                            <span className="text-xs text-cyan-300 font-medium">{user.linkedDoctor.name}</span>
+                                                            <span className="text-xs text-cyan-300 font-medium">
+                                                                {user.linkedDoctor?.name ?? localUsers.find((u: any) => u.id === user.linkedDoctorId)?.name}
+                                                            </span>
                                                         </div>
                                                     ) : (
                                                         <span className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 rounded-full px-2 py-0.5 font-bold">
