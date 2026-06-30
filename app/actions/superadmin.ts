@@ -133,6 +133,8 @@ export async function getAllUsers(skip = 0) {
             twoFactorEnabled: true,
             twoFactorRequired: true,
             createdAt: true,
+            linkedDoctorId: true,
+            linkedDoctor: { select: { id: true, name: true } },
             _count: {
                 select: { patients: true, consultations: true },
             },
@@ -166,6 +168,7 @@ export async function createUserAdmin(data: {
     email: string;
     role: "MEDECIN" | "SECRETAIRE" | "ADMIN";
     password?: string;
+    linkedDoctorId?: string;
 }) {
     try {
         await checkSuperAdmin();
@@ -176,32 +179,54 @@ export async function createUserAdmin(data: {
         }
         const hashedPassword = await bcrypt.hash(pwd, 10);
 
-        // Modules par défaut selon le rôle
         const defaultModules = data.role === "SECRETAIRE"
             ? ["AGENDA", "PATIENTS", "FACTURATION"]
             : ["AGENDA", "PATIENTS", "FACTURATION", "CONSULTATION", "IMAGERIE"];
 
         const user = await prisma.user.create({
             data: {
-                name: data.name,
-                email: data.email,
-                password: hashedPassword,
-                role: data.role,
+                name:          data.name,
+                email:         data.email,
+                password:      hashedPassword,
+                role:          data.role,
                 enabledModules: defaultModules,
-            }
+                linkedDoctorId: data.role === "SECRETAIRE" && data.linkedDoctorId ? data.linkedDoctorId : undefined,
+            },
+            select: {
+                id: true, name: true, email: true, role: true, status: true,
+                enabledModules: true, twoFactorEnabled: true, twoFactorRequired: true,
+                createdAt: true, linkedDoctorId: true,
+                linkedDoctor: { select: { id: true, name: true } },
+                _count: { select: { patients: true, consultations: true } },
+                abonnements: { select: { plan: true, statut: true, dateDebut: true }, take: 1 },
+            },
         });
 
-        // Créer un abonnement par défaut pour que l'utilisateur puisse se connecter
         await prisma.abonnement.create({
             data: {
-                userId: user.id,
-                plan: data.role === "SECRETAIRE" ? "SOLO" : "CLINIQUE",
-                statut: "ACTIF",
+                userId:    user.id,
+                plan:      data.role === "SECRETAIRE" ? "SOLO" : "CLINIQUE",
+                statut:    "ACTIF",
                 dateDebut: new Date(),
-            }
+            },
         });
 
-        revalidatePath("/admin/super");
+        revalidatePath("/admin");
+        return { success: true, data: JSON.parse(JSON.stringify(user)) };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function linkSecretaryToDoctor(secretaryId: string, doctorId: string | null) {
+    try {
+        await checkSuperAdmin();
+        const user = await prisma.user.update({
+            where:  { id: secretaryId },
+            data:   { linkedDoctorId: doctorId },
+            select: { id: true, name: true, linkedDoctorId: true, linkedDoctor: { select: { id: true, name: true } } },
+        });
+        revalidatePath("/admin");
         return { success: true, data: JSON.parse(JSON.stringify(user)) };
     } catch (error: any) {
         return { success: false, error: error.message };

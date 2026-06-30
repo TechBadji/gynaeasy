@@ -16,16 +16,23 @@ import QuickRdvSearch from "@/components/dashboard/quick-rdv-search";
 import SmsRemindersCard from "@/components/dashboard/sms-reminders-card";
 import NextAppointmentCard from "@/components/dashboard/next-appointment-card";
 import GrossessesProches from "@/components/dashboard/grossesses-proches";
+import { getEffectiveDoctorId, getLinkedDoctor } from "@/lib/effective-user";
 
 export default async function DashboardPage() {
     const session = await getServerSession(authOptions);
     if (!session) return null;
 
-    const userId = (session.user as any).id;
-    const role = (session.user as any).role;
+    const userId   = (session.user as any).id;
+    const role     = (session.user as any).role;
     const userName = session.user?.name ?? "";
     const PREFIXES = new Set(["dr", "dr.", "pr", "pr.", "m.", "mme", "mlle"]);
     const firstName = userName.split(" ").find((w: string) => w.length > 1 && !PREFIXES.has(w.toLowerCase())) ?? (role === "SECRETAIRE" ? "Secrétaire" : "Docteur");
+
+    // Pour secrétaire : toutes les données sont filtrées sur le médecin lié
+    const [doctorId, linkedDoctor] = await Promise.all([
+        getEffectiveDoctorId(userId, role),
+        getLinkedDoctor(userId, role),
+    ]);
 
     const now = new Date();
     const hour = now.getHours();
@@ -56,26 +63,26 @@ export default async function DashboardPage() {
         initialAlerts,
         unreadCount,
     ] = await Promise.all([
-        prisma.patient.count({ where: { treatingDoctorId: userId } }),
-        prisma.consultation.count({ where: { userId, dateHeure: { gte: todayStart, lte: todayEnd } } }),
-        prisma.consultation.count({ where: { userId, dateHeure: { gte: yStart,     lte: yEnd } } }),
-        prisma.grossesse.count({ where: { statut: "EN_COURS", patient: { treatingDoctorId: userId } } }),
+        prisma.patient.count({ where: { treatingDoctorId: doctorId } }),
+        prisma.consultation.count({ where: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } } }),
+        prisma.consultation.count({ where: { userId: doctorId, dateHeure: { gte: yStart,     lte: yEnd } } }),
+        prisma.grossesse.count({ where: { statut: "EN_COURS", patient: { treatingDoctorId: doctorId } } }),
         prisma.grossesse.findMany({
-            where: { statut: "EN_COURS", dpa: { gte: now, lte: in30Days }, patient: { treatingDoctorId: userId } },
+            where: { statut: "EN_COURS", dpa: { gte: now, lte: in30Days }, patient: { treatingDoctorId: doctorId } },
             include: { patient: { select: { nom: true, prenom: true, id: true } } },
             orderBy: { dpa: "asc" },
             take: 5,
         }),
-        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId, dateHeure: { gte: todayStart, lte: todayEnd } } } }),
-        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId, dateHeure: { gte: yStart, lte: yEnd } } } }),
-        prisma.patient.count({ where: { treatingDoctorId: userId, createdAt: { gte: monthStart } } }),
+        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } } } }),
+        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: yStart, lte: yEnd } } } }),
+        prisma.patient.count({ where: { treatingDoctorId: doctorId, createdAt: { gte: monthStart } } }),
         prisma.consultation.findFirst({
-            where: { userId, dateHeure: { gt: now } },
+            where: { userId: doctorId, dateHeure: { gt: now } },
             include: { patient: { select: { nom: true, prenom: true, id: true } } },
             orderBy: { dateHeure: "asc" },
         }),
         prisma.accessRequest.findMany({
-            where: { patient: { treatingDoctorId: userId }, status: "PENDING" },
+            where: { patient: { treatingDoctorId: doctorId }, status: "PENDING" },
             include: {
                 doctor:  { select: { name: true } },
                 patient: { select: { nom: true, prenom: true, codePatient: true } },
@@ -136,6 +143,30 @@ export default async function DashboardPage() {
 
     return (
         <div className="space-y-6 pb-8">
+            {/* Bannière secrétaire — médecin lié */}
+            {role === "SECRETAIRE" && (
+                linkedDoctor ? (
+                    <div className="flex items-center gap-3 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3">
+                        <div className="h-8 w-8 rounded-full bg-violet-600 flex items-center justify-center text-white text-sm font-black flex-shrink-0">
+                            {linkedDoctor.name?.[0] ?? "D"}
+                        </div>
+                        <div>
+                            <p className="text-xs font-black text-violet-500 uppercase tracking-widest">Cabinet rattaché</p>
+                            <p className="text-sm font-bold text-violet-800">{linkedDoctor.name}{linkedDoctor.specialite ? ` — ${linkedDoctor.specialite}` : ""}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                        <div className="h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 flex-shrink-0">
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M12 3a9 9 0 110 18A9 9 0 0112 3z"/></svg>
+                        </div>
+                        <div>
+                            <p className="text-xs font-black text-amber-600 uppercase tracking-widest">Aucun médecin associé</p>
+                            <p className="text-sm text-amber-700">Votre compte n&apos;est pas encore rattaché à un médecin. Contactez l&apos;administrateur.</p>
+                        </div>
+                    </div>
+                )
+            )}
             {/* ══════════════════════════════════════════
                 GREETING HEADER
             ══════════════════════════════════════════ */}

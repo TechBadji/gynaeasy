@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 import PatientsListClient from "@/components/patients/patients-list-client";
 
 export default async function PatientsPage() {
@@ -9,9 +10,12 @@ export default async function PatientsPage() {
     if (!session?.user) redirect("/api/auth/signin");
 
     const userId = (session.user as any).id;
+    const role   = (session.user as any).role;
+
+    const doctorId = await getEffectiveDoctorId(userId, role);
 
     const patients = await prisma.patient.findMany({
-        where: { treatingDoctorId: userId },
+        where: { treatingDoctorId: doctorId },
         select: {
             id: true,
             codePatient: true,

@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 const RdvSchema = z.object({
     patientId: z.string().min(1, "Veuillez sélectionner un patient"),
@@ -27,9 +28,13 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
         return { success: false, message: "Non authentifié" };
     }
     const userId = (session.user as any).id;
+    const role   = (session.user as any).role;
     if (!userId) {
         return { success: false, message: "Session invalide. Reconnectez-vous." };
     }
+
+    // Pour la secrétaire : les RDV sont créés sur le compte du médecin lié
+    const doctorId = await getEffectiveDoctorId(userId, role);
 
     try {
         let finalPatientId = formData.get("patientId") as string;
@@ -48,14 +53,14 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
             const codePatient = Math.floor(10000 + Math.random() * 90000).toString();
             const newPatient = await prisma.patient.create({
                 data: {
-                    civilite: civilite as any,
+                    civilite:        civilite as any,
                     nom,
                     prenom,
                     telephone,
                     codePatient,
-                    treatingDoctorId: userId,
-                    dateNaissance: new Date(1990, 0, 1),
-                    userId,
+                    treatingDoctorId: doctorId,
+                    dateNaissance:   new Date(1990, 0, 1),
+                    userId:          doctorId,
                 }
             });
             finalPatientId = newPatient.id;
@@ -91,11 +96,11 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
         await prisma.consultation.create({
             data: {
                 patientId: finalPatientId,
-                userId,
+                userId:    doctorId,
                 dateHeure,
-                duree: dureeMin,
-                type: data.type as any,
-                motif: data.motif || null,
+                duree:     dureeMin,
+                type:      data.type as any,
+                motif:     data.motif || null,
             },
         });
 

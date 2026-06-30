@@ -2,13 +2,18 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { startOfWeek, endOfWeek } from "date-fns";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 import AgendaClient from "./agenda-client";
 
 export default async function AgendaPage() {
     const session = await getServerSession(authOptions);
-    const userId = (session?.user as any)?.id;
+    const userId  = (session?.user as any)?.id;
+    const role    = (session?.user as any)?.role;
 
-    const now = new Date();
+    // La secrétaire voit l'agenda du médecin lié
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
+    const now       = new Date();
     const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
     const todayEnd   = new Date(now); todayEnd.setHours(23, 59, 59, 999);
     const weekStart  = startOfWeek(now, { weekStartsOn: 1 });
@@ -16,26 +21,26 @@ export default async function AgendaPage() {
 
     const [consultations, patients, countToday, countWeek, prochainRDV] = await Promise.all([
         prisma.consultation.findMany({
-            where: { userId },
+            where:   { userId: doctorId },
             include: {
                 patient: { select: { civilite: true, nom: true, prenom: true, id: true } },
             },
             orderBy: { dateHeure: "asc" },
         }),
         prisma.patient.findMany({
-            where: { treatingDoctorId: userId },
-            select: { id: true, nom: true, prenom: true, civilite: true, telephone: true },
+            where:   { treatingDoctorId: doctorId },
+            select:  { id: true, nom: true, prenom: true, civilite: true, telephone: true },
             orderBy: { nom: "asc" },
         }),
         prisma.consultation.count({
-            where: { userId, dateHeure: { gte: todayStart, lte: todayEnd } },
+            where: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } },
         }),
         prisma.consultation.count({
-            where: { userId, dateHeure: { gte: weekStart, lte: weekEnd } },
+            where: { userId: doctorId, dateHeure: { gte: weekStart, lte: weekEnd } },
         }),
         prisma.consultation.findFirst({
-            where: { userId, dateHeure: { gt: now } },
-            select: { dateHeure: true },
+            where:   { userId: doctorId, dateHeure: { gt: now } },
+            select:  { dateHeure: true },
             orderBy: { dateHeure: "asc" },
         }),
     ]);

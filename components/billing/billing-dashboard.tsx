@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback, useTransition } from "react";
 import {
     Receipt,
-    Search,
-    Plus,
-    Filter,
     Download,
     CheckCircle2,
     Clock,
@@ -16,16 +13,20 @@ import {
     TrendingUp,
     Activity,
     Printer,
-    Smartphone
+    Smartphone,
+    Loader2,
+    ExternalLink,
+    RefreshCw,
+    AlertTriangle,
+    X,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { formatCurrency } from "@/lib/utils";
 import toast from "react-hot-toast";
-import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import * as XLSX from "xlsx";
-import { createReglement } from "@/app/actions/billing";
+import { confirmManualPayment, initiateWavePayment, checkWavePaymentStatus, confirmWavePaymentManual } from "@/app/actions/billing";
 import FeuilleSoinPrint from "./feuille-soin-print";
 
 interface BillingDashboardProps {
@@ -35,39 +36,112 @@ interface BillingDashboardProps {
 }
 
 export default function BillingDashboard({ recentInvoices, pendingConsultations, clinicSettings }: BillingDashboardProps) {
-    const [invoices, setInvoices] = useState(recentInvoices);
-    const [searchQuery, setSearchQuery] = useState("");
+    const [invoices, setInvoices]           = useState(recentInvoices);
     const [isPayModalOpen, setIsPayModalOpen] = useState(false);
     const [selectedConsultation, setSelectedConsultation] = useState<any>(null);
-    const [paymentMode, setPaymentMode] = useState<any>("ESPECES");
+    const [paymentMode, setPaymentMode]     = useState<string>("ESPECES");
+    const [amount, setAmount]               = useState<number>(0);
+    const [reference, setReference]         = useState("");
     const [printingInvoice, setPrintingInvoice] = useState<any>(null);
     const [justPaidInvoice, setJustPaidInvoice] = useState<any>(null);
+    const [isPending, startTransition]      = useTransition();
+
+    // Wave state
+    const [waveStep, setWaveStep]           = useState<"idle" | "pending" | "polling" | "done" | "error">("idle");
+    const [waveUrl, setWaveUrl]             = useState<string | null>(null);
+    const [waveSimulated, setWaveSimulated] = useState(false);
+    const [waveReglementId, setWaveReglementId] = useState<string | null>(null);
 
     const handleOpenPayment = (consultation: any) => {
         setSelectedConsultation(consultation);
+        setAmount(consultation.honoraire || 25000);
+        setReference("");
+        setPaymentMode("ESPECES");
+        setWaveStep("idle");
+        setWaveUrl(null);
+        setWaveReglementId(null);
         setIsPayModalOpen(true);
     };
 
-    const handleConfirmPayment = async () => {
-        if (!selectedConsultation) return;
-
-        try {
-            const res = await createReglement({
-                consultationId: selectedConsultation.id,
-                montant: selectedConsultation.honoraire || 25000,
-                mode: paymentMode,
-            });
-
-            if (res.success) {
-                toast.success("Paiement enregistré avec succès");
-                // Au lieu de reload tout de suite, on garde la facture pour l'affichage du succès
-                setJustPaidInvoice(res.reglement);
-                setIsPayModalOpen(false);
-            }
-        } catch (e: any) {
-            toast.error(e.message);
-        }
+    const closeModal = () => {
+        setIsPayModalOpen(false);
+        setWaveStep("idle");
+        setWaveUrl(null);
+        setWaveReglementId(null);
     };
+
+    // ── Paiement manuel (non-Wave) ────────────────────────────────────────
+    const handleConfirmManual = () => startTransition(async () => {
+        if (!selectedConsultation) return;
+        const res = await confirmManualPayment({
+            consultationId: selectedConsultation.id,
+            montant:        amount,
+            mode:           paymentMode as any,
+            reference:      reference || undefined,
+        });
+        if (res.success) {
+            setJustPaidInvoice(res.reglement);
+            closeModal();
+            toast.success("Encaissement enregistré ✓");
+        } else {
+            toast.error(res.error || "Erreur");
+        }
+    });
+
+    // ── Wave : initier le checkout ────────────────────────────────────────
+    const handleInitiateWave = () => startTransition(async () => {
+        if (!selectedConsultation) return;
+        setWaveStep("pending");
+        const res = await initiateWavePayment({ consultationId: selectedConsultation.id, montant: amount });
+        if (res.success) {
+            setWaveUrl(res.waveUrl!);
+            setWaveSimulated(res.simulated!);
+            setWaveReglementId(res.reglementId!);
+            setWaveStep("polling");
+        } else {
+            toast.error(res.error || "Erreur Wave");
+            setWaveStep("error");
+        }
+    });
+
+    // ── Wave : polling statut ────────────────────────────────────────────
+    const handleCheckWave = useCallback(async () => {
+        if (!waveReglementId) return;
+        const res = await checkWavePaymentStatus(waveReglementId);
+        if (res.status === "complete") {
+            const r = await confirmWavePaymentManual(waveReglementId);
+            if (r.success) {
+                setWaveStep("done");
+                setJustPaidInvoice(r.reglement);
+                closeModal();
+                toast.success("Paiement Wave confirmé ✓");
+            }
+        } else if (res.status === "error") {
+            toast.error("La transaction Wave a échoué");
+            setWaveStep("error");
+        }
+    }, [waveReglementId]);
+
+    // Polling automatique toutes les 5s quand Wave est en attente
+    useEffect(() => {
+        if (waveStep !== "polling") return;
+        const interval = setInterval(handleCheckWave, 5000);
+        return () => clearInterval(interval);
+    }, [waveStep, handleCheckWave]);
+
+    // ── Wave : confirmation manuelle (simulation) ─────────────────────────
+    const handleSimulateWave = () => startTransition(async () => {
+        if (!waveReglementId) return;
+        const res = await confirmWavePaymentManual(waveReglementId);
+        if (res.success) {
+            setWaveStep("done");
+            setJustPaidInvoice(res.reglement);
+            closeModal();
+            toast.success("Paiement Wave simulé confirmé ✓");
+        } else {
+            toast.error("Erreur confirmation");
+        }
+    });
 
     const handleExportExcel = () => {
         const toastId = toast.loading("Préparation du rapport...");
@@ -279,7 +353,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                         Exporter Rapport
                     </button>
                     {/* Feature not yet fully implemented
-                    <button className="flex items-center gap-2 bg-indigo-600 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm">
+                    <button className="flex items-center gap-2 bg-violet-600 px-4 py-2 rounded-lg text-sm font-semibold text-white hover:bg-violet-700 transition-colors shadow-sm">
                         <Plus className="h-4 w-4" />
                         Acte Hors Consultation
                     </button>
@@ -307,9 +381,9 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                         <Clock className="h-6 w-6 text-amber-600" />
                     </div>
                 </div>
-                <div className="bg-indigo-600 p-6 rounded-2xl shadow-lg shadow-indigo-200 flex items-center justify-between text-white">
+                <div className="bg-violet-600 p-6 rounded-2xl shadow-lg shadow-violet-200 flex items-center justify-between text-white">
                     <div>
-                        <p className="text-xs font-bold text-indigo-200 uppercase tracking-widest mb-1">Taux de Recouvrement</p>
+                        <p className="text-xs font-bold text-violet-200 uppercase tracking-widest mb-1">Taux de Recouvrement</p>
                         <h3 className="text-2xl font-black">94%</h3>
                     </div>
                     <div className="h-12 w-12 rounded-xl bg-white/10 flex items-center justify-center">
@@ -349,7 +423,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                                             </td>
                                             <td className="px-6 py-4">
                                                 <p className="text-sm text-slate-700 font-medium">{c.user.name}</p>
-                                                <p className="text-xs text-indigo-600 font-bold">{c.type}</p>
+                                                <p className="text-xs text-violet-600 font-bold">{c.type}</p>
                                             </td>
                                             <td className="px-6 py-4 text-xs text-slate-500 font-medium">
                                                 {format(new Date(c.dateHeure), "HH:mm", { locale: fr })}
@@ -360,7 +434,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                                             <td className="px-6 py-4 text-right">
                                                 <button
                                                     onClick={() => handleOpenPayment(c)}
-                                                    className="bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all border border-indigo-100"
+                                                    className="bg-violet-50 text-violet-600 hover:bg-violet-600 hover:text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all border border-violet-100"
                                                 >
                                                     Encaisser
                                                 </button>
@@ -378,7 +452,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                     <div className="bg-white rounded-2xl border border-slate-100 shadow-sm flex flex-col h-full">
                         <div className="p-6 border-b border-slate-50 flex items-center justify-between">
                             <h2 className="font-bold text-slate-800 flex items-center gap-2">
-                                <Receipt className="h-5 w-5 text-indigo-500" />
+                                <Receipt className="h-5 w-5 text-violet-500" />
                                 Dernières factures
                             </h2>
                         </div>
@@ -404,7 +478,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handlePrintFeuille(inv)}
-                                                className="text-indigo-600 hover:text-indigo-800 p-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter bg-indigo-50 px-2 py-0.5 rounded transition-all"
+                                                className="text-violet-600 hover:text-violet-800 p-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-tighter bg-violet-50 px-2 py-0.5 rounded transition-all"
                                             >
                                                 <Printer className="h-3.5 w-3.5" />
                                                 FDS
@@ -424,60 +498,183 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                 </div>
             </div>
 
-            {/* Modal de Paiement */}
+            {/* ── Modal de Paiement ─────────────────────────────────────── */}
             {isPayModalOpen && selectedConsultation && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 no-print">
-                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={() => setIsPayModalOpen(false)} />
+                    <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onClick={closeModal} />
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 overflow-hidden">
-                        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-                            <h2 className="text-xl font-black text-slate-800">Finaliser l'encaissement</h2>
-                            <p className="text-slate-500 text-sm">Patiente: {selectedConsultation.patient.prenom} {selectedConsultation.patient.nom}</p>
+
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-start justify-between">
+                            <div>
+                                <h2 className="text-lg font-black text-slate-800">Encaissement</h2>
+                                <p className="text-slate-500 text-sm">
+                                    {selectedConsultation.patient.prenom} {selectedConsultation.patient.nom}
+                                    <span className="text-slate-400 mx-1">·</span>
+                                    <span className="text-xs font-bold text-slate-400">#{selectedConsultation.patient.codePatient}</span>
+                                </p>
+                            </div>
+                            <button onClick={closeModal} className="text-slate-400 hover:text-slate-600 transition-colors mt-0.5">
+                                <X className="h-5 w-5" />
+                            </button>
                         </div>
 
-                        <div className="p-6 space-y-6">
-                            <div className="flex flex-col items-center justify-center py-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
-                                <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-1">Total à payer</p>
-                                <h4 className="text-4xl font-black text-indigo-700">{formatCurrency(selectedConsultation.honoraire || 25000)}</h4>
+                        <div className="p-6 space-y-5">
+                            {/* Montant éditable */}
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Montant (FCFA)</label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        value={amount}
+                                        onChange={e => setAmount(Number(e.target.value))}
+                                        disabled={waveStep !== "idle"}
+                                        className="w-full text-center text-3xl font-black text-violet-700 bg-violet-50 border border-violet-100 rounded-2xl py-4 focus:outline-none focus:ring-2 focus:ring-violet-300 disabled:opacity-60"
+                                    />
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-violet-400">FCFA</span>
+                                </div>
                             </div>
 
-                            <div className="space-y-3">
-                                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Mode de règlement</label>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                    {["ESPECES", "CB", "WAVE", "ORANGE_MONEY", "SANTE", "CHEQUE"].map((mode) => (
+                            {/* Mode de règlement */}
+                            <div>
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Mode de règlement</label>
+                                <div className="grid grid-cols-3 gap-2">
+                                    {[
+                                        { id: "ESPECES",      label: "Espèces",    icon: <Banknote className="h-4 w-4" /> },
+                                        { id: "WAVE",         label: "Wave",       icon: <Smartphone className="h-4 w-4" /> },
+                                        { id: "ORANGE_MONEY", label: "Orange M.",  icon: <Smartphone className="h-4 w-4" /> },
+                                        { id: "CB",           label: "CB",         icon: <CreditCard className="h-4 w-4" /> },
+                                        { id: "CHEQUE",       label: "Chèque",     icon: <FileText className="h-4 w-4" /> },
+                                        { id: "SANTE",        label: "Mutuelle",   icon: <Activity className="h-4 w-4" /> },
+                                    ].map(m => (
                                         <button
-                                            key={mode}
-                                            onClick={() => setPaymentMode(mode)}
-                                            className={`p-3 rounded-xl border flex flex-col items-center gap-1.5 transition-all text-xs font-bold ${paymentMode === mode ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-white border-slate-100 text-slate-600 hover:border-indigo-200'}`}
+                                            key={m.id}
+                                            onClick={() => { setPaymentMode(m.id); setWaveStep("idle"); setWaveUrl(null); setWaveReglementId(null); }}
+                                            disabled={waveStep === "polling"}
+                                            className={`flex flex-col items-center gap-1 p-3 rounded-xl border text-xs font-bold transition-all disabled:pointer-events-none ${
+                                                paymentMode === m.id
+                                                    ? m.id === "WAVE"
+                                                        ? "bg-blue-600 border-blue-600 text-white shadow-md"
+                                                        : "bg-violet-600 border-violet-600 text-white shadow-md"
+                                                    : "bg-white border-slate-100 text-slate-500 hover:border-violet-200 hover:text-violet-600"
+                                            }`}
                                         >
-                                            {mode === "ESPECES" && <Banknote className="h-5 w-5 mb-1" />}
-                                            {mode === "CB" && <CreditCard className="h-5 w-5 mb-1" />}
-                                            {mode === "CHEQUE" && <FileText className="h-5 w-5 mb-1" />}
-                                            {mode === "SANTE" && <Activity className="h-5 w-5 mb-1" />}
-                                            {mode === "WAVE" && <Smartphone className={`h-5 w-5 mb-1 ${paymentMode === mode ? 'text-white' : 'text-blue-400'}`} />}
-                                            {mode === "ORANGE_MONEY" && <Smartphone className={`h-5 w-5 mb-1 ${paymentMode === mode ? 'text-white' : 'text-orange-500'}`} />}
-                                            <span className="text-[10px] font-black uppercase tracking-tight text-center">
-                                                {mode === "ORANGE_MONEY" ? "ORANGE M." : mode === "SANTE" ? "MUTUELLE" : mode}
-                                            </span>
+                                            {m.icon}
+                                            {m.label}
                                         </button>
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Référence (non-Wave) */}
+                            {paymentMode !== "WAVE" && (paymentMode === "CHEQUE" || paymentMode === "VIREMENT" || paymentMode === "ORANGE_MONEY") && (
+                                <div>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-2">Référence / N° transaction</label>
+                                    <input
+                                        type="text"
+                                        value={reference}
+                                        onChange={e => setReference(e.target.value)}
+                                        placeholder="Ex: OM-2026-XXXXX"
+                                        className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-300"
+                                    />
+                                </div>
+                            )}
+
+                            {/* ── Zone Wave ─────────────────────────────────────────── */}
+                            {paymentMode === "WAVE" && (
+                                <div className="space-y-3">
+                                    {/* Simulation badge */}
+                                    {!process.env.NEXT_PUBLIC_WAVE_CONFIGURED && (
+                                        <div className="flex items-center gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                                            <AlertTriangle className="h-3.5 w-3.5 flex-shrink-0" />
+                                            Mode simulation — <span className="font-bold">WAVE_API_KEY</span> non configurée
+                                        </div>
+                                    )}
+
+                                    {waveStep === "idle" && (
+                                        <button
+                                            onClick={handleInitiateWave}
+                                            disabled={isPending || amount <= 0}
+                                            className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-blue-200"
+                                        >
+                                            {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Smartphone className="h-4 w-4" />}
+                                            Générer le lien Wave
+                                        </button>
+                                    )}
+
+                                    {(waveStep === "polling" || waveStep === "pending") && (
+                                        <div className="space-y-3">
+                                            {/* Lien Wave */}
+                                            {waveUrl && (
+                                                <a
+                                                    href={waveUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center justify-between gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 hover:bg-blue-100 transition-colors"
+                                                >
+                                                    <div>
+                                                        <p className="text-xs font-black text-blue-700 uppercase tracking-wider">Lien de paiement Wave</p>
+                                                        <p className="text-[10px] text-blue-500 truncate max-w-[260px]">{waveUrl}</p>
+                                                    </div>
+                                                    <ExternalLink className="h-4 w-4 text-blue-500 flex-shrink-0" />
+                                                </a>
+                                            )}
+
+                                            {/* Statut polling */}
+                                            <div className="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                                                    <span className="text-xs font-bold text-slate-600">En attente du paiement patient…</span>
+                                                </div>
+                                                <button onClick={handleCheckWave} disabled={isPending} className="text-slate-400 hover:text-slate-600 disabled:opacity-50">
+                                                    <RefreshCw className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
+                                                </button>
+                                            </div>
+
+                                            {/* Bouton simulation */}
+                                            {waveSimulated && (
+                                                <button
+                                                    onClick={handleSimulateWave}
+                                                    disabled={isPending}
+                                                    className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white py-2.5 rounded-xl font-bold text-sm transition-all"
+                                                >
+                                                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                                                    Simuler paiement reçu
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {waveStep === "error" && (
+                                        <div className="flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                                            <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                                            Échec de la transaction Wave
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
-                        <div className="p-6 border-t border-slate-100 flex gap-3">
+                        {/* Footer */}
+                        <div className="px-6 pb-6 flex gap-3">
                             <button
-                                onClick={() => setIsPayModalOpen(false)}
-                                className="flex-1 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 transition-colors"
+                                onClick={closeModal}
+                                className="flex-1 px-4 py-3 rounded-xl text-sm font-bold text-slate-500 hover:bg-slate-50 border border-slate-100 transition-colors"
                             >
                                 Annuler
                             </button>
-                            <button
-                                onClick={handleConfirmPayment}
-                                className="flex-[2] bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-3 rounded-xl text-sm font-black shadow-lg shadow-indigo-100 flex items-center justify-center gap-2"
-                            >
-                                <CheckCircle2 className="h-5 w-5" />
-                                Confirmer l'encaissement
-                            </button>
+                            {paymentMode !== "WAVE" && (
+                                <button
+                                    onClick={handleConfirmManual}
+                                    disabled={isPending || amount <= 0}
+                                    className="flex-[2] bg-violet-600 hover:bg-violet-700 disabled:opacity-50 text-white px-4 py-3 rounded-xl text-sm font-black shadow-lg shadow-violet-100 flex items-center justify-center gap-2 transition-all"
+                                >
+                                    {isPending
+                                        ? <Loader2 className="h-5 w-5 animate-spin" />
+                                        : <CheckCircle2 className="h-5 w-5" />}
+                                    Valider l'encaissement
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -496,7 +693,7 @@ export default function BillingDashboard({ recentInvoices, pendingConsultations,
                         <div className="grid grid-cols-1 gap-3">
                             <button
                                 onClick={() => handlePrintFeuille(justPaidInvoice)}
-                                className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-indigo-200"
+                                className="w-full flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white py-4 rounded-2xl font-black transition-all shadow-lg shadow-violet-200"
                             >
                                 <Printer className="h-5 w-5" />
                                 Imprimer le reçu (FDS)

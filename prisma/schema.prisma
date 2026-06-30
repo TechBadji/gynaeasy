@@ -33,6 +33,9 @@ model User {
   subscriptionStatus   StatutAbonnement?
   isEmergencyAvailable Boolean           @default(false)
   abonnements          Abonnement[]
+  linkedDoctorId       String?
+  linkedDoctor         User?             @relation("SecretaryDoctor", fields: [linkedDoctorId], references: [id], onDelete: SetNull)
+  secretaries          User[]            @relation("SecretaryDoctor")
   accessRequests       AccessRequest[]
   auditLogs            AuditLog[]
   consultations        Consultation[]
