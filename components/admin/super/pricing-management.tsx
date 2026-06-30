@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { updatePlanConfig, getPlanStats } from "@/app/actions/superadmin";
 import { SUBSCRIPTION_PLANS } from "@/config/plans";
 import {
     Save, CheckCircle2, AlertCircle, Plus, Trash2,
-    Users, TrendingUp, Loader2, Check
+    Users, TrendingUp, Loader2, Check, Stethoscope, Zap, Building2
 } from "lucide-react";
 import toast from "react-hot-toast";
 
-const PLAN_META: Record<string, { icon: string; color: string; accent: string; border: string }> = {
-    SOLO:    { icon: "🌱", color: "text-slate-300",  accent: "bg-slate-500/5",  border: "border-slate-500/20" },
-    PRO:     { icon: "🚀", color: "text-violet-400", accent: "bg-violet-500/5", border: "border-violet-500/30" },
-    CLINIQUE:{ icon: "👑", color: "text-amber-400",  accent: "bg-amber-500/5",  border: "border-amber-500/30" },
+const PLAN_META: Record<string, { icon: React.ReactNode; color: string; accent: string; border: string }> = {
+    SOLO:    { icon: <Stethoscope className="h-4 w-4" />, color: "text-slate-300",  accent: "bg-slate-500/5",  border: "border-slate-500/20" },
+    PRO:     { icon: <Zap className="h-4 w-4" />,         color: "text-violet-400", accent: "bg-violet-500/5", border: "border-violet-500/30" },
+    CLINIQUE:{ icon: <Building2 className="h-4 w-4" />,   color: "text-amber-400",  accent: "bg-amber-500/5",  border: "border-amber-500/30" },
 };
 
 const DEFAULT_FEATURES: Record<string, { text: string; included: boolean }[]> = {
@@ -118,7 +118,7 @@ export default function SuperAdminPricing({ planConfigs }: { planConfigs: any[] 
                     return (
                         <div key={planName} className={`rounded-xl border p-5 ${meta.accent} ${meta.border}`}>
                             <div className="flex items-center gap-2 mb-4">
-                                <span className="text-xl">{meta.icon}</span>
+                                <div className={`${meta.color}`}>{meta.icon}</div>
                                 <span className={`text-sm font-bold ${meta.color}`}>{planName}</span>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -160,7 +160,7 @@ export default function SuperAdminPricing({ planConfigs }: { planConfigs: any[] 
                             {/* En-tête */}
                             <div className={`p-5 border-b border-white/5 flex items-center justify-between ${meta.accent}`}>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-2xl">{meta.icon}</span>
+                                    <div className={`${meta.color}`}>{meta.icon}</div>
                                     <div>
                                         <h3 className={`font-bold text-base ${meta.color}`}>{planName}</h3>
                                         {edit.isPromotional && (
