@@ -80,10 +80,12 @@ export default function SidebarNav({ role, isImagingEnabled, isAdmin }: SidebarN
                 Facturation & Encaissements
             </Link>
 
-            <Link href="/inventaire" className={linkClass("/inventaire")}>
-                <Package className={iconClass("/inventaire", "text-slate-400")} />
-                Stocks & Inventaire
-            </Link>
+            {role !== "SECRETAIRE" && (
+                <Link href="/inventaire" className={linkClass("/inventaire")}>
+                    <Package className={iconClass("/inventaire", "text-slate-400")} />
+                    Stocks & Inventaire
+                </Link>
+            )}
 
             <Link href="/sms" className={linkClass("/sms")}>
                 <MessageSquare className={iconClass("/sms", "text-slate-400")} />
