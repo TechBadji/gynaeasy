@@ -45,6 +45,7 @@ model User {
   patients             Patient[]
   promoUsages          PromoUsage[]
   demandesUpgrade      DemandeUpgrade[]
+  stockItems           StockItem[]
 }
 
 model Notification {
@@ -304,6 +305,10 @@ model StockItem {
   seuilAlerte   Int      @default(5)
   derniereModif DateTime @updatedAt
   createdAt     DateTime @default(now())
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
 }
 
 model ClinicSettings {

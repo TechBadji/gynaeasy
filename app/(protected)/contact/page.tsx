@@ -4,7 +4,7 @@ export default function ContactSupportPage() {
     return (
         <div className="max-w-6xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-20">
             <div className="text-center space-y-4">
-                <span className="text-[10px] font-black text-pink-600 uppercase tracking-[0.3em] bg-pink-50 px-4 py-1.5 rounded-full border border-pink-100">Nous sommes là</span>
+                <span className="text-[10px] font-black text-violet-600 uppercase tracking-[0.3em] bg-violet-50 px-4 py-1.5 rounded-full border border-violet-100">Nous sommes là</span>
                 <h1 className="text-5xl font-black text-slate-900 tracking-tight">Contactez le Support Gynaeasy</h1>
                 <p className="text-lg text-slate-500 font-medium max-w-2xl mx-auto italic">
                     Une question technique ? Un besoin spécifique pour votre cabinet ? Notre équipe dédiée vous répond sous 24h ouvrées.
@@ -12,10 +12,10 @@ export default function ContactSupportPage() {
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden shadow-pink-100/30">
+                <div className="md:col-span-2 bg-white rounded-[3rem] border border-slate-100 shadow-2xl overflow-hidden shadow-violet-100/30">
                     <div className="p-10 border-b border-slate-50 flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="h-12 w-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+                            <div className="h-12 w-12 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600">
                                 <Send className="h-6 w-6" />
                             </div>
                             <h2 className="text-2xl font-black text-slate-800 tracking-tight">Envoyez un message</h2>
@@ -36,7 +36,7 @@ export default function ContactSupportPage() {
                                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Urgence</label>
                                 <div className="flex bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
                                     <button className="flex-1 py-2 text-xs font-black text-slate-500 rounded-xl hover:bg-white hover:shadow-sm transition-all uppercase">Normale</button>
-                                    <button className="flex-1 py-2 text-xs font-black text-pink-600 bg-white shadow-sm rounded-xl border border-pink-100 uppercase uppercase">Haute</button>
+                                    <button className="flex-1 py-2 text-xs font-black text-violet-600 bg-white shadow-sm rounded-xl border border-violet-100 uppercase">Haute</button>
                                 </div>
                             </div>
                         </div>
@@ -58,40 +58,40 @@ export default function ContactSupportPage() {
                 </div>
 
                 <div className="space-y-8 h-full">
-                    <div className="p-8 bg-gradient-to-br from-indigo-900 via-indigo-950 to-slate-900 rounded-[3rem] text-white shadow-2xl shadow-indigo-900/30 flex flex-col justify-between h-full min-h-[500px]">
+                    <div className="p-8 bg-gradient-to-br from-violet-900 via-violet-950 to-slate-900 rounded-[3rem] text-white shadow-2xl shadow-violet-900/30 flex flex-col justify-between h-full min-h-[500px]">
                         <div className="space-y-12">
                             <div className="space-y-4">
                                 <h3 className="text-3xl font-black leading-tight">Canaux de support directs</h3>
-                                <p className="text-indigo-300 text-sm font-medium">Réponses immédiates pendant les heures d'ouverture (9h - 18h).</p>
+                                <p className="text-violet-300 text-sm font-medium">Réponses immédiates pendant les heures d'ouverture (9h - 18h).</p>
                             </div>
 
                             <div className="space-y-8">
                                 <div className="flex items-center gap-5 group">
-                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-indigo-900 transition-all duration-300">
+                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-violet-900 transition-all duration-300">
                                         <Phone className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-indigo-400 uppercase tracking-widest">WhatsApp / Appel</p>
+                                        <p className="text-xs font-black text-violet-400 uppercase tracking-widest">WhatsApp / Appel</p>
                                         <p className="text-xl font-black">+221 77 123 45 67</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-5 group">
-                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-indigo-900 transition-all duration-300">
+                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-violet-900 transition-all duration-300">
                                         <Mail className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-indigo-400 uppercase tracking-widest">Email</p>
+                                        <p className="text-xs font-black text-violet-400 uppercase tracking-widest">Email</p>
                                         <p className="text-xl font-black">support@gynaeasy.com</p>
                                     </div>
                                 </div>
 
                                 <div className="flex items-center gap-5 group">
-                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-indigo-900 transition-all duration-300">
+                                    <div className="h-14 w-14 rounded-2xl bg-white/10 flex items-center justify-center border border-white/20 group-hover:bg-white group-hover:text-violet-900 transition-all duration-300">
                                         <MapPin className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-indigo-400 uppercase tracking-widest">Siège Social</p>
+                                        <p className="text-xs font-black text-violet-400 uppercase tracking-widest">Siège Social</p>
                                         <p className="text-xl font-black">Dakar, Sénégal</p>
                                     </div>
                                 </div>

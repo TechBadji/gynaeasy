@@ -137,7 +137,7 @@ export default function ClinicSettingsForm({
                                 type="text"
                                 value={userDetails.clinicName}
                                 onChange={(e) => setUserDetails({ ...userDetails, clinicName: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-black text-indigo-600"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-black text-violet-600"
                                 placeholder="ex: Cabinet Médical Gynaeasy"
                                 required
                             />
@@ -192,7 +192,7 @@ export default function ClinicSettingsForm({
                                 type="text"
                                 value={settings.slogan || ""}
                                 onChange={(e) => setSettings({ ...settings, slogan: e.target.value })}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all font-serif italic"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-serif italic"
                                 placeholder="ex: Votre santé, notre priorité"
                             />
                         </div>
@@ -208,7 +208,7 @@ export default function ClinicSettingsForm({
                                 type="email"
                                 value={settings.email || ""}
                                 onChange={(e) => setSettings({ ...settings, email: e.target.value })}
-                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all"
                                 placeholder="contact@gynaeasy.com"
                             />
                         </div>
@@ -220,7 +220,7 @@ export default function ClinicSettingsForm({
                 <button
                     type="submit"
                     disabled={isSaving}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-indigo-100 flex items-center gap-3 transition-all disabled:opacity-50"
+                    className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-4 rounded-2xl font-black shadow-lg shadow-violet-100 flex items-center gap-3 transition-all disabled:opacity-50"
                 >
                     {isSaving ? (
                         <>Sauvegarde...</>

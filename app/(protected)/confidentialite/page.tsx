@@ -63,7 +63,7 @@ export default function PrivacyPage() {
         },
         {
             title: "Abonnement & Facturation",
-            icon: <CreditCard className="h-6 w-6 text-indigo-600" />,
+            icon: <CreditCard className="h-6 w-6 text-violet-600" />,
             content: "L'abonnement est sans engagement de durée longue (sauf mention contraire). La facturation est mensuelle. En cas de retard de paiement, une suspension temporaire peut intervenir après 15 jours.",
             badges: ["Sans Engagement", "Mensualité Fixe"]
         },
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
                     </button>
                     <button
                         onClick={() => setView("terms")}
-                        className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${view === "terms" ? "bg-white text-indigo-600 shadow-xl" : "text-slate-500 hover:text-slate-900"}`}
+                        className={`flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl text-xs font-black uppercase tracking-widest transition-all ${view === "terms" ? "bg-white text-violet-600 shadow-xl" : "text-slate-500 hover:text-slate-900"}`}
                     >
                         <FileStack className="h-4 w-4" />
                         Conditions Générales
@@ -203,7 +203,7 @@ function PrivacyDetails({ rights }: { rights: any[] }) {
                 </div>
                 <div className="p-8 bg-slate-50 rounded-[2.5rem] border border-slate-100 space-y-6">
                     <div className="flex items-center gap-3">
-                        <Globe2 className="h-5 w-5 text-indigo-500" />
+                        <Globe2 className="h-5 w-5 text-violet-500" />
                         <h4 className="font-bold text-slate-800">Partenaires Tiers</h4>
                     </div>
                     <ul className="space-y-4">

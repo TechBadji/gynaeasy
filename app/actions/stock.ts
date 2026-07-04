@@ -11,8 +11,10 @@ import { authOptions } from "@/lib/auth";
 export async function getStockItems() {
     const session = await getServerSession(authOptions);
     if (!session?.user) return [];
+    const userId = (session.user as any).id;
     return await prisma.stockItem.findMany({
-        orderBy: { nom: "asc" }
+        where: { userId },
+        orderBy: { nom: "asc" },
     });
 }
 
@@ -28,15 +30,13 @@ export async function updateStockItem(id: string | null, data: {
 }) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, error: "Non autorisé" };
+    const userId = (session.user as any).id;
     if (id) {
-        await prisma.stockItem.update({
-            where: { id },
-            data
-        });
+        const owned = await prisma.stockItem.findFirst({ where: { id, userId }, select: { id: true } });
+        if (!owned) return { success: false, error: "Non autorisé" };
+        await prisma.stockItem.update({ where: { id }, data });
     } else {
-        await prisma.stockItem.create({
-            data
-        });
+        await prisma.stockItem.create({ data: { ...data, userId } });
     }
     revalidatePath("/inventaire");
     return { success: true };
@@ -48,8 +48,9 @@ export async function updateStockItem(id: string | null, data: {
 export async function consumeStockItem(nom: string, quantity: number = 1) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, message: "Non autorisé" };
+    const userId = (session.user as any).id;
     const item = await prisma.stockItem.findFirst({
-        where: { nom: { contains: nom, mode: 'insensitive' } }
+        where: { nom: { contains: nom, mode: 'insensitive' }, userId },
     });
 
     if (item && item.quantite > 0) {
@@ -70,8 +71,9 @@ export async function consumeStockItem(nom: string, quantity: number = 1) {
 export async function adjustStockQuantity(id: string, delta: number) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, error: "Non autorisé" };
+    const userId = (session.user as any).id;
 
-    const item = await prisma.stockItem.findUnique({ where: { id }, select: { quantite: true } });
+    const item = await prisma.stockItem.findFirst({ where: { id, userId }, select: { quantite: true } });
     if (!item) return { success: false, error: "Article introuvable" };
 
     const newQty = Math.max(0, item.quantite + delta);
@@ -87,9 +89,10 @@ export async function adjustStockQuantity(id: string, delta: number) {
 export async function deleteStockItem(id: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return { success: false, error: "Non autorisé" };
-    await prisma.stockItem.delete({
-        where: { id }
-    });
+    const userId = (session.user as any).id;
+    const owned = await prisma.stockItem.findFirst({ where: { id, userId }, select: { id: true } });
+    if (!owned) return { success: false, error: "Non autorisé" };
+    await prisma.stockItem.delete({ where: { id } });
     revalidatePath("/inventaire");
     return { success: true };
 }

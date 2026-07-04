@@ -238,9 +238,9 @@ export default async function DashboardPage() {
 
                 {/* Grossesses */}
                 <Link href="/patients" className="block">
-                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:border-pink-100 transition-all h-full">
+                    <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 hover:shadow-md hover:border-violet-100 transition-all h-full">
                         <div className="flex items-start justify-between mb-4">
-                            <div className="h-11 w-11 rounded-xl bg-pink-100 flex items-center justify-center text-pink-600">
+                            <div className="h-11 w-11 rounded-xl bg-violet-100 flex items-center justify-center text-violet-600">
                                 <Activity className="h-5 w-5" />
                             </div>
                             {grossessesProches.length > 0 ? (
