@@ -40,6 +40,7 @@ export default function AlertsList({ initialAlerts, unreadCount }: {
         startTransition(async () => {
             await markAsRead(id);
             setAlerts(prev => prev.filter(a => a.id !== id));
+            router.refresh();
         });
     };
 

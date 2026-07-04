@@ -32,7 +32,7 @@ export default function NotificationBell() {
     useEffect(() => {
         fetchNotifs();
         // Optionnel: polling toutes les 2 minutes
-        const interval = setInterval(fetchNotifs, 120000);
+        const interval = setInterval(fetchNotifs, 60000);
         return () => clearInterval(interval);
     }, []);
 
@@ -63,10 +63,15 @@ export default function NotificationBell() {
         }
     };
 
+    const handleToggle = () => {
+        if (!isOpen) fetchNotifs();
+        setIsOpen(!isOpen);
+    };
+
     return (
         <div className="relative" ref={dropdownRef}>
-            <button 
-                onClick={() => setIsOpen(!isOpen)}
+            <button
+                onClick={handleToggle}
                 className={`relative p-2 rounded-xl transition-all duration-300 ${isOpen ? 'bg-white/10 text-white shadow-lg' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
             >
                 <Bell className={`h-5 w-5 ${unreadCount > 0 ? 'animate-swing' : ''}`} />
