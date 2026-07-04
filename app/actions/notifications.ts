@@ -74,9 +74,9 @@ export async function markAllAsRead() {
 }
 
 /**
- * Créer une notification (Utilitaire interne)
+ * Utilitaire interne — ne pas appeler depuis le client directement
  */
-export async function createNotification(userId: string, titre: string, message: string, type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' | 'URGENT' = 'INFO', link?: string) {
+async function createNotification(userId: string, titre: string, message: string, type: 'INFO' | 'SUCCESS' | 'WARNING' | 'ERROR' | 'URGENT' = 'INFO', link?: string) {
     try {
         const notif = await prisma.notification.create({
             data: {

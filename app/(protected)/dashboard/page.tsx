@@ -331,7 +331,7 @@ export default async function DashboardPage() {
                             </Link>
                         </div>
                         <div className="p-4">
-                            <UpcomingAppointments doctorId={userId} />
+                            <UpcomingAppointments doctorId={doctorId} />
                         </div>
                     </div>
                 </div>

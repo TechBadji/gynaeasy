@@ -9,6 +9,9 @@ import { authOptions } from "@/lib/auth";
  * Récupère les paramètres du cabinet
  */
 export async function getClinicSettings() {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) throw new Error("Non authentifié");
+
     let settings = await prisma.clinicSettings.findUnique({
         where: { id: "singleton" }
     });

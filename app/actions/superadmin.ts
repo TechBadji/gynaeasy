@@ -99,20 +99,18 @@ export async function getSuperAdminStats() {
 }
 
 async function getConsultationsByMonth() {
-    const months = [];
     const now = new Date();
-    for (let i = 5; i >= 0; i--) {
-        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-        const end = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-        const count = await prisma.consultation.count({
-            where: { createdAt: { gte: d, lt: end } },
-        });
-        months.push({
-            month: d.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" }),
-            count,
-        });
-    }
-    return months;
+    const ranges = Array.from({ length: 6 }, (_, i) => {
+        const d   = new Date(now.getFullYear(), now.getMonth() - (5 - i), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() - (5 - i) + 1, 1);
+        return { d, end, label: d.toLocaleDateString("fr-FR", { month: "short", year: "2-digit" }) };
+    });
+    const counts = await Promise.all(
+        ranges.map(({ d, end }) =>
+            prisma.consultation.count({ where: { createdAt: { gte: d, lt: end } } })
+        )
+    );
+    return ranges.map(({ label }, i) => ({ month: label, count: counts[i] }));
 }
 
 // ============================================
@@ -591,16 +589,31 @@ export async function createAdvertisement(data: {
     return JSON.parse(JSON.stringify(ad));
 }
 
-export async function updateAdvertisement(id: string, data: any) {
+type AdUpdateInput = {
+    partenaire?: string; titre?: string;
+    description?: string | null; imageUrl?: string | null;
+    lienClick?: string | null; couleur?: string | null;
+    dateDebut?: Date | string; dateFin?: Date | string; prixParJour?: number;
+    statut?: "ACTIF" | "PAUSE" | "TERMINE"; formatCible?: string[];
+};
+
+export async function updateAdvertisement(id: string, data: AdUpdateInput) {
     await checkSuperAdmin();
-    if (data.dateDebut && data.dateFin && data.prixParJour) {
-        const diffTime = Math.abs(new Date(data.dateFin).getTime() - new Date(data.dateDebut).getTime());
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-        data.prixTotal = diffDays * data.prixParJour;
+    const update: Record<string, unknown> = {};
+    const allowed: (keyof AdUpdateInput)[] = [
+        "partenaire", "titre", "description", "imageUrl", "lienClick",
+        "couleur", "statut", "formatCible", "prixParJour", "dateDebut", "dateFin",
+    ];
+    for (const key of allowed) {
+        if (data[key] !== undefined) update[key] = data[key];
     }
-    if (data.dateDebut) data.dateDebut = new Date(data.dateDebut);
-    if (data.dateFin) data.dateFin = new Date(data.dateFin);
-    const ad = await prisma.advertisement.update({ where: { id }, data });
+    if (update.dateDebut && !(update.dateDebut instanceof Date)) update.dateDebut = new Date(update.dateDebut as string);
+    if (update.dateFin   && !(update.dateFin   instanceof Date)) update.dateFin   = new Date(update.dateFin as string);
+    if (update.dateDebut && update.dateFin && update.prixParJour) {
+        const diffTime = Math.abs((update.dateFin as Date).getTime() - (update.dateDebut as Date).getTime());
+        update.prixTotal = (Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1) * (update.prixParJour as number);
+    }
+    const ad = await prisma.advertisement.update({ where: { id }, data: update });
     revalidatePath("/admin/super");
     revalidatePath("/abonnement");
     return JSON.parse(JSON.stringify(ad));
@@ -615,6 +628,8 @@ export async function deleteAdvertisement(id: string) {
 }
 
 export async function trackAdImpression(id: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return;
     try {
         await prisma.advertisement.update({
             where: { id },
@@ -624,6 +639,8 @@ export async function trackAdImpression(id: string) {
 }
 
 export async function trackAdClick(id: string) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return;
     try {
         await prisma.advertisement.update({
             where: { id },

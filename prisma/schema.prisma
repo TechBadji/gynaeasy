@@ -86,6 +86,9 @@ model Patient {
   grossesses          Grossesse[]
   treatingDoctor      User            @relation("TreatingDoctor", fields: [treatingDoctorId], references: [id])
   user                User?           @relation(fields: [userId], references: [id])
+
+  @@index([treatingDoctorId])
+  @@index([userId])
 }
 
 model AccessRequest {

@@ -24,6 +24,7 @@ async function checkAdmin() {
 }
 
 export async function getSettings() {
+    await checkAdmin();
     const p = await getPrisma();
 
     // Normal way if model exists
