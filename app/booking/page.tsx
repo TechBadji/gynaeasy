@@ -204,6 +204,11 @@ export default function BookingPage() {
                                         <p className="text-slate-400 font-medium">Aucun médecin n'est disponible en urgence pour le moment. Veuillez choisir une consultation standard.</p>
                                     </div>
                                 )}
+                                {bookingType === "CONSULTATION" && doctors.length === 0 && (
+                                    <div className="md:col-span-2 p-12 text-center bg-white border border-slate-100 rounded-[2.5rem]">
+                                        <p className="text-slate-400 font-medium">Aucun médecin disponible pour le moment. Veuillez réessayer ultérieurement ou contacter le cabinet directement.</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

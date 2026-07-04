@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { prisma } from '@/lib/prisma';
 import {
     Activity,
     Calendar,
@@ -25,7 +26,8 @@ import Image from 'next/image';
 import { SUBSCRIPTION_PLANS } from '@/config/plans';
 import { formatFCFA } from '@/lib/subscriptions';
 
-export default function Home() {
+export default async function Home() {
+    const doctorCount = await prisma.user.count({ where: { role: "MEDECIN", status: "ACTIVE" } });
     return (
         <div className="min-h-screen bg-white text-slate-900 font-sans selection:bg-violet-100 selection:text-violet-600">
             {/* --- NAVBAR --- */}
@@ -107,7 +109,7 @@ export default function Home() {
                                 <Shield className="h-5 w-5" /> 100% Sécurisé
                             </div>
                             <div className="flex items-center gap-2 font-bold text-slate-400">
-                                <Users className="h-5 w-5" /> +200 Médecins
+                                <Users className="h-5 w-5" /> +{doctorCount} Médecins
                             </div>
                         </div>
                     </div>
@@ -156,7 +158,7 @@ export default function Home() {
             <section id="features" className="py-24 bg-slate-50">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-                        <h2 className="text-4xl font-black tracking-tight text-slate-900">Tout ce dont votre cabinet à besoin.</h2>
+                        <h2 className="text-4xl font-black tracking-tight text-slate-900">Tout ce dont votre cabinet a besoin.</h2>
                         <p className="text-lg text-slate-500">
                             Une interface pensée par des médecins pour des médecins africains. Rapide, fluide et sans complexité inutile.
                         </p>

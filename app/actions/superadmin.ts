@@ -537,13 +537,17 @@ export async function getAuditLogs(limit = 50) {
 
 export async function getActiveDoctors() {
     try {
-        const doctors: any[] = await prisma.$queryRaw`
-            SELECT * FROM "User"
-            WHERE role = 'MEDECIN'
-              AND status = 'ACTIVE'
-            ORDER BY name ASC
-        `;
-        return doctors;
+        return await prisma.user.findMany({
+            where: { role: "MEDECIN", status: "ACTIVE" },
+            select: {
+                id: true,
+                name: true,
+                specialite: true,
+                clinicName: true,
+                isEmergencyAvailable: true,
+            },
+            orderBy: { name: "asc" },
+        });
     } catch (err) {
         console.error("getActiveDoctors Error:", err);
         return [];
