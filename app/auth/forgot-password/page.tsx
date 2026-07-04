@@ -16,8 +16,16 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
         setError("");
         try {
-            await requestPasswordReset(email);
-            setSent(true);
+            const result = await requestPasswordReset(email);
+            if (!result.success) {
+                if (result.error === "EMAIL_NOT_FOUND") {
+                    setError("Aucun compte ne correspond à cette adresse email. Vérifiez l'adresse ou contactez votre administrateur.");
+                } else {
+                    setError("Une erreur est survenue. Veuillez réessayer.");
+                }
+            } else {
+                setSent(true);
+            }
         } catch {
             setError("Une erreur est survenue. Veuillez réessayer.");
         } finally {
@@ -28,7 +36,7 @@ export default function ForgotPasswordPage() {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="flex justify-center text-pink-600">
+                <div className="flex justify-center text-violet-600">
                     <Activity className="h-12 w-12" />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">
@@ -49,16 +57,16 @@ export default function ForgotPasswordPage() {
                                 </svg>
                             </div>
                             <p className="text-sm text-slate-700 mb-4">
-                                Si un compte existe pour <b>{email}</b>, vous recevrez un email avec les instructions de réinitialisation dans quelques minutes.
+                                Un email avec les instructions de réinitialisation a été envoyé à <b>{email}</b>. Vérifiez également vos spams.
                             </p>
-                            <Link href="/auth/login" className="text-pink-600 hover:text-pink-500 text-sm font-medium">
+                            <Link href="/auth/login" className="text-violet-600 hover:text-violet-500 text-sm font-medium">
                                 ← Retour à la connexion
                             </Link>
                         </div>
                     ) : (
                         <form className="space-y-6" onSubmit={handleSubmit}>
                             {error && (
-                                <div className="bg-red-50 border-l-4 border-red-500 p-4">
+                                <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md">
                                     <p className="text-sm text-red-700">{error}</p>
                                 </div>
                             )}
@@ -73,7 +81,7 @@ export default function ForgotPasswordPage() {
                                         required
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                                         placeholder="votre@email.com"
                                     />
                                 </div>
@@ -82,13 +90,13 @@ export default function ForgotPasswordPage() {
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
+                                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50"
                                 >
                                     {isLoading ? "Envoi en cours..." : "Envoyer le lien"}
                                 </button>
                             </div>
                             <div className="text-center">
-                                <Link href="/auth/login" className="text-sm text-pink-600 hover:text-pink-500">
+                                <Link href="/auth/login" className="text-sm text-violet-600 hover:text-violet-500">
                                     ← Retour à la connexion
                                 </Link>
                             </div>
