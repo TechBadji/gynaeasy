@@ -10,13 +10,15 @@ export async function POST(req: NextRequest) {
     const rawBody  = await req.text();
     const signature = req.headers.get("wave-signature") ?? "";
 
-    // Vérifier la signature (skip si WAVE_WEBHOOK_SECRET non configuré)
-    if (process.env.WAVE_WEBHOOK_SECRET) {
-        const valid = await verifyWaveWebhookSignature(rawBody, signature);
-        if (!valid) {
-            console.warn("[Wave Webhook] Signature invalide");
-            return NextResponse.json({ error: "Signature invalide" }, { status: 401 });
-        }
+    // WAVE_WEBHOOK_SECRET obligatoire — rejeter si absent
+    if (!process.env.WAVE_WEBHOOK_SECRET) {
+        console.error("[Wave Webhook] WAVE_WEBHOOK_SECRET non configuré — webhook rejeté");
+        return NextResponse.json({ error: "Webhook non configuré" }, { status: 403 });
+    }
+    const valid = await verifyWaveWebhookSignature(rawBody, signature);
+    if (!valid) {
+        console.warn("[Wave Webhook] Signature invalide");
+        return NextResponse.json({ error: "Signature invalide" }, { status: 401 });
     }
 
     let event: any;

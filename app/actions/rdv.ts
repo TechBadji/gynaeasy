@@ -115,9 +115,11 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
 export async function getPatients() {
     const session = await getServerSession(authOptions);
     if (!session?.user) return [];
-    const userId = (session.user as any).id;
+    const userId   = (session.user as any).id;
+    const role     = (session.user as any).role;
+    const doctorId = await getEffectiveDoctorId(userId, role);
     return prisma.patient.findMany({
-        where: { userId },
+        where: { treatingDoctorId: doctorId },
         select: { id: true, nom: true, prenom: true, civilite: true },
         orderBy: { nom: "asc" },
     });

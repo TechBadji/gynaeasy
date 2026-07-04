@@ -10,6 +10,13 @@ export async function saveImagingReport(documentId: string, description: string,
     if (!session || (session.user as any).role !== "MEDECIN") {
         throw new Error("Seuls les médecins peuvent rédiger des comptes-rendus");
     }
+    const userId = (session.user as any).id;
+
+    const owned = await prisma.document.findFirst({
+        where: { id: documentId, patient: { treatingDoctorId: userId } },
+        select: { id: true },
+    });
+    if (!owned) throw new Error("Non autorisé");
 
     const updated = await prisma.document.update({
         where: { id: documentId },
@@ -37,6 +44,13 @@ export async function saveImagingCliche(documentId: string, url: string) {
     if (!session || (session.user as any).role !== "MEDECIN") {
         throw new Error("Non autorisé");
     }
+    const userId = (session.user as any).id;
+
+    const owned = await prisma.document.findFirst({
+        where: { id: documentId, patient: { treatingDoctorId: userId } },
+        select: { id: true },
+    });
+    if (!owned) throw new Error("Non autorisé");
 
     await prisma.document.update({
         where: { id: documentId },

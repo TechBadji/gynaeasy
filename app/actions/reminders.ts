@@ -6,6 +6,7 @@ import { sendWhatsApp } from "@/lib/whatsapp";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { format } from "date-fns";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 export async function getRemindersCount(date: Date) {
     const start = new Date(date);
@@ -90,9 +91,11 @@ export async function getPatientsBroadcastList() {
 
     if (!["MEDECIN", "SECRETAIRE", "ADMIN"].includes(role)) return [];
 
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
     const patients = await prisma.patient.findMany({
         where: {
-            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            ...(role !== "ADMIN" ? { treatingDoctorId: doctorId } : {}),
             telephone: { not: null, notIn: [""] },
         },
         select: {
@@ -172,11 +175,13 @@ export async function broadcastSMS(patientIds: string[], message: string) {
         return { success: false, message: "Sélection invalide" };
     }
 
-    // Ownership: MEDECIN limited to own patients, SECRETAIRE/ADMIN see all
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
+    // Ownership: MEDECIN et SECRETAIRE filtrés sur leur médecin, ADMIN voit tout
     const patients = await prisma.patient.findMany({
         where: {
             id: { in: patientIds },
-            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            ...(role !== "ADMIN" ? { treatingDoctorId: doctorId } : {}),
             telephone: { not: null, notIn: [""] },
         },
         select: { id: true, nom: true, telephone: true },
@@ -229,10 +234,12 @@ export async function broadcastMessage(
 
     if (!channels.length) return { success: false, message: "Aucun canal sélectionné" };
 
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
     const patients = await prisma.patient.findMany({
         where: {
             id: { in: patientIds },
-            ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+            ...(role !== "ADMIN" ? { treatingDoctorId: doctorId } : {}),
             telephone: { not: null, notIn: [""] },
         },
         select: { id: true, nom: true, telephone: true },

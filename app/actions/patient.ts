@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { sendSMS } from "@/lib/sms";
 import { sendAccessRequestNotificationEmail } from "@/lib/mail";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 // Schéma de validation Zod pour la création d'un patient
 const PatientSchema = z.object({
@@ -79,10 +80,13 @@ export async function createPatient(
 
     try {
         const userId = (session.user as any).id;
+        const role   = (session.user as any).role;
         if (!userId) {
             return { success: false, message: "Session invalide : ID utilisateur manquant. Reconnectez-vous." };
         }
 
+        // Pour une secrétaire, le patient est rattaché au médecin lié
+        const doctorId = await getEffectiveDoctorId(userId, role);
         const codePatient = await generateUniqueCodePatient();
 
         await prisma.patient.create({
@@ -95,11 +99,11 @@ export async function createPatient(
                 email: data.email || null,
                 telephone: data.telephone || null,
                 isPublic: data.isPublic,
-                treatingDoctorId: userId, // Le médecin créateur devient le médecin traitant par défaut
+                treatingDoctorId: doctorId,
                 groupeSanguin: (data.groupeSanguin as any) || null,
                 rhesus: data.rhesus || null,
                 antecedentsMedicaux: data.antecedentsMedicaux ? { texte: data.antecedentsMedicaux } : undefined,
-                userId,
+                userId: doctorId,
             },
         });
 
@@ -218,12 +222,15 @@ export async function searchPatients(query: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user) return [];
     const userId = (session.user as any).id;
+    const role   = (session.user as any).role;
 
     if (!query || query.length < 2) return [];
 
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
     return await prisma.patient.findMany({
         where: {
-            userId,
+            treatingDoctorId: doctorId,
             OR: [
                 { nom: { contains: query, mode: "insensitive" } },
                 { prenom: { contains: query, mode: "insensitive" } },

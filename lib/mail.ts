@@ -46,8 +46,7 @@ export const sendVerificationEmail = async (email: string, name: string, token: 
 export const sendCredentialsEmail = async (email: string, name: string, password: string) => {
     const loginLink = `${domain}/auth/login`;
     if (!process.env.SMTP_USER) {
-        console.warn("⚠️ SMTP_USER manquant. Email d'identifiants non envoyé.");
-        console.log(`🔑 Identifiants pour ${name} (${email}) : Pass: ${password}`);
+        console.warn(`⚠️ SMTP_USER manquant. Email d'identifiants non envoyé pour ${email}.`);
         return;
     }
     await sendMail(email, 'Votre compte Gynaeasy est actif !', `
