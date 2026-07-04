@@ -244,7 +244,7 @@ export default function LoginPage() {
                     Gynaeasy
                 </h2>
                 <p className="mt-2 text-center text-sm text-slate-600">
-                    Espace d&apos;authentification HDS
+                    Espace d&apos;authentification sécurisé
                 </p>
             </div>
 

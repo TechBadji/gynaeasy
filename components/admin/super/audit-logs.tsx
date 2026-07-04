@@ -33,7 +33,7 @@ export default function SuperAdminAudit({ logs }: { logs: any[] }) {
             <div>
                 <h1 className="text-2xl font-bold text-white">Journal d&apos;Audit</h1>
                 <p className="text-slate-400 text-sm mt-1">
-                    Traçabilité complète des actions — conformité HDS
+                    Traçabilité complète des actions
                 </p>
             </div>
 

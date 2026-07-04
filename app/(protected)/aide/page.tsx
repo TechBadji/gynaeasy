@@ -39,8 +39,8 @@ export default function AidePage() {
             a: "Oui, Gynaeasy supporte l'import via fichiers Excel/CSV. Contactez notre support technique pour un accompagnement personnalisé." 
         },
         { 
-            q: "Mes données sont-elles hébergées sur des serveurs HDS ?", 
-            a: "Absolument. Gynaeasy utilise des serveurs certifiés Hébergement de Données de Santé (HDS) pour garantir une sécurité maximale." 
+            q: "Mes données sont-elles hébergées sur des serveurs sécurisés ?",
+            a: "Absolument. Gynaeasy utilise des serveurs sécurisés situés en Union Européenne avec chiffrement AES-256 pour garantir une sécurité maximale."
         },
         { 
             q: "Comment gérer les droits d'accès de ma secrétaire ?", 
@@ -65,7 +65,7 @@ export default function AidePage() {
                 <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent pointer-events-none" />
                 <div className="relative z-10 max-w-2xl">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-black uppercase tracking-widest text-pink-300 mb-6">
-                        <ShieldCheck className="h-3 w-3" /> Support Prioritaire HDS
+                        <ShieldCheck className="h-3 w-3" /> Support Prioritaire
                     </div>
                     <h1 className="text-5xl font-black tracking-tight mb-6">Comment pouvons-nous vous aider ?</h1>
                     <p className="text-xl text-slate-300 font-medium mb-10 leading-relaxed">Explorez nos guides détaillés ou recherchez une solution spécifique pour optimiser la gestion de votre cabinet.</p>

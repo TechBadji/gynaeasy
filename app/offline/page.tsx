@@ -27,7 +27,7 @@ export default function OfflinePage() {
                 </button>
 
                 <p className="text-slate-600 text-xs font-medium">
-                    Gynaeasy — Logiciel Gynécologie HDS
+                    Gynaeasy — Logiciel Gynécologie
                 </p>
             </div>
         </div>

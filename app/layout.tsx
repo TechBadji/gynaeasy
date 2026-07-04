@@ -13,8 +13,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-    title: 'Gynaeasy - Logiciel Gynécologie HDS',
-    description: 'SaaS Gynécologique HDS - Suivis, CCAM, Ordonnances',
+    title: 'Gynaeasy - Logiciel Gynécologie',
+    description: 'SaaS Gynécologique - Suivis, CCAM, Ordonnances',
     manifest: '/manifest.json',
     appleWebApp: {
         capable: true,

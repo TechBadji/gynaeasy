@@ -48,7 +48,7 @@ export default async function ChangePasswordPage() {
                         <div className="mt-10 pt-10 border-t border-slate-100 flex items-center justify-center gap-4 text-slate-400">
                            <div className="flex flex-col items-center gap-1">
                                 <Shield className="h-5 w-5 text-violet-500/50" />
-                                <span className="text-[9px] font-black uppercase tracking-widest">Sécurité HDS</span>
+                                <span className="text-[9px] font-black uppercase tracking-widest">Sécurité</span>
                            </div>
                            <div className="h-8 w-[1px] bg-slate-100 mx-2"></div>
                            <div className="flex flex-col items-center gap-1">

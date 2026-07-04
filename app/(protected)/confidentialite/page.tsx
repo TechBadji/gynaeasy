@@ -26,10 +26,10 @@ export default function PrivacyPage() {
     const privacySections = [
         {
             id: "hds",
-            title: "Hébergement & Sécurité HDS",
+            title: "Hébergement & Sécurité",
             icon: <Database className="h-6 w-6 text-violet-600" />,
-            content: "Toutes les données de santé traitées par Gynaeasy sont stockées sur des serveurs certifiés HDS (Hébergement de Données de Santé) situés en Union Européenne. Nous appliquons un chiffrement AES-256 pour les données au repos et le protocole TLS 1.3 pour tous les échanges.",
-            badges: ["Certifié HDS", "Chiffrement AES-256", "TLS 1.3"]
+            content: "Toutes les données de santé traitées par Gynaeasy sont stockées sur des serveurs sécurisés situés en Union Européenne. Nous appliquons un chiffrement AES-256 pour les données au repos et le protocole TLS 1.3 pour tous les échanges.",
+            badges: ["Chiffrement AES-256", "TLS 1.3", "Serveurs UE"]
         },
         {
             id: "nature",

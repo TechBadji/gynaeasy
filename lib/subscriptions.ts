@@ -5,7 +5,7 @@ import { SUBSCRIPTION_PLANS } from "@/config/plans";
  */
 
 export type FeatureKey = 
-  | "Agenda & Dossier Patient HDS"
+  | "Agenda & Dossier Spécialisé"
   | "SMS Rappels : Pack de 100 SMS inclus"
   | "300 SMS de rappel inclus / mois"
   | "1000 SMS de rappel inclus / mois"

@@ -104,7 +104,7 @@ export default function Home() {
 
                         <div className="pt-8 flex flex-wrap items-center justify-center lg:justify-start gap-8 opacity-60 grayscale hover:grayscale-0 transition-all">
                             <div className="flex items-center gap-2 font-bold text-slate-400">
-                                <Shield className="h-5 w-5" /> 100% Sécurisé HDS
+                                <Shield className="h-5 w-5" /> 100% Sécurisé
                             </div>
                             <div className="flex items-center gap-2 font-bold text-slate-400">
                                 <Users className="h-5 w-5" /> +200 Médecins
@@ -236,7 +236,7 @@ export default function Home() {
                                         <h3 className="text-2xl font-bold text-white">Données Sécurisées</h3>
                                     </div>
                                     <p className="text-slate-400 leading-relaxed font-medium">
-                                        Vos données de santé sont chiffrées de bout en bout et hébergées sur des serveurs certifiés HDS (Hébergeur de Données de Santé).
+                                        Vos données de santé sont chiffrées de bout en bout et hébergées sur des serveurs sécurisés situés en Union Européenne.
                                     </p>
                                     <div className="grid grid-cols-2 gap-4 pt-4">
                                         <div className="p-4 bg-white/5 rounded-2xl border border-white/10">
