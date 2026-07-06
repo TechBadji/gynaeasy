@@ -9,7 +9,7 @@ import {
     Plus, X, Loader2, CalendarPlus, Trash2, ExternalLink,
     Clock, Globe, Phone, User, CalendarCheck, ChevronLeft,
     ChevronRight, LayoutGrid, CalendarDays, List, CheckCircle2,
-    MessageSquare, Video,
+    MessageSquare, Video, Sparkles, Mic, MicOff,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createRdv, cancelRdv, type RdvFormState } from "@/app/actions/rdv";
@@ -118,6 +118,14 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
     const [isNewPatient, setIsNewPatient]       = useState(false);
     const [newPatientInfo, setNewPatientInfo]   = useState({ nom: "", prenom: "" });
 
+    // IA RDV
+    const [aiText, setAiText]               = useState("");
+    const [aiLoading, setAiLoading]         = useState(false);
+    const [aiSuggestion, setAiSuggestion]   = useState<string | null>(null);
+    const [aiRecording, setAiRecording]     = useState(false);
+    const [prefilledMotif, setPrefilledMotif] = useState("");
+    const aiRecognitionRef                  = useRef<any>(null);
+
     // Modal "Détail RDV"
     const [selectedEvent, setSelectedEvent]   = useState<CalendarEvent | null>(null);
     const [isDetailOpen, setIsDetailOpen]     = useState(false);
@@ -141,7 +149,22 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         if (params.get("new") === "true") {
-            openNewModal();
+            const aiDate   = params.get("aiDate");
+            const aiTime   = params.get("aiTime");
+            const aiType   = params.get("aiType") as RdvTypeValue | null;
+            const aiMotif  = params.get("aiMotif");
+            const aiPatient = params.get("aiPatient");
+
+            openNewModal(aiDate ?? undefined, aiTime ?? undefined);
+
+            if (aiType && RDV_TYPES.some((t) => t.value === aiType)) setSelectedType(aiType);
+            if (aiMotif)   setPrefilledMotif(decodeURIComponent(aiMotif));
+            if (aiPatient) {
+                const name = decodeURIComponent(aiPatient);
+                setSearch(name);
+                setAiSuggestion(`Pré-rempli par l'IA · ${[aiDate, aiTime, aiType !== "CONSULTATION" ? aiType : null, aiMotif].filter(Boolean).join(" · ")}`);
+            }
+
             const pId = params.get("patientId");
             if (pId) {
                 const found = patients.find((p) => p.id === pId);
@@ -165,9 +188,77 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
         setSelectedPatient(null);
         setIsNewPatient(false);
         setNewPatientInfo({ nom: "", prenom: "" });
+        setPrefilledMotif("");
+        setAiText("");
+        setAiSuggestion(null);
         setState(initialState);
         setModalKey((k) => k + 1);
         setIsOpen(true);
+    };
+
+    const handleAiPrefill = async () => {
+        if (!aiText.trim()) return;
+        setAiLoading(true);
+        setAiSuggestion(null);
+        try {
+            const res = await fetch("/api/ai-rdv", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: aiText }),
+            });
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.error || "Erreur IA");
+            }
+            const data = await res.json();
+
+            // Mettre à jour les états AVANT de remonter le formulaire
+            if (data.date) setPrefilledDate(data.date);
+            if (data.time) setPrefilledTime(data.time);
+            if (data.type) setSelectedType(data.type);
+            if (data.motif) setPrefilledMotif(data.motif);
+            if (data.patientName) {
+                setSearch(data.patientName);
+                setShowDropdown(true);
+            }
+
+            // Remonter le formulaire avec les nouvelles valeurs par défaut
+            setModalKey((k) => k + 1);
+
+            // Résumé de ce qui a été pré-rempli
+            const parts: string[] = [];
+            if (data.patientName) parts.push(`Patient : ${data.patientName}`);
+            if (data.date) parts.push(`Date : ${data.date}`);
+            if (data.time) parts.push(`Heure : ${data.time}`);
+            if (data.type && data.type !== "CONSULTATION") parts.push(`Type : ${data.type}`);
+            if (data.motif) parts.push(`Motif : ${data.motif}`);
+            setAiSuggestion(parts.length > 0 ? parts.join(" · ") : "Formulaire pré-rempli");
+        } catch (err: any) {
+            toast.error(err.message || "Impossible d'analyser le texte");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const toggleAiMic = () => {
+        if (aiRecording) {
+            aiRecognitionRef.current?.stop();
+            setAiRecording(false);
+            return;
+        }
+        const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+        if (!SR) { toast.error("Reconnaissance vocale non supportée. Utilisez Chrome ou Edge."); return; }
+        const rec = new SR();
+        rec.lang = "fr-FR";
+        rec.onresult = (e: any) => {
+            const transcript = Array.from(e.results).map((r: any) => r[0].transcript).join(" ");
+            setAiText(transcript);
+        };
+        rec.onend = () => setAiRecording(false);
+        rec.onerror = () => setAiRecording(false);
+        aiRecognitionRef.current = rec;
+        rec.start();
+        setAiRecording(true);
     };
 
     const closeNewModal = () => {
@@ -550,6 +641,53 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
                             </button>
                         </div>
 
+                        {/* Zone IA — dictée ou texte libre */}
+                        <div className="px-6 py-4 border-b border-slate-100 bg-violet-50/40 space-y-3">
+                            <div className="flex items-center gap-2">
+                                <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+                                <span className="text-[10px] font-black text-violet-600 uppercase tracking-widest">Assistant IA — Prise de RDV rapide</span>
+                            </div>
+                            <div className="flex gap-2">
+                                <div className="flex-1 relative">
+                                    <input
+                                        type="text"
+                                        value={aiText}
+                                        onChange={(e) => setAiText(e.target.value)}
+                                        onKeyDown={(e) => e.key === "Enter" && handleAiPrefill()}
+                                        placeholder='Ex: "RDV Mme Diallo demain à 14h pour suivi grossesse"'
+                                        className="w-full bg-white border border-violet-200 rounded-xl px-3 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400/30 focus:border-violet-400 pr-10"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={toggleAiMic}
+                                        className={`absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors ${aiRecording ? "text-red-500" : "text-slate-400 hover:text-violet-500"}`}
+                                        title={aiRecording ? "Arrêter" : "Dicter"}
+                                    >
+                                        {aiRecording
+                                            ? <MicOff className="h-4 w-4" />
+                                            : <Mic className="h-4 w-4" />}
+                                    </button>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleAiPrefill}
+                                    disabled={!aiText.trim() || aiLoading}
+                                    className="flex items-center gap-1.5 px-4 py-2.5 bg-violet-600 hover:bg-violet-700 disabled:opacity-40 text-white text-xs font-black rounded-xl transition-all whitespace-nowrap"
+                                >
+                                    {aiLoading
+                                        ? <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        : <Sparkles className="h-3.5 w-3.5" />}
+                                    Analyser
+                                </button>
+                            </div>
+                            {aiSuggestion && (
+                                <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
+                                    <p className="text-xs text-emerald-700 font-medium">{aiSuggestion}</p>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex-1 overflow-y-auto p-6">
                             <form key={modalKey} ref={formRef} onSubmit={handleSubmit} id="new-rdv-form" className="space-y-5">
                                 {state.message && (
@@ -710,6 +848,7 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
                                     <label htmlFor="motif" className={labelClass}>Motif</label>
                                     <textarea id="motif" name="motif" rows={2}
                                         className={inputClass}
+                                        defaultValue={prefilledMotif}
                                         placeholder="Douleurs, suivi post-op, contrôle de grossesse…" />
                                 </div>
                             </form>

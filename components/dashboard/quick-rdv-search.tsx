@@ -43,7 +43,7 @@ export default function QuickRdvSearch() {
                     </div>
                     <input
                         type="text"
-                        className="block w-full pl-10 pr-3 py-3 border-2 border-indigo-50 rounded-xl leading-5 bg-indigo-50/30 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all font-medium"
+                        className="block w-full pl-10 pr-3 py-3 border-2 border-violet-50 rounded-xl leading-5 bg-violet-50/30 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-violet-500 focus:border-violet-500 sm:text-sm transition-all font-medium"
                         placeholder="Rechercher un patient (Nom ou Code)..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
@@ -52,7 +52,7 @@ export default function QuickRdvSearch() {
                 </div>
                 <Link 
                     href="/agenda?new=true" 
-                    className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all text-center flex items-center gap-2 whitespace-nowrap"
+                    className="bg-violet-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-violet-100 hover:bg-violet-700 transition-all text-center flex items-center gap-2 whitespace-nowrap"
                 >
                     <CalendarPlus className="h-5 w-5" />
                     <span className="hidden sm:inline">Nouveau rendez vous</span>
@@ -71,19 +71,19 @@ export default function QuickRdvSearch() {
                         <Link
                             key={patient.id}
                             href={`/agenda?new=true&patientId=${patient.id}&patientName=${encodeURIComponent(`${patient.civilite} ${patient.nom.toUpperCase()} ${patient.prenom}`)}`}
-                            className="flex items-center gap-3 px-4 py-3 hover:bg-indigo-50 transition-colors group border-b border-slate-50 last:border-0"
+                            className="flex items-center gap-3 px-4 py-3 hover:bg-violet-50 transition-colors group border-b border-slate-50 last:border-0"
                             onClick={() => setShowResults(false)}
                         >
-                            <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            <div className="h-10 w-10 rounded-full bg-violet-100 flex items-center justify-center text-violet-600 group-hover:bg-violet-600 group-hover:text-white transition-colors">
                                 <User className="h-5 w-5" />
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm font-bold text-slate-900">
                                     {patient.civilite} {patient.nom.toUpperCase()} {patient.prenom}
                                 </p>
-                                <p className="text-[10px] font-mono font-medium text-indigo-500">#{patient.codePatient}</p>
+                                <p className="text-[10px] font-mono font-medium text-violet-500">#{patient.codePatient}</p>
                             </div>
-                            <CalendarPlus className="h-4 w-4 text-slate-300 group-hover:text-indigo-600 transition-colors" />
+                            <CalendarPlus className="h-4 w-4 text-slate-300 group-hover:text-violet-600 transition-colors" />
                         </Link>
                     ))}
                 </div>
@@ -94,7 +94,7 @@ export default function QuickRdvSearch() {
                     <p className="text-sm text-slate-500">Aucun patient ne correspond à "{query}"</p>
                     <Link 
                         href="/patients"
-                        className="mt-2 text-xs font-bold text-indigo-600 hover:underline inline-block"
+                        className="mt-2 text-xs font-bold text-violet-600 hover:underline inline-block"
                     >
                         + Créer une nouvelle fiche patient
                     </Link>

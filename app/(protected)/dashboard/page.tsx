@@ -7,12 +7,12 @@ import Link from "next/link";
 import {
     Users, CalendarDays, Activity, TrendingUp,
     ArrowUpRight, ArrowDownRight, UserPlus, Calendar,
-    BarChart3, MessageSquare, CreditCard, Megaphone,
+    BarChart3, MessageSquare, CreditCard, Sparkles,
 } from "lucide-react";
 import UpcomingAppointments from "@/components/dashboard/upcoming-appointments";
 import AlertsList from "@/components/dashboard/alerts-list";
 import AccessRequestsList from "@/components/dashboard/access-requests-list";
-import QuickRdvSearch from "@/components/dashboard/quick-rdv-search";
+import SecretaireAiRdv from "@/components/dashboard/secretaire-ai-rdv";
 import SmsRemindersCard from "@/components/dashboard/sms-reminders-card";
 import NextAppointmentCard from "@/components/dashboard/next-appointment-card";
 import GrossessesProches from "@/components/dashboard/grossesses-proches";
@@ -283,15 +283,15 @@ export default async function DashboardPage() {
             ══════════════════════════════════════════ */}
             {role === "SECRETAIRE" && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                    <div className="lg:col-span-2 bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-6 text-white shadow-lg shadow-indigo-100">
+                    <div className="lg:col-span-2 bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-6 text-white shadow-lg shadow-violet-200">
                         <div className="mb-5">
                             <h2 className="text-lg font-black flex items-center gap-2">
-                                <Megaphone className="h-5 w-5 text-indigo-200" />
-                                Planifier un rendez-vous
+                                <Sparkles className="h-5 w-5 text-violet-200" />
+                                Assistant IA — Prise de RDV
                             </h2>
-                            <p className="text-indigo-200 text-sm mt-0.5">Recherchez un patient puis sélectionnez un créneau dans l&apos;agenda</p>
+                            <p className="text-violet-200 text-sm mt-0.5">Dictez ou tapez une demande en langage naturel, l&apos;IA remplit le formulaire</p>
                         </div>
-                        <QuickRdvSearch />
+                        <SecretaireAiRdv />
                     </div>
                     <SmsRemindersCard />
                 </div>
