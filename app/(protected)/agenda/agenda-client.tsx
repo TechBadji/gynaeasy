@@ -122,9 +122,39 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
     const [aiText, setAiText]               = useState("");
     const [aiLoading, setAiLoading]         = useState(false);
     const [aiSuggestion, setAiSuggestion]   = useState<string | null>(null);
+    const [aiWarning, setAiWarning]         = useState<string | null>(null);
     const [aiRecording, setAiRecording]     = useState(false);
     const [prefilledMotif, setPrefilledMotif] = useState("");
     const aiRecognitionRef                  = useRef<any>(null);
+
+    // Résolution patient depuis nom IA — gère homonymes
+    const resolveAiPatient = (rawName: string) => {
+        const cleaned = rawName.toLowerCase()
+            .replace(/^(mme|mlle|m\.|m\s|dr\.?|pr\.?)\s*/i, "").trim();
+        const matches = patients.filter((p) => {
+            const nom    = p.nom.toLowerCase();
+            const prenom = p.prenom.toLowerCase();
+            return cleaned.includes(nom) || cleaned.includes(prenom) ||
+                   nom.includes(cleaned)  || prenom.includes(cleaned);
+        });
+        if (matches.length === 1) {
+            setSelectedPatient(matches[0]);
+            setSearch(`${matches[0].civilite} ${matches[0].nom.toUpperCase()} ${matches[0].prenom}`);
+            setAiWarning(null);
+        } else if (matches.length > 1) {
+            // Homonymes : montrer le dropdown, laisser la secrétaire choisir
+            setSearch(cleaned);
+            setShowDropdown(true);
+            setAiWarning(`⚠️ ${matches.length} patients correspondent à "${rawName}" — sélectionnez le bon dans la liste ci-dessous`);
+        } else {
+            // Inconnu → nouveau patient pré-rempli
+            setIsNewPatient(true);
+            const words = cleaned.split(/\s+/).filter(Boolean);
+            setNewPatientInfo({ nom: (words[0] ?? "").toUpperCase(), prenom: words.slice(1).join(" ") });
+            setSearch(rawName);
+            setAiWarning(null);
+        }
+    };
 
     // Modal "Détail RDV"
     const [selectedEvent, setSelectedEvent]   = useState<CalendarEvent | null>(null);
@@ -161,29 +191,7 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
             if (aiMotif)   setPrefilledMotif(decodeURIComponent(aiMotif));
             if (aiPatient) {
                 const rawName = decodeURIComponent(aiPatient);
-                // Nettoyer la civilité pour la recherche
-                const cleaned = rawName.toLowerCase()
-                    .replace(/^(mme|mlle|m\.|m\s|dr\.?|pr\.?)\s*/i, "").trim();
-                // Chercher un patient existant par correspondance approchée
-                const matched = patients.find((p) => {
-                    const nom    = p.nom.toLowerCase();
-                    const prenom = p.prenom.toLowerCase();
-                    return cleaned.includes(nom) || cleaned.includes(prenom) ||
-                           nom.includes(cleaned)  || prenom.includes(cleaned);
-                });
-                if (matched) {
-                    setSelectedPatient(matched);
-                    setSearch(`${matched.civilite} ${matched.nom.toUpperCase()} ${matched.prenom}`);
-                } else {
-                    // Patient inconnu → mode nouveau patient avec infos pré-remplies
-                    setIsNewPatient(true);
-                    const words = cleaned.split(/\s+/).filter(Boolean);
-                    setNewPatientInfo({
-                        nom:    (words[0] ?? "").toUpperCase(),
-                        prenom: words.slice(1).join(" "),
-                    });
-                    setSearch(rawName);
-                }
+                resolveAiPatient(rawName);
                 setAiSuggestion(`Pré-rempli par l'IA · ${[aiDate, aiTime, aiType !== "CONSULTATION" ? aiType : null, aiMotif].filter(Boolean).join(" · ")}`);
             }
 
@@ -240,26 +248,7 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
             if (data.type) setSelectedType(data.type);
             if (data.motif) setPrefilledMotif(data.motif);
             if (data.patientName) {
-                const cleaned = data.patientName.toLowerCase()
-                    .replace(/^(mme|mlle|m\.|m\s|dr\.?|pr\.?)\s*/i, "").trim();
-                const matched = patients.find((p) => {
-                    const nom    = p.nom.toLowerCase();
-                    const prenom = p.prenom.toLowerCase();
-                    return cleaned.includes(nom) || cleaned.includes(prenom) ||
-                           nom.includes(cleaned)  || prenom.includes(cleaned);
-                });
-                if (matched) {
-                    setSelectedPatient(matched);
-                    setSearch(`${matched.civilite} ${matched.nom.toUpperCase()} ${matched.prenom}`);
-                } else {
-                    setIsNewPatient(true);
-                    const words = cleaned.split(/\s+/).filter(Boolean);
-                    setNewPatientInfo({
-                        nom:    (words[0] ?? "").toUpperCase(),
-                        prenom: words.slice(1).join(" "),
-                    });
-                    setSearch(data.patientName);
-                }
+                resolveAiPatient(data.patientName);
             }
 
             // Remonter le formulaire avec les nouvelles valeurs par défaut
@@ -720,7 +709,13 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
                                     Analyser
                                 </button>
                             </div>
-                            {aiSuggestion && (
+                            {aiWarning && (
+                                <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+                                    <span className="text-amber-500 flex-shrink-0 mt-0.5">⚠️</span>
+                                    <p className="text-xs text-amber-700 font-medium">{aiWarning}</p>
+                                </div>
+                            )}
+                            {aiSuggestion && !aiWarning && (
                                 <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
                                     <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 flex-shrink-0" />
                                     <p className="text-xs text-emerald-700 font-medium">{aiSuggestion}</p>
@@ -816,6 +811,7 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
                                                                 setSelectedPatient(p);
                                                                 setSearch(`${p.civilite} ${p.nom.toUpperCase()} ${p.prenom}`);
                                                                 setShowDropdown(false);
+                                                                setAiWarning(null);
                                                             }}
                                                             className="w-full text-left px-4 py-2.5 text-sm hover:bg-violet-50 hover:text-violet-700 transition-colors border-b border-slate-50 last:border-0">
                                                             <span className="font-bold">{p.civilite} {p.nom.toUpperCase()} {p.prenom}</span>
