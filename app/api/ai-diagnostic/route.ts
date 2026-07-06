@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import Anthropic from "@anthropic-ai/sdk";
+import Groq from "groq-sdk";
 
 export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
@@ -45,8 +45,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Consultation introuvable" }, { status: 404 });
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-        return NextResponse.json({ error: "ANTHROPIC_API_KEY non configurée" }, { status: 503 });
+    if (!process.env.GROQ_API_KEY) {
+        return NextResponse.json({ error: "GROQ_API_KEY non configurée" }, { status: 503 });
     }
 
     const patient = consultation.patient;
@@ -58,12 +58,16 @@ export async function POST(req: NextRequest) {
         ? JSON.stringify(patient.antecedentsMedicaux, null, 2)
         : "Non renseignés";
 
-    const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+    const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
-    const stream = await anthropic.messages.stream({
-        model: "claude-sonnet-4-6",
+    const stream = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
         max_tokens: 1800,
-        system: `Tu es un assistant médical spécialisé en gynécologie-obstétrique.
+        stream: true,
+        messages: [
+            {
+                role: "system",
+                content: `Tu es un assistant médical spécialisé en gynécologie-obstétrique.
 Tu aides le médecin à structurer ses observations, formuler des hypothèses diagnostiques et rédiger une ordonnance sur la base des symptômes qu'il décrit.
 
 RÈGLES IMPORTANTES :
@@ -86,7 +90,7 @@ Utilise EXACTEMENT ce format de réponse (ne modifie pas les titres de sections)
 
 ## Notes pour le dossier
 [Résumé clinique structuré à intégrer dans le compte-rendu de consultation]`,
-        messages: [
+            },
             {
                 role: "user",
                 content: `Patiente : ${patient.civilite} ${patient.prenom} ${patient.nom}, ${age} ans
@@ -104,13 +108,9 @@ Dictée du médecin (symptômes et signes cliniques) :
     const readable = new ReadableStream({
         async start(controller) {
             try {
-                for await (const event of stream) {
-                    if (
-                        event.type === "content_block_delta" &&
-                        event.delta.type === "text_delta"
-                    ) {
-                        controller.enqueue(encoder.encode(event.delta.text));
-                    }
+                for await (const chunk of stream) {
+                    const text = chunk.choices[0]?.delta?.content ?? "";
+                    if (text) controller.enqueue(encoder.encode(text));
                 }
             } catch (err) {
                 controller.error(err);
