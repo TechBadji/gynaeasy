@@ -160,8 +160,30 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
             if (aiType && RDV_TYPES.some((t) => t.value === aiType)) setSelectedType(aiType);
             if (aiMotif)   setPrefilledMotif(decodeURIComponent(aiMotif));
             if (aiPatient) {
-                const name = decodeURIComponent(aiPatient);
-                setSearch(name);
+                const rawName = decodeURIComponent(aiPatient);
+                // Nettoyer la civilité pour la recherche
+                const cleaned = rawName.toLowerCase()
+                    .replace(/^(mme|mlle|m\.|m\s|dr\.?|pr\.?)\s*/i, "").trim();
+                // Chercher un patient existant par correspondance approchée
+                const matched = patients.find((p) => {
+                    const nom    = p.nom.toLowerCase();
+                    const prenom = p.prenom.toLowerCase();
+                    return cleaned.includes(nom) || cleaned.includes(prenom) ||
+                           nom.includes(cleaned)  || prenom.includes(cleaned);
+                });
+                if (matched) {
+                    setSelectedPatient(matched);
+                    setSearch(`${matched.civilite} ${matched.nom.toUpperCase()} ${matched.prenom}`);
+                } else {
+                    // Patient inconnu → mode nouveau patient avec infos pré-remplies
+                    setIsNewPatient(true);
+                    const words = cleaned.split(/\s+/).filter(Boolean);
+                    setNewPatientInfo({
+                        nom:    (words[0] ?? "").toUpperCase(),
+                        prenom: words.slice(1).join(" "),
+                    });
+                    setSearch(rawName);
+                }
                 setAiSuggestion(`Pré-rempli par l'IA · ${[aiDate, aiTime, aiType !== "CONSULTATION" ? aiType : null, aiMotif].filter(Boolean).join(" · ")}`);
             }
 
@@ -218,8 +240,26 @@ export default function AgendaClient({ initialEvents, patients, stats }: Props) 
             if (data.type) setSelectedType(data.type);
             if (data.motif) setPrefilledMotif(data.motif);
             if (data.patientName) {
-                setSearch(data.patientName);
-                setShowDropdown(true);
+                const cleaned = data.patientName.toLowerCase()
+                    .replace(/^(mme|mlle|m\.|m\s|dr\.?|pr\.?)\s*/i, "").trim();
+                const matched = patients.find((p) => {
+                    const nom    = p.nom.toLowerCase();
+                    const prenom = p.prenom.toLowerCase();
+                    return cleaned.includes(nom) || cleaned.includes(prenom) ||
+                           nom.includes(cleaned)  || prenom.includes(cleaned);
+                });
+                if (matched) {
+                    setSelectedPatient(matched);
+                    setSearch(`${matched.civilite} ${matched.nom.toUpperCase()} ${matched.prenom}`);
+                } else {
+                    setIsNewPatient(true);
+                    const words = cleaned.split(/\s+/).filter(Boolean);
+                    setNewPatientInfo({
+                        nom:    (words[0] ?? "").toUpperCase(),
+                        prenom: words.slice(1).join(" "),
+                    });
+                    setSearch(data.patientName);
+                }
             }
 
             // Remonter le formulaire avec les nouvelles valeurs par défaut
