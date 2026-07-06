@@ -8,12 +8,17 @@ export default async function InventairePage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/api/auth/signin");
 
-    // Récupérer les articles en stock
-    const stockItems = await prisma.stockItem.findMany({
-        orderBy: { nom: "asc" }
-    });
+    const userId = (session.user as any).id;
 
-    return (
-        <InventoryDashboard initialItems={stockItems} />
-    );
+    let stockItems: any[] = [];
+    try {
+        stockItems = await prisma.stockItem.findMany({
+            where: { userId },
+            orderBy: { nom: "asc" },
+        });
+    } catch (err) {
+        console.error("Inventaire fetch error:", err);
+    }
+
+    return <InventoryDashboard initialItems={stockItems} />;
 }
