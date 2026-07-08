@@ -179,15 +179,15 @@ export default async function Home() {
                                 icon: Video,
                                 title: "Téléconsultation Sécurisée",
                                 desc: "Réalisez des consultations à distance via notre canal vidéo HD chiffré, conforme aux normes de santé.",
-                                color: "bg-pink-600",
-                                shadow: "shadow-pink-200"
+                                color: "bg-violet-500",
+                                shadow: "shadow-violet-200"
                             },
                             {
                                 icon: Brain,
                                 title: "IA & Aide au Diagnostic",
                                 desc: "Gagnez du temps avec la génération automatique de comptes-rendus et l'analyse intelligente des données cliniques.",
-                                color: "bg-indigo-600",
-                                shadow: "shadow-indigo-200"
+                                color: "bg-violet-600",
+                                shadow: "shadow-violet-200"
                             },
                             {
                                 icon: Bell,

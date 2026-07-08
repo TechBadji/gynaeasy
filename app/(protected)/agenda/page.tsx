@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -21,7 +22,7 @@ export default async function AgendaPage() {
 
     const [consultations, patients, countToday, countWeek, prochainRDV] = await Promise.all([
         prisma.consultation.findMany({
-            where:   { userId: doctorId },
+            where:   { userId: doctorId, statut: { not: "ANNULE" } },
             include: {
                 patient: { select: { civilite: true, nom: true, prenom: true, id: true } },
             },

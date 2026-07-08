@@ -92,6 +92,9 @@ export async function createRdv(formData: FormData): Promise<RdvFormState> {
         const [hour, minute] = data.heureDebut.split(":").map(Number);
         const dateHeure = new Date(year, month - 1, day, hour, minute);
         const dureeMin = parseInt(data.duree);
+        if (isNaN(dureeMin) || dureeMin <= 0 || dureeMin > 480) {
+            return { success: false, message: "Durée invalide" };
+        }
 
         await prisma.consultation.create({
             data: {
@@ -139,8 +142,8 @@ export async function cancelRdv(id: string) {
         if (!appointment) return { success: false, message: "Rendez-vous introuvable" };
         if (appointment.userId !== sessionUserId) return { success: false, message: "Non autorisé" };
 
-        // Deletion (or mark as cancelled if field exists)
-        await prisma.consultation.delete({ where: { id } });
+        // Soft delete : marquer comme ANNULE (conservation de l'historique médical)
+        await prisma.consultation.update({ where: { id }, data: { statut: "ANNULE" } });
 
         // Notifications
         const { sendSMS } = await import("@/lib/sms");

@@ -48,6 +48,10 @@ export async function confirmManualPayment(data: {
     if (!await getAuthorizedConsultation(data.consultationId, userId))
         return { success: false, error: "Non autorisé" };
 
+    if (!Number.isFinite(data.montant) || data.montant < 0 || data.montant > 99_999_999) {
+        return { success: false, error: "Montant invalide" };
+    }
+
     // Supprimer un éventuel règlement EN_ATTENTE existant pour cette consultation
     await prisma.reglement.deleteMany({
         where: { consultationId: data.consultationId, statut: "EN_ATTENTE" },

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
@@ -64,8 +65,8 @@ export default async function DashboardPage() {
         unreadCount,
     ] = await Promise.all([
         prisma.patient.count({ where: { treatingDoctorId: doctorId } }),
-        prisma.consultation.count({ where: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } } }),
-        prisma.consultation.count({ where: { userId: doctorId, dateHeure: { gte: yStart,     lte: yEnd } } }),
+        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: todayStart, lte: todayEnd } } }),
+        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: yStart,     lte: yEnd } } }),
         prisma.grossesse.count({ where: { statut: "EN_COURS", patient: { treatingDoctorId: doctorId } } }),
         prisma.grossesse.findMany({
             where: { statut: "EN_COURS", dpa: { gte: now, lte: in30Days }, patient: { treatingDoctorId: doctorId } },
@@ -77,7 +78,7 @@ export default async function DashboardPage() {
         prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: yStart, lte: yEnd } } } }),
         prisma.patient.count({ where: { treatingDoctorId: doctorId, createdAt: { gte: monthStart } } }),
         prisma.consultation.findFirst({
-            where: { userId: doctorId, dateHeure: { gt: now } },
+            where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gt: now } },
             include: { patient: { select: { nom: true, prenom: true, id: true } } },
             orderBy: { dateHeure: "asc" },
         }),

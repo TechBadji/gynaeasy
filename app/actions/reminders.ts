@@ -136,13 +136,16 @@ export async function getRemindersForDate(date: Date) {
     const end = new Date(date);
     end.setHours(23, 59, 59, 999);
 
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
     return await prisma.consultation.findMany({
         where: {
             dateHeure: { gte: start, lte: end },
             smsReminded: false,
+            userId: doctorId,
             patient: {
                 telephone: { not: null, notIn: [""] },
-                ...(role === "MEDECIN" ? { treatingDoctorId: userId } : {}),
+                treatingDoctorId: doctorId,
             },
         },
         select: {

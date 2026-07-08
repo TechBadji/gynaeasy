@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { PatientClient } from "@/components/patients/patient-client";

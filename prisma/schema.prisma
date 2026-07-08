@@ -132,21 +132,22 @@ model ActeCCAM {
 }
 
 model Consultation {
-  id               String             @id @default(cuid())
+  id               String              @id @default(cuid())
   patientId        String
   userId           String
   dateHeure        DateTime
-  duree            Int                @default(30)
+  duree            Int                 @default(30)
   type             TypeRDV
+  statut           StatutConsultation  @default(PLANIFIE)
   motif            String?
   diagnostique     String?
   notes            String?
   donneesMedicales Json?
   honoraire        Float?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  source           RDVSource          @default(PHONE)
-  smsReminded      Boolean            @default(false)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+  source           RDVSource           @default(PHONE)
+  smsReminded      Boolean             @default(false)
   patient          Patient            @relation(fields: [patientId], references: [id])
   user             User               @relation(fields: [userId], references: [id])
   actes            ConsultationActe[]
@@ -424,6 +425,12 @@ enum StatutAbonnement {
   ACTIF
   ANNULE
   EXPIRE
+}
+
+enum StatutConsultation {
+  PLANIFIE
+  TERMINE
+  ANNULE
 }
 
 enum StatutDemande {

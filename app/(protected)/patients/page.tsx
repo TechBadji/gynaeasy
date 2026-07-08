@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -14,22 +15,27 @@ export default async function PatientsPage() {
 
     const doctorId = await getEffectiveDoctorId(userId, role);
 
-    const patients = await prisma.patient.findMany({
-        where: { treatingDoctorId: doctorId },
-        select: {
-            id: true,
-            codePatient: true,
-            civilite: true,
-            nom: true,
-            prenom: true,
-            dateNaissance: true,
-            telephone: true,
-            email: true,
-            groupeSanguin: true,
-            rhesus: true,
-        },
-        orderBy: { nom: "asc" },
-    });
+    let patients: any[] = [];
+    try {
+        patients = await prisma.patient.findMany({
+            where: { treatingDoctorId: doctorId },
+            select: {
+                id: true,
+                codePatient: true,
+                civilite: true,
+                nom: true,
+                prenom: true,
+                dateNaissance: true,
+                telephone: true,
+                email: true,
+                groupeSanguin: true,
+                rhesus: true,
+            },
+            orderBy: { nom: "asc" },
+        });
+    } catch (err) {
+        console.error("[PatientsPage]:", err);
+    }
 
     return <PatientsListClient patients={patients} />;
 }

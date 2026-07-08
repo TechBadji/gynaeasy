@@ -88,7 +88,7 @@ export default function BookingPage() {
     };
 
     // Simplified slots for demo
-    const slots = ["09:00", "09:30", "10:00", "10:30", "11:00", "14:0)0", "14:30", "15:00", "15:30"];
+    const slots = ["09:00", "09:30", "10:00", "10:30", "11:00", "14:00", "14:30", "15:00", "15:30"];
     const futureDates = Array.from({ length: 7 }, (_, i) => {
         const d = new Date();
         d.setDate(d.getDate() + i + 1);
