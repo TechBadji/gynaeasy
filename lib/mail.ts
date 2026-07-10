@@ -35,9 +35,9 @@ export const sendVerificationEmail = async (email: string, name: string, token: 
     }
     await sendMail(email, 'Vérifiez votre compte Gynaeasy', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #4f46e5;">Bienvenue sur Gynaeasy, Dr. ${name} !</h1>
+            <h1 style="color: #7c3aed;">Bienvenue sur Gynaeasy, Dr. ${name} !</h1>
             <p>Merci de vous être inscrit sur notre plateforme. Pour finaliser votre inscription, veuillez vérifier votre adresse email.</p>
-            <a href="${confirmLink}" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Vérifier mon email</a>
+            <a href="${confirmLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Vérifier mon email</a>
             <p style="margin-top: 24px; color: #64748b; font-size: 14px;">Si vous n'avez pas créé de compte, vous pouvez ignorer cet email.</p>
         </div>
     `);
@@ -51,7 +51,7 @@ export const sendCredentialsEmail = async (email: string, name: string, password
     }
     await sendMail(email, 'Votre compte Gynaeasy est actif !', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #ec4899;">Félicitations, Dr. ${name} !</h1>
+            <h1 style="color: #7c3aed;">Félicitations, Dr. ${name} !</h1>
             <p>Votre inscription a été validée par notre équipe administrative. Votre cabinet est désormais prêt.</p>
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;">
                 <p style="margin: 0; font-size: 14px; color: #64748b;">Vos identifiants de connexion :</p>
@@ -59,7 +59,7 @@ export const sendCredentialsEmail = async (email: string, name: string, password
                 <p style="margin: 4px 0 0 0; font-weight: bold;">Mot de passe : <span style="font-family: monospace; background: #e2e8f0; padding: 2px 6px; border-radius: 4px;">${password}</span></p>
             </div>
             <p style="color: #ef4444; font-size: 13px;"><b>Important :</b> Changez votre mot de passe dès votre première connexion.</p>
-            <a href="${loginLink}" style="display: inline-block; background-color: #ec4899; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Se connecter à Gynaeasy</a>
+            <a href="${loginLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Se connecter à Gynaeasy</a>
         </div>
     `);
 };
@@ -67,7 +67,7 @@ export const sendCredentialsEmail = async (email: string, name: string, password
 export const sendBookingNotificationEmail = async (email: string, patientName: string, doctorName: string, date: string, time: string) => {
     await sendMail(email, 'Confirmation de votre rendez-vous - Gynaeasy', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #4f46e5;">Rendez-vous Confirmé</h1>
+            <h1 style="color: #7c3aed;">Rendez-vous Confirmé</h1>
             <p>Bonjour ${patientName},</p>
             <p>Votre rendez-vous avec le <b>${doctorName}</b> est confirmé pour le :</p>
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 20px 0; text-align: center;">
@@ -86,10 +86,10 @@ export const sendAccessRequestNotificationEmail = async (
 ) => {
     await sendMail(treatingDoctorEmail, `Demande d'accès dossier patient - Gynaeasy`, `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #4f46e5;">Demande d'accès au dossier</h1>
+            <h1 style="color: #7c3aed;">Demande d'accès au dossier</h1>
             <p>Bonjour Dr. ${treatingDoctorName},</p>
             <p>Le <b>Dr. ${requestingDoctorName}</b> demande l'accès au dossier de votre patiente <b>${patientName}</b>.</p>
-            <a href="${domain}/patients" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Voir la demande</a>
+            <a href="${domain}/patients" style="display: inline-block; background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Voir la demande</a>
         </div>
     `);
 };
@@ -103,10 +103,10 @@ export const sendResetPasswordEmail = async (email: string, name: string, token:
     }
     await sendMail(email, 'Réinitialisation de votre mot de passe - Gynaeasy', `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #ec4899;">Réinitialisation du mot de passe</h1>
+            <h1 style="color: #7c3aed;">Réinitialisation du mot de passe</h1>
             <p>Bonjour Dr. ${name},</p>
             <p>Vous avez demandé à réinitialiser votre mot de passe. Cliquez sur le bouton ci-dessous. Ce lien est valable <b>1 heure</b>.</p>
-            <a href="${resetLink}" style="display: inline-block; background-color: #ec4899; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Réinitialiser mon mot de passe</a>
+            <a href="${resetLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Réinitialiser mon mot de passe</a>
             <p style="margin-top: 24px; color: #64748b; font-size: 14px;">Si vous n'avez pas fait cette demande, ignorez cet email. Votre mot de passe restera inchangé.</p>
         </div>
     `);
@@ -116,13 +116,13 @@ export const sendAdminApprovalNotificationEmail = async (adminEmail: string, doc
     const adminLink = `${domain}/admin?tab=inscriptions`;
     await sendMail(adminEmail, `Nouvelle inscription en attente — Gynaeasy`, `
         <div style="font-family: sans-serif; max-width: 600px; margin: auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px;">
-            <h1 style="color: #4f46e5;">Nouvelle inscription à approuver</h1>
+            <h1 style="color: #7c3aed;">Nouvelle inscription à approuver</h1>
             <p>Une nouvelle demande est en attente de votre validation :</p>
             <div style="background-color: #f8fafc; padding: 16px; border-radius: 8px; margin: 24px 0;">
                 <p style="margin: 0; font-weight: bold;">Dr. ${doctorName}</p>
                 <p style="margin: 4px 0 0 0; color: #64748b;">${doctorEmail}</p>
             </div>
-            <a href="${adminLink}" style="display: inline-block; background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Approuver l'inscription</a>
+            <a href="${adminLink}" style="display: inline-block; background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 16px;">Approuver l'inscription</a>
         </div>
     `);
 };
