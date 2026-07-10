@@ -473,6 +473,7 @@ export default async function Home() {
                             <li><Link href="/aide" className="hover:text-violet-600 transition-colors">Centre d'aide</Link></li>
                             <li><Link href="/contact" className="hover:text-violet-600 transition-colors">Contact</Link></li>
                             <li><Link href="/confidentialite" className="hover:text-violet-600 transition-colors">Confidentialité</Link></li>
+                            <li><Link href="/cgu" className="hover:text-violet-600 transition-colors">CGU</Link></li>
                         </ul>
                     </div>
                 </div>

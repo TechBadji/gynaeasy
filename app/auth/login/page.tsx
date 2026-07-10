@@ -316,6 +316,12 @@ export default function LoginPage() {
                             Découvrir les offres
                         </Link>
                     </p>
+                    <p className="mt-3 text-center text-[10px] text-slate-300">
+                        En vous connectant, vous acceptez nos{" "}
+                        <Link href="/cgu" className="text-slate-400 hover:text-violet-600 transition-colors underline">CGU</Link>
+                        {" "}et notre{" "}
+                        <Link href="/confidentialite" className="text-slate-400 hover:text-violet-600 transition-colors underline">politique de confidentialité</Link>
+                    </p>
                 </div>
             </div>
         </div>
