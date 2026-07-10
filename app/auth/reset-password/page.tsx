@@ -49,7 +49,7 @@ function ResetPasswordForm() {
         return (
             <div className="text-center">
                 <p className="text-sm text-red-600 mb-4">Lien invalide ou expiré.</p>
-                <Link href="/auth/forgot-password" className="text-pink-600 hover:text-pink-500 text-sm font-medium">
+                <Link href="/auth/forgot-password" className="text-violet-600 hover:text-violet-500 text-sm font-medium">
                     Faire une nouvelle demande
                 </Link>
             </div>
@@ -67,7 +67,7 @@ function ResetPasswordForm() {
                 <p className="text-sm text-slate-700 mb-4">
                     Mot de passe réinitialisé avec succès. Redirection vers la connexion...
                 </p>
-                <Link href="/auth/login" className="text-pink-600 hover:text-pink-500 text-sm font-medium">
+                <Link href="/auth/login" className="text-violet-600 hover:text-violet-500 text-sm font-medium">
                     Se connecter maintenant
                 </Link>
             </div>
@@ -92,7 +92,7 @@ function ResetPasswordForm() {
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="appearance-none block w-full px-3 py-2 pr-10 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                        className="appearance-none block w-full px-3 py-2 pr-10 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                         placeholder="8 caractères minimum"
                     />
                     <button
@@ -115,7 +115,7 @@ function ResetPasswordForm() {
                         required
                         value={confirm}
                         onChange={(e) => setConfirm(e.target.value)}
-                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                        className="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm placeholder-slate-400 focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                         placeholder="Répétez le mot de passe"
                     />
                 </div>
@@ -124,13 +124,13 @@ function ResetPasswordForm() {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:opacity-50"
                 >
                     {isLoading ? "Enregistrement..." : "Réinitialiser le mot de passe"}
                 </button>
             </div>
             <div className="text-center">
-                <Link href="/auth/login" className="text-sm text-pink-600 hover:text-pink-500">
+                <Link href="/auth/login" className="text-sm text-violet-600 hover:text-violet-500">
                     ← Retour à la connexion
                 </Link>
             </div>
@@ -142,7 +142,7 @@ export default function ResetPasswordPage() {
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="flex justify-center text-pink-600">
+                <div className="flex justify-center text-violet-600">
                     <Activity className="h-12 w-12" />
                 </div>
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-slate-900">

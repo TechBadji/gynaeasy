@@ -14,7 +14,8 @@ export async function requestPasswordReset(email: string) {
 
     const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
 
-    if (!user) return { success: false, error: "EMAIL_NOT_FOUND" };
+    // Fail silencieux : ne pas révéler si l'email existe ou non
+    if (!user) return { success: true };
 
     const token = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour

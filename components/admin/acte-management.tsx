@@ -36,7 +36,7 @@ export default function ActeManagement({ actes }: { actes: any[] }) {
             <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                     <CardTitle className="text-xl flex items-center gap-2">
-                        <ClipboardList className="h-5 w-5 text-pink-600" />
+                        <ClipboardList className="h-5 w-5 text-violet-600" />
                         Catalogue des Actes CCAM
                     </CardTitle>
                     <p className="text-xs text-slate-500 mt-1">{actes.length} actes référencés dans la base</p>
@@ -49,7 +49,7 @@ export default function ActeManagement({ actes }: { actes: any[] }) {
                         placeholder="Filtrer par code ou libellé..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                        className="w-full pl-9 pr-4 py-2 text-sm border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none"
                     />
                 </div>
             </CardHeader>

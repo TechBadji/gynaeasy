@@ -65,21 +65,21 @@ export function PatientClient({ patient }: { patient: any }) {
             <div className="flex space-x-1 border-b pb-px">
                 <button
                     onClick={() => setActiveTab("dossier")}
-                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'dossier' ? 'border-b-2 border-pink-600 text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'dossier' ? 'border-b-2 border-violet-600 text-violet-600' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                     <Activity className="h-4 w-4 mr-2" />
                     Dossier Médical
                 </button>
                 <button
                     onClick={() => setActiveTab("consultations")}
-                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'consultations' ? 'border-b-2 border-pink-600 text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'consultations' ? 'border-b-2 border-violet-600 text-violet-600' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                     <Stethoscope className="h-4 w-4 mr-2" />
                     Consultations
                 </button>
                 <button
                     onClick={() => setActiveTab("documents")}
-                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'documents' ? 'border-b-2 border-pink-600 text-pink-600' : 'text-slate-500 hover:text-slate-700'}`}
+                    className={`px-4 py-2 font-medium text-sm inline-flex items-center transition-colors ${activeTab === 'documents' ? 'border-b-2 border-violet-600 text-violet-600' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                     <FileText className="h-4 w-4 mr-2" />
                     Documents
@@ -190,7 +190,7 @@ export function PatientClient({ patient }: { patient: any }) {
                         <Card>
                             <CardHeader className="flex flex-row items-center justify-between pb-3">
                                 <CardTitle className="text-lg">Dernières Consultations</CardTitle>
-                                <button onClick={() => setActiveTab("consultations")} className="text-sm font-medium text-pink-600 hover:text-pink-700">
+                                <button onClick={() => setActiveTab("consultations")} className="text-sm font-medium text-violet-600 hover:text-violet-700">
                                     Voir tout
                                 </button>
                             </CardHeader>
@@ -203,7 +203,7 @@ export function PatientClient({ patient }: { patient: any }) {
                                                     <div className="font-medium text-slate-900">{c.type.replace('_', ' ')}</div>
                                                     <div className="text-xs text-slate-500">{new Date(c.dateHeure).toLocaleDateString('fr-FR')}</div>
                                                 </div>
-                                                <button onClick={() => setActiveTab("consultations")} className="text-sm text-pink-600 font-medium hover:underline">
+                                                <button onClick={() => setActiveTab("consultations")} className="text-sm text-violet-600 font-medium hover:underline">
                                                     Ouvrir
                                                 </button>
                                             </div>

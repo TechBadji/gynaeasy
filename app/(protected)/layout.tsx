@@ -19,10 +19,15 @@ export default async function ProtectedLayout({
     }
 
     const userId = (session.user as any).id;
-    const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { enabledModules: true, role: true, image: true, name: true, email: true, twoFactorEnabled: true }
-    });
+    let user: any = null;
+    try {
+        user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { enabledModules: true, role: true, image: true, name: true, email: true, twoFactorEnabled: true }
+        });
+    } catch {
+        // DB indisponible — on continue avec user=null, le contenu protected restera accessible
+    }
 
     const isImagingEnabled = (user as any)?.enabledModules?.includes("IMAGERIE");
 

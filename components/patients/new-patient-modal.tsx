@@ -36,7 +36,7 @@ export default function NewPatientModal() {
     };
 
     const inputClass =
-        "mt-1 block w-full border border-slate-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500";
+        "mt-1 block w-full border border-slate-300 rounded-md shadow-sm px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500";
     const labelClass = "block text-sm font-medium text-slate-700";
     const errorClass = "text-xs text-red-600 mt-1";
 
@@ -45,7 +45,7 @@ export default function NewPatientModal() {
             {/* Bouton déclencheur */}
             <button
                 onClick={() => setIsOpen(true)}
-                className="flex items-center bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-md font-medium text-sm transition-colors"
+                className="flex items-center bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md font-medium text-sm transition-colors"
             >
                 <UserPlus className="h-4 w-4 mr-2" />
                 Nouveau Patient
@@ -258,7 +258,7 @@ export default function NewPatientModal() {
                                 type="submit"
                                 form="new-patient-form"
                                 disabled={isLoading}
-                                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-pink-600 rounded-md hover:bg-pink-700 transition-colors disabled:opacity-50"
+                                className="flex items-center px-4 py-2 text-sm font-medium text-white bg-violet-600 rounded-md hover:bg-violet-700 transition-colors disabled:opacity-50"
                             >
                                 {isLoading ? (
                                     <>

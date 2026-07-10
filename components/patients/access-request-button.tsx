@@ -28,7 +28,7 @@ export default function AccessRequestButton({ patientId }: { patientId: string }
         <button
             onClick={handleRequest}
             disabled={isPending}
-            className="px-6 py-2 bg-pink-600 text-white rounded-xl font-medium shadow-lg shadow-pink-200 hover:bg-pink-500 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="px-6 py-2 bg-violet-600 text-white rounded-xl font-medium shadow-lg shadow-violet-200 hover:bg-violet-500 transition-all flex items-center gap-2 disabled:opacity-50"
         >
             {isPending ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

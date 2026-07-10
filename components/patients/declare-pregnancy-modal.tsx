@@ -49,7 +49,7 @@ export function DeclarePregnancyModal({ patientId }: DeclarePregnancyModalProps)
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <button className="text-xs font-medium text-pink-600 bg-pink-50 px-3 py-1 rounded-full cursor-pointer hover:bg-pink-100">
+                <button className="text-xs font-medium text-violet-600 bg-violet-50 px-3 py-1 rounded-full cursor-pointer hover:bg-violet-100">
                     + Déclarer grossesse
                 </button>
             </DialogTrigger>
@@ -84,7 +84,7 @@ export function DeclarePregnancyModal({ patientId }: DeclarePregnancyModalProps)
                         >
                             Annuler
                         </Button>
-                        <Button type="submit" disabled={isLoading} className="bg-pink-600 hover:bg-pink-700">
+                        <Button type="submit" disabled={isLoading} className="bg-violet-600 hover:bg-violet-700">
                             {isLoading ? "Enregistrement..." : "Déclarer"}
                         </Button>
                     </DialogFooter>

@@ -35,7 +35,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-xl flex items-center gap-2">
-                            <Building2 className="h-5 w-5 text-pink-600" />
+                            <Building2 className="h-5 w-5 text-violet-600" />
                             Informations de la Clinique
                         </CardTitle>
                     </CardHeader>
@@ -50,7 +50,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                             type="text"
                                             value={formData.clinicName}
                                             onChange={(e) => setFormData({ ...formData, clinicName: e.target.value })}
-                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none"
                                             placeholder="Ex: Clinique Gynaeasy"
                                             required
                                         />
@@ -64,7 +64,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                             type="text"
                                             value={formData.currency}
                                             onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
-                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none"
                                             placeholder="Ex: FCFA, €"
                                             required
                                         />
@@ -77,7 +77,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                         <textarea
                                             value={formData.address}
                                             onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none min-h-[80px]"
+                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none min-h-[80px]"
                                             placeholder="Adresse complète..."
                                         />
                                     </div>
@@ -90,7 +90,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                             type="tel"
                                             value={formData.phone}
                                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none"
                                             placeholder="+221..."
                                         />
                                     </div>
@@ -103,7 +103,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                             type="email"
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-pink-500 focus:outline-none"
+                                            className="w-full pl-9 pr-4 py-2 border rounded-md focus:ring-2 focus:ring-violet-500 focus:outline-none"
                                             placeholder="contact@clinique.com"
                                         />
                                     </div>
@@ -113,7 +113,7 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex items-center gap-2 bg-pink-600 text-white px-6 py-2 rounded-md hover:bg-pink-700 transition-colors disabled:opacity-50"
+                                    className="flex items-center gap-2 bg-violet-600 text-white px-6 py-2 rounded-md hover:bg-violet-700 transition-colors disabled:opacity-50"
                                 >
                                     <Save className="h-4 w-4" />
                                     {loading ? "Enregistrement..." : "Sauvegarder les paramètres"}
@@ -136,8 +136,8 @@ export default function GeneralSettings({ settings }: { settings: any }) {
                             <p className="text-sm text-slate-600 whitespace-pre-line text-xs">{formData.address || "Adresse non renseignée"}</p>
                             <p className="text-xs text-slate-600">{formData.phone && `Tél: ${formData.phone}`}</p>
                         </div>
-                        <div className="p-4 bg-pink-50 rounded-lg border border-pink-100">
-                            <p className="text-xs text-pink-600 uppercase font-bold mb-1">Configuration Monnaie</p>
+                        <div className="p-4 bg-violet-50 rounded-lg border border-violet-100">
+                            <p className="text-xs text-violet-600 uppercase font-bold mb-1">Configuration Monnaie</p>
                             <p className="text-sm text-slate-700">Toutes les factures seront émises en <span className="font-bold">{formData.currency}</span>.</p>
                         </div>
                     </CardContent>

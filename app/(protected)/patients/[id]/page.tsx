@@ -10,6 +10,10 @@ import AccessRequestButton from "@/components/patients/access-request-button";
 
 export default async function PatientPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+
+    const session = await getServerSession(authOptions);
+    if (!session?.user) redirect("/auth/login");
+
     const patient = await prisma.patient.findUnique({
         where: { id: id },
         include: {
@@ -29,9 +33,6 @@ export default async function PatientPage({ params }: { params: Promise<{ id: st
     });
 
     if (!patient) return notFound();
-
-    const session = await getServerSession(authOptions);
-    if (!session?.user) redirect("/auth/login");
 
     const userId = (session.user as any).id;
 

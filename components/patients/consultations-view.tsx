@@ -60,13 +60,13 @@ export function ConsultationsView({ consultations, patientId }: ConsultationsVie
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-3 border-b border-slate-100">
                     <CardTitle className="text-xl flex items-center gap-2">
-                        <Stethoscope className="h-5 w-5 text-pink-600" />
+                        <Stethoscope className="h-5 w-5 text-violet-600" />
                         Historique des Consultations
                     </CardTitle>
                     <Button
                         onClick={handleNewConsultation}
                         disabled={isCreating}
-                        className="bg-pink-600 hover:bg-pink-700 text-white gap-2"
+                        className="bg-violet-600 hover:bg-violet-700 text-white gap-2"
                         size="sm"
                     >
                         <PlusCircle className="h-4 w-4" />
@@ -81,7 +81,7 @@ export function ConsultationsView({ consultations, patientId }: ConsultationsVie
                                     {/* En-tête de la consultation */}
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
-                                            <h3 className="text-lg font-semibold text-slate-900 border-b-2 border-pink-200 inline-block pb-1 mb-2">
+                                            <h3 className="text-lg font-semibold text-slate-900 border-b-2 border-violet-200 inline-block pb-1 mb-2">
                                                 {c.type.replace(/_/g, ' ')}
                                             </h3>
                                             <p className="text-sm text-slate-500 font-medium bg-slate-100 px-3 py-1 rounded-full inline-block ml-3">
@@ -109,7 +109,7 @@ export function ConsultationsView({ consultations, patientId }: ConsultationsVie
                                                 variant={editingId === c.id ? "default" : "outline"}
                                                 size="sm"
                                                 onClick={() => setEditingId(editingId === c.id ? null : c.id)}
-                                                className={editingId === c.id ? "bg-pink-600 hover:bg-pink-700" : ""}
+                                                className={editingId === c.id ? "bg-violet-600 hover:bg-violet-700" : ""}
                                             >
                                                 {editingId === c.id ? (
                                                     <>
@@ -203,8 +203,8 @@ export function ConsultationsView({ consultations, patientId }: ConsultationsVie
                                                     )}
 
                                                     {c.donneesMedicales.conclusion && (
-                                                        <div className="bg-pink-50/50 p-3 rounded border border-pink-100 col-span-2 md:col-span-1">
-                                                            <h4 className="text-xs font-bold text-pink-800 uppercase mb-2">Conclusion / CAT</h4>
+                                                        <div className="bg-violet-50/50 p-3 rounded border border-violet-100 col-span-2 md:col-span-1">
+                                                            <h4 className="text-xs font-bold text-violet-800 uppercase mb-2">Conclusion / CAT</h4>
                                                             <p className="text-sm text-slate-700 whitespace-pre-wrap">{c.donneesMedicales.conclusion}</p>
                                                         </div>
                                                     )}

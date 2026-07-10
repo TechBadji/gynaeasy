@@ -219,7 +219,7 @@ export default function CguPage() {
                 <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
                     <p>© {new Date().getFullYear()} Gynaeasy / Digitalmatis — Tous droits réservés</p>
                     <div className="flex items-center gap-4">
-                        <Link href="/(protected)/confidentialite" className="hover:text-violet-600 transition-colors">Politique de confidentialité</Link>
+                        <Link href="/confidentialite" className="hover:text-violet-600 transition-colors">Politique de confidentialité</Link>
                         <Link href="/" className="hover:text-violet-600 transition-colors">Accueil</Link>
                     </div>
                 </div>

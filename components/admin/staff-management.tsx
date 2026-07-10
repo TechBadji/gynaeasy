@@ -27,7 +27,7 @@ export default function StaffManagement({ users }: { users: any[] }) {
         <Card>
             <CardHeader>
                 <CardTitle className="text-xl flex items-center gap-2">
-                    <UserCog className="h-5 w-5 text-pink-600" />
+                    <UserCog className="h-5 w-5 text-violet-600" />
                     Gestion du Personnel
                 </CardTitle>
             </CardHeader>
@@ -65,7 +65,7 @@ export default function StaffManagement({ users }: { users: any[] }) {
                                             disabled={loading === user.id}
                                             value={user.role}
                                             onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                                            className="text-xs border rounded-md p-1 focus:ring-1 focus:ring-pink-500 focus:outline-none bg-white font-medium cursor-pointer"
+                                            className="text-xs border rounded-md p-1 focus:ring-1 focus:ring-violet-500 focus:outline-none bg-white font-medium cursor-pointer"
                                         >
                                             <option value="MEDECIN">Médecin</option>
                                             <option value="SECRETAIRE">Secrétaire</option>

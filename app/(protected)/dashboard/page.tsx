@@ -64,24 +64,24 @@ export default async function DashboardPage() {
         initialAlerts,
         unreadCount,
     ] = await Promise.all([
-        prisma.patient.count({ where: { treatingDoctorId: doctorId } }),
-        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: todayStart, lte: todayEnd } } }),
-        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: yStart,     lte: yEnd } } }),
-        prisma.grossesse.count({ where: { statut: "EN_COURS", patient: { treatingDoctorId: doctorId } } }),
+        prisma.patient.count({ where: { treatingDoctorId: doctorId } }).catch(() => 0),
+        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: todayStart, lte: todayEnd } } }).catch(() => 0),
+        prisma.consultation.count({ where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gte: yStart,     lte: yEnd } } }).catch(() => 0),
+        prisma.grossesse.count({ where: { statut: "EN_COURS", patient: { treatingDoctorId: doctorId } } }).catch(() => 0),
         prisma.grossesse.findMany({
             where: { statut: "EN_COURS", dpa: { gte: now, lte: in30Days }, patient: { treatingDoctorId: doctorId } },
             include: { patient: { select: { nom: true, prenom: true, id: true } } },
             orderBy: { dpa: "asc" },
             take: 5,
-        }),
-        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } } } }),
-        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: yStart, lte: yEnd } } } }),
-        prisma.patient.count({ where: { treatingDoctorId: doctorId, createdAt: { gte: monthStart } } }),
+        }).catch(() => []),
+        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: todayStart, lte: todayEnd } } } }).catch(() => ({ _sum: { montant: 0 } })),
+        prisma.reglement.aggregate({ _sum: { montant: true }, where: { statut: "PAYE", consultation: { userId: doctorId, dateHeure: { gte: yStart, lte: yEnd } } } }).catch(() => ({ _sum: { montant: 0 } })),
+        prisma.patient.count({ where: { treatingDoctorId: doctorId, createdAt: { gte: monthStart } } }).catch(() => 0),
         prisma.consultation.findFirst({
             where: { userId: doctorId, statut: { not: "ANNULE" }, dateHeure: { gt: now } },
             include: { patient: { select: { nom: true, prenom: true, id: true } } },
             orderBy: { dateHeure: "asc" },
-        }),
+        }).catch(() => null),
         prisma.accessRequest.findMany({
             where: { patient: { treatingDoctorId: doctorId }, status: "PENDING" },
             include: {
@@ -89,13 +89,13 @@ export default async function DashboardPage() {
                 patient: { select: { nom: true, prenom: true, codePatient: true } },
             },
             orderBy: { createdAt: "desc" },
-        }),
+        }).catch(() => []),
         prisma.notification.findMany({
             where: { userId, read: false },
             orderBy: { createdAt: "desc" },
             take: 8,
-        }),
-        prisma.notification.count({ where: { userId, read: false } }),
+        }).catch(() => []),
+        prisma.notification.count({ where: { userId, read: false } }).catch(() => 0),
     ]);
 
     const caJour = regJour._sum.montant ?? 0;

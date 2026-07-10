@@ -5,6 +5,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 const DonneesMedicalesSchema = z.record(z.string(), z.unknown());
 
@@ -51,23 +52,24 @@ export async function updateConsultationMedicalData(
 
 export async function createEmptyConsultation(patientId: string) {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    if (!session?.user) {
         return { success: false, message: "Non autorisé" };
     }
 
     try {
-        const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-        if (!user) return { success: false, message: "Utilisateur introuvable" };
+        const userId   = (session.user as any).id;
+        const role     = (session.user as any).role;
+        const doctorId = await getEffectiveDoctorId(userId, role);
 
         const patient = await prisma.patient.findUnique({ where: { id: patientId }, select: { treatingDoctorId: true } });
-        if (!patient || patient.treatingDoctorId !== user.id) {
+        if (!patient || patient.treatingDoctorId !== doctorId) {
             return { success: false, message: "Non autorisé" };
         }
 
         const consultation = await prisma.consultation.create({
             data: {
                 patientId,
-                userId: user.id,
+                userId: doctorId,
                 dateHeure: new Date(),
                 type: "CONSULTATION",
                 motif: "Consultation du jour",

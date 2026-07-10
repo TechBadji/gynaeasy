@@ -122,6 +122,14 @@ export async function updateUserAvatar(userId: string, imageData: string) {
         if (!session?.user) return { success: false, error: "Non autorisé" };
         if ((session.user as any).id !== userId) return { success: false, error: "Non autorisé" };
 
+        if (!imageData.startsWith("data:image/")) {
+            return { success: false, error: "Format d'image invalide" };
+        }
+        // Limite : ~2 Mo en base64 ≈ 2.8M caractères
+        if (imageData.length > 2_800_000) {
+            return { success: false, error: "Image trop volumineuse (max 2 Mo)" };
+        }
+
         await prisma.user.update({
             where: { id: userId },
             data: { image: imageData }

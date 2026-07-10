@@ -9,6 +9,9 @@ import { format } from "date-fns";
 import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 export async function getRemindersCount(date: Date) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return 0;
+
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
     const end = new Date(date);
@@ -26,6 +29,9 @@ export async function getRemindersCount(date: Date) {
 }
 
 export async function sendDailyReminders(date: Date) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) return { success: false, message: "Non autorisé" };
+
     try {
         const start = new Date(date);
         start.setHours(0, 0, 0, 0);

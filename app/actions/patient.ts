@@ -121,12 +121,22 @@ export async function declareGrossesse(patientId: string, ddrStr: string | null)
     const session = await getServerSession(authOptions);
     if (!session?.user) throw new Error("Non autorisé");
 
+    const userId = (session.user as any).id;
+    const role   = (session.user as any).role;
+    const doctorId = await getEffectiveDoctorId(userId, role);
+
+    const patientCheck = await prisma.patient.findUnique({
+        where: { id: patientId, treatingDoctorId: doctorId },
+        select: { id: true },
+    });
+    if (!patientCheck) return { success: false, message: "Non autorisé" };
+
     let ddr = null;
     let dpa = null;
 
     if (ddrStr) {
         ddr = new Date(ddrStr);
-        // Calcul simple de DPA: DDR + 280 jours (40 SA)
+        if (isNaN(ddr.getTime())) return { success: false, message: "Date de dernières règles invalide" };
         dpa = new Date(ddr.getTime() + 280 * 24 * 60 * 60 * 1000);
     }
 

@@ -46,7 +46,7 @@ export default async function ParametresPage({ searchParams }: PageProps) {
         <div className="space-y-6 pb-20">
             <div>
                 <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-                    <Settings className="h-6 w-6 text-indigo-600" />
+                    <Settings className="h-6 w-6 text-violet-600" />
                     Paramètres du Cabinet
                 </h1>
                 <p className="text-slate-500 text-sm">Configurez l'identité de votre cabinet et sécurisez votre accès.</p>
@@ -64,7 +64,7 @@ export default async function ParametresPage({ searchParams }: PageProps) {
                                 href={t.href}
                                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                                     isActive
-                                        ? "border-indigo-600 text-indigo-600"
+                                        ? "border-violet-600 text-violet-600"
                                         : "border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300"
                                 }`}
                             >

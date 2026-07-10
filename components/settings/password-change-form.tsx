@@ -48,7 +48,7 @@ export default function PasswordChangeForm() {
         <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl">
             <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-8">
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="h-12 w-12 rounded-2xl bg-pink-50 flex items-center justify-center text-pink-600 border border-pink-100">
+                    <div className="h-12 w-12 rounded-2xl bg-violet-50 flex items-center justify-center text-violet-600 border border-violet-100">
                         <Lock className="h-6 w-6" />
                     </div>
                     <div>
@@ -68,7 +68,7 @@ export default function PasswordChangeForm() {
                                 type="password"
                                 value={passwords.current}
                                 onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all"
+                                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all"
                                 placeholder="••••••••"
                                 required
                             />
@@ -86,7 +86,7 @@ export default function PasswordChangeForm() {
                                     type="password"
                                     value={passwords.new}
                                     onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
-                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-mono"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-mono"
                                     placeholder="••••••••"
                                     required
                                 />
@@ -101,7 +101,7 @@ export default function PasswordChangeForm() {
                                     type="password"
                                     value={passwords.confirm}
                                     onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-pink-500/20 transition-all font-mono"
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-violet-500/20 transition-all font-mono"
                                     placeholder="••••••••"
                                     required
                                 />

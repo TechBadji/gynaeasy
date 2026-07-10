@@ -16,16 +16,8 @@ export default function ForgotPasswordPage() {
         setIsLoading(true);
         setError("");
         try {
-            const result = await requestPasswordReset(email);
-            if (!result.success) {
-                if (result.error === "EMAIL_NOT_FOUND") {
-                    setError("Aucun compte ne correspond à cette adresse email. Vérifiez l'adresse ou contactez votre administrateur.");
-                } else {
-                    setError("Une erreur est survenue. Veuillez réessayer.");
-                }
-            } else {
-                setSent(true);
-            }
+            await requestPasswordReset(email);
+            setSent(true);
         } catch {
             setError("Une erreur est survenue. Veuillez réessayer.");
         } finally {

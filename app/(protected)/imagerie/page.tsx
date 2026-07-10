@@ -5,12 +5,15 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import ImagingDashboard from "@/components/imagerie/imaging-dashboard";
 import { getClinicSettings } from "@/app/actions/clinic";
+import { getEffectiveDoctorId } from "@/lib/effective-user";
 
 export default async function ImagingPage() {
     const session = await getServerSession(authOptions);
     if (!session) redirect("/api/auth/signin");
 
-    const userId = (session.user as any).id;
+    const userId   = (session.user as any).id;
+    const role     = (session.user as any).role;
+    const doctorId = await getEffectiveDoctorId(userId, role);
 
     const [user, scans, patients, clinicSettings] = await Promise.all([
         prisma.user.findUnique({
@@ -20,7 +23,7 @@ export default async function ImagingPage() {
         prisma.document.findMany({
             where: {
                 type: "ECHOGRAPHIE",
-                patient: { treatingDoctorId: userId },
+                patient: { treatingDoctorId: doctorId },
             },
             select: {
                 id: true, nom: true, description: true, metadata: true, createdAt: true,
@@ -31,7 +34,7 @@ export default async function ImagingPage() {
             orderBy: { createdAt: "desc" },
         }),
         prisma.patient.findMany({
-            where: { treatingDoctorId: userId },
+            where: { treatingDoctorId: doctorId },
             select: { id: true, nom: true, prenom: true, codePatient: true, civilite: true },
             orderBy: { nom: "asc" },
         }),
